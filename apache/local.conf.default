@@ -1,0 +1,43 @@
+# cakewell apache2 virtual host configuration
+# author: Tom at klenwell@gmail.com
+
+# This apache2 virtual host configuration is set up to create a local site
+# at domain http://cakewell/
+#
+# First, rename this file to local.conf.  Then, change the DocumentRoot and
+# Directory paths below to lead to your Cakewell CakePhp webroot directory.
+#
+# To enable, link this file to your apache2 sites-enabled directory and restart
+# your server.  On Ubuntu, this can be done from the command line like so
+# (substitute the appropriate paths):
+#
+# $ sudo ln -s /absolute/path/to/cakewell/apache/local.conf /etc/apache2/sites-enabled/cakewell
+# $ sudo apache2ctl -k restart
+#
+# Finally, add cakewell to you /etc/hosts file.  Ubuntu commands:
+#
+# $ sudo gedit /etc/hosts
+# add line: 127.0.0.1     cakewell
+
+<VirtualHost *:80>
+
+  ServerName cakewell
+  #ServerAlias tba
+  ServerAdmin webmaster@localhost
+  DocumentRoot /absolute/path/to/cakewell/webroot
+
+  <Directory /absolute/path/to/cakewell/webroot/>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride All
+    Order allow,deny
+    allow from all
+  </Directory>
+
+  # Log level: debug, info, notice, warn, error, crit, alert, emerg
+  LogLevel warn
+  ErrorLog /var/log/apache2/error.log
+  CustomLog /var/log/apache2/access.log combined	
+
+  ServerSignature On
+
+</VirtualHost>
