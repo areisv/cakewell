@@ -15,3 +15,27 @@ CREATE TABLE IF NOT EXISTS `simple_records` (
     
     PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+
+CREATE TABLE IF NOT EXISTS `comments` (
+  `id` bigint(20) unsigned NOT NULL auto_increment,
+  `form_id` varchar(32) NOT NULL default '',
+  `dom_id` varchar(32) NOT NULL default '',
+  `parent_id` bigint(20) NOT NULL default '0',
+  `type` varchar(20) NOT NULL default '',
+  `created` datetime default NULL,
+  `approved` tinyint(4) NOT NULL default '1',
+  `karma` int(11) NOT NULL default '0',
+  `author` varchar(255) NOT NULL default '',
+  `author_email` varchar(100) NOT NULL default '',
+  `author_url` varchar(200) NOT NULL default '',
+  `author_ip` varchar(100) default NULL,
+  `text` text NOT NULL,
+  `agent` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `approved` (`approved`),
+  KEY `form_id` (`form_id`),
+  KEY `parent_id` (`parent_id`),
+  KEY `form_id` (`form_id`),
+  KEY `created` (`created`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
