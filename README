@@ -1,0 +1,71 @@
+This document is provided to help you set up the CakePhp app (cakewell) here
+provided.  The source is available from:
+
+    http://code.google.com/p/klenwell/
+
+The core CakePhp libraries are not provided here.  See info below for setting
+up this app to work with the core libraries located in a place of your
+choosing.
+
+
+
+*** Files You WILL NEED to Edit in Setting Up Your App
+
+    webroot/index.php.default
+        - rename webroot/index.php
+        - set $CakePhpCoreDir
+    webroot/test.php.default
+        - rename webroot/test.php
+        - set $CakePhpCoreDir
+    app/config/database.php.default
+        - rename database.php
+        - update settings to match your database
+    app/config/core.php
+
+
+*** Files You MAY WANT to Edit in Setting Up Your App
+
+    css files
+
+
+
+*** One Core, Many Apps
+I like to use a centralized CakePhp core library for multiple projects on
+my development server.  In the source CakePhp distribution, the "core" library
+would be the one found in the "cake" directory (with the files basics.php,
+bootstrap.php, and dispatcher.php in it).  This library generally remains
+constant between projects.
+
+The app directory is the place where most the customization takes place and I
+copy that to a projects own directory.  I also move the cake webroot directory
+out of the app directory and on to the same level as the app directory.
+
+So on my linux server, I will have the core cake and various project directories
+set up something like this:
+
+/var/www/
+    cake_core/          <-- "cake" dir from cake source
+    project1/
+        app/            <-- "app" dir from cake source
+        webroot/        <-- this is within "app" in the source
+            index.php   <-- edit path settings in this file
+    project2/
+        app/
+        webroot/
+            index.php
+
+Then I configure the DocumentRoot in apache2 config file for each project to
+point to the webroot dir.
+
+To make this work, it will be necessary to edit the path settings in the webroot
+index.php file.  In this distribution, I add three variables in an attempt
+to make this as simple and obvious as possible: $CakePhpAppDirParent,
+$CakePhpAppDirName, $CakePhpCoreDir.
+
+For project1 above, the settings would be as follows:
+
+$CakePhpAppDirParent = dirname(dirname(__FILE__));
+$CakePhpAppDirName = 'app';
+$CakePhpCoreDir = dirname($CakePhpAppDirParent) . DS . 'cake_core';
+
+See webroot/index.php here for details.

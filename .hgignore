@@ -1,0 +1,8 @@
+# use glob syntax.
+syntax: glob
+
+app/tmp
+app/config/database.php
+webroot/index.php
+webroot/test.php
+apache/local.conf

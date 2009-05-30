@@ -1,0 +1,29 @@
+
+/** Documentation **/
+/*______________________________________________________________________________
+
+    Klenwell Stylesheet Template
+
+    Last Update: $date$
+    Author: Tom at klenwell@gmail.com
+
+    NOTES
+    A basic stylesheet for the cakephp demo app.
+______________________________________________________________________________*/
+
+h1, h2, h3, h4, h5, h6 { margin-bottom:0.5em; }
+hr { margin:1em 0; color:#CC6666; }
+li { margin:0.5em 0; }
+
+.cakewell-demo a { color:#333; }
+.cakewell-demo a:hover { color:#CC6666; }
+
+.cakewell-demo .controller_menu {
+ float:right;
+ padding:1em;
+ border:16px solid #ccc;
+ background:#eee;
+}
+.cakewell-demo .controller_menu h2 {
+ margin:0 0 4px; padding:0px;
+}
