@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
   PRIMARY KEY  (`id`),
   KEY `approved` (`approved`),
   KEY `form_id` (`form_id`),
+  KEY `dom_id` (`dom_id`),
   KEY `parent_id` (`parent_id`),
-  KEY `form_id` (`form_id`),
   KEY `created` (`created`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
