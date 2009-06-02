@@ -17,7 +17,7 @@
         Required jquery be loaded by the layout or view
         
     Usage:
-        $html = $this->element( 'comment',
+        $html = $this->element( 'comment_form',
                                 array( 'form_id'  => 'sample var',
                                        'dom_id' => '+6 hours' ) );
 */
@@ -32,15 +32,18 @@ if ( !isset($form_id) )
 
 <script type="text/javascript">
 
-// display a loading message or image
-$('#<?php print $dom_id; ?>').html('loading comment form');
-
-// this is a jquery ajax call
-$('#<?php print $dom_id; ?>').load(
-    '/comment/form/',
-    { 'form_id' : '<?php print urlencode($form_id); ?>',
-      'dom_id' : '<?php print urlencode($dom_id); ?>' }
-);
+$(document).ready( function() {
+    
+    // display a loading message or image
+    $('#<?php print $dom_id; ?>').html('loading comment form');
+    
+    // this is a jquery ajax call
+    $('#<?php print $dom_id; ?>').load(
+        '/comment/form/',
+        { 'form_id' : '<?php print urlencode($form_id); ?>',
+          'dom_id' : '<?php print urlencode($dom_id); ?>' }
+    );
+});
 
 </script>
 
