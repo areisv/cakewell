@@ -6,7 +6,7 @@ if ( !isset($output) ) $output = 'no output';
 if ( is_array($output) ) $output = htmlspecialchars(print_r($output, 1));
 
 // this will update the head section with raw markup
-#$this->addScript();
+$this->addScript('<script type="text/javascript" src="http://api.recaptcha.net/js/recaptcha_ajax.js"></script>');
 
 // stylesheet (will add to $scripts_for_layout)
 $html->css('klenwell.basic', null, array(), false);

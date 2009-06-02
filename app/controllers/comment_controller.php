@@ -6,6 +6,8 @@
     Summary of controller here.
 */
 
+App::import('Vendor', 'recaptcha/recaptchalib');
+
 class CommentController extends AppController
 {
     public $name = 'Comment';
@@ -32,6 +34,16 @@ class CommentController extends AppController
             $this->set_stage(1);
         $this->set_stage($this->Session->read('comment.stage'));
         
+        // reset form
+        if ( isset($this->params['form']['reset_comment']) )
+        {
+            $this->data['Comment'] = array();
+            $this->_pickle();
+            $this->set_stage(1);
+        }
+        #pr($this->params);
+        #pr($this->data);
+        
         // handle submissions
         if ( isset($this->data['Comment']['submitted']) )
         {
@@ -41,7 +53,7 @@ class CommentController extends AppController
                 $this->Comment->set($this->data);
                 if ( $this->Comment->validates($this->data) )
                 {
-                    $this->_pickle();
+                    $this->_pickle($this->Comment->data);
                     $this->set_stage(2);
                 }
             }
@@ -52,19 +64,20 @@ class CommentController extends AppController
                 $RecaptchaResponse = recaptcha_check_answer (
                                         RECAPTCHA_PRIVATE_KEY,
                                         $_SERVER["REMOTE_ADDR"],
-                                        $_POST["recaptcha_challenge_field"],
-                                        $_POST["recaptcha_response_field"] );
+                                        $this->params['form']['recaptcha_challenge_field'],
+                                        $this->params['form']['recaptcha_response_field'] );
                 
                 if ( $RecaptchaResponse->is_valid )
                 {
+                    $this->data = $this->_unpickle();
+                    $this->data['Comment']['recaptcha'] = $this->params['form']['recaptcha_response_field'];
+                    $this->Comment->set($this->data);
                     $this->Comment->save();
                     $this->set_stage(3);
                 }
                 else
                 {
-                    $RecaptchaError = $RecaptchaResponse->error;
-                    $header = sprintf('<div class="fail">recaptcha error: %s</div>',
-                                        $RecaptchaError );
+                    $this->set('form_message', 'recaptcha failed: please try again');
                 }
             }
 
@@ -82,7 +95,19 @@ class CommentController extends AppController
 
         // show stage 2
         if ( $this->stage == 2 )
+        {
+            // preview data
+            $Pickle = $this->_unpickle();
+            $CommentData = $Pickle['Comment'];
+            $this->set('author', $CommentData['author']);
+            $this->set('author_email', $CommentData['author_email']);
+            $this->set('author_url', $CommentData['author_url']);
+            $this->set('comment_text', $CommentData['text']);
+            
+            // add recaptcha html
+            if ( !isset($recaptcha_error) ) $recaptcha_error = '';
             return $this->render('form_2');
+        }
 
         // show stage 1
         return $this->render('form_1');
@@ -95,9 +120,9 @@ class CommentController extends AppController
         $this->stage = $num;
     }
     
-    function _pickle()
+    function _pickle($data=array())
     {
-        $this->Session->write('CommentData', $this->data);
+        $this->Session->write('CommentData', $data);
     }
     
     function _unpickle()
