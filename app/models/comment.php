@@ -24,6 +24,16 @@ class Comment extends AppModel {
                 'rule' => array('validate_freetext', 'text'))
         ),
         
+        'author_email' => array
+        (
+            'formal' => array(
+                'rule' => 'email',
+                'required' => true,
+                'allowEmpty' => false,
+                'message' => 'please enter a valid email'
+            ),
+        ),
+        
         'author_url' => array
         (
             'formal' => array(
