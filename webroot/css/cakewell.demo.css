@@ -14,6 +14,7 @@ ______________________________________________________________________________*/
 h1, h2, h3, h4, h5, h6 { margin-bottom:0.5em; }
 hr { margin:1em 0; color:#CC6666; }
 li { margin:0.5em 0; }
+form div, form, table { clear:none; }
 
 .cakewell-demo a { color:#333; }
 .cakewell-demo a:hover { color:#CC6666; }

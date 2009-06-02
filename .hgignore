@@ -2,7 +2,11 @@
 syntax: glob
 
 app/tmp
+app/config/core.php
 app/config/database.php
+app/controllers/sandbox_controller.php
+app/views/sandbox
 webroot/index.php
 webroot/test.php
 apache/local.conf
+

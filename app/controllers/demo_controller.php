@@ -186,6 +186,52 @@ class DemoController extends AppController
         $this->render('report');
     }
     
+    function test_recaptcha()
+    {
+        App::import('Vendor', 'recaptcha/recaptchalib');
+        
+        $RecaptchaResponse = null;
+        $RecaptchaError = null;
+        $header = 'recaptcha demo';
+        
+        if ( isset($_POST["submit"]) )
+        {
+            $RecaptchaResponse = recaptcha_check_answer (
+                                    RECAPTCHA_PRIVATE_KEY,
+                                    $_SERVER["REMOTE_ADDR"],
+                                    $_POST["recaptcha_challenge_field"],
+                                    $_POST["recaptcha_response_field"] );
+            
+            if ( $RecaptchaResponse->is_valid )
+            {
+                $header = '<div class="ok">recaptcha successful</div>';
+            }
+            else
+            {
+                $RecaptchaError = $RecaptchaResponse->error;
+                $header = sprintf('<div class="fail">recaptcha error: %s</div>',
+                                    $RecaptchaError );
+            }
+        }
+        $recaptcha_html = recaptcha_get_html( RECAPTCHA_PUBLIC_KEY,
+                                                  $RecaptchaError );
+            
+        $form_html = <<<XHTML
+<div class="recaptcha_form">
+<form action="{$this->here}" method="post">
+    {$recaptcha_html}
+    <input type="submit" name="submit" value="submit" />
+</form>
+</div>
+XHTML;
+
+        // output
+        $this->set('header', $header . $form_html);
+        $this->set('data', ( isset($RecaptchaResponse) ) ? print_r($RecaptchaResponse,1) : '');
+        $this->set('menu', $this->_get_controller_menu());
+        $this->render('report');
+    }
+    
     function test_flash()
     {
         $this->flash('you are being redirected to the index', '/'.$this->viewPath);

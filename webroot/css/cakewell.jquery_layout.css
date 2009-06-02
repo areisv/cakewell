@@ -1,0 +1,57 @@
+
+/** Documentation **/
+/*______________________________________________________________________________
+
+Klenwell Stylesheet Template
+
+Last Update: $date$
+Author: Tom at klenwell@gmail.com
+
+NOTES
+A basic template for stylesheets.
+
+______________________________________________________________________________*/
+
+
+/* Settings
+______________________________________________________________________________*/
+
+body { font-family:sans-serif; }
+h1, h2, h3, h4, h5, h6 { margin:0; padding:0; }
+p, pre, blockquote, ul, ol, dl, address { margin: .5em 0; padding: 0; }
+ul li { list-style:none; margin-left:.5em; }
+dd, blockquote { margin-left: .5em; }
+form, fieldset { margin: 0; padding: 0; } 
+form label { cursor: pointer; } fieldset { border: none; }
+input, select, textarea { font-size: 100%; }
+table { border-collapse:collapse; } td { vertical-align:top; }
+.left { float:left; } .right { float:right;}
+.clear { clear:both; }
+
+/* layout elements */
+div#masthead { padding:4px; }
+div#content {}
+div#foot {
+    padding:4px;
+    color:#999;
+    border-top:1px solid #ccc;
+    text-align:center;
+}
+a { color:#900; }
+a:hover { color:#090; text-decoration:none; }
+
+/* masthead */
+div#masthead h1 { margin:0; }
+div#masthead a { text-decoration:none; }
+
+/* foot */
+div#foot div.col { width:200px; padding:0; }
+div#foot div.left { text-align:left; }
+div#foot div.right { text-align:right; }
+
+/* samples */
+#sample_background_image {
+ background-image:url('path/image.jpg');
+ background-position: 20% center;
+ background-repeat: no-repeat;
+}
