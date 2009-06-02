@@ -206,6 +206,11 @@
 
 /* Additional Constants */
     
-    define('PROJECT_ROOT', dirname(dirname(dirname(__FILE__))) . DS);        
+    // Project Root Directory Path
+    define('PROJECT_ROOT', dirname(dirname(dirname(__FILE__))) . DS);
+    
+    // ReCaptcha Keys (http://recaptcha.net/)
+    define('RECAPTCHA_PUBLIC_KEY', 'PUBLIC_KEY_HERE');
+    define('RECAPTCHA_PRIVATE_KEY', 'PRIVATE_KEY_HERE');
 
 ?>
