@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `type` varchar(20) NOT NULL default '',
   `created` datetime default NULL,
   `approved` tinyint(4) NOT NULL default '1',
-  `karma` int(11) NOT NULL default '0',
+  `recaptcha` varchar(32) NOT NULL default '',
   `author` varchar(255) NOT NULL default '',
   `author_email` varchar(100) NOT NULL default '',
   `author_url` varchar(200) NOT NULL default '',
