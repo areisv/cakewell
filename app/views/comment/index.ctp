@@ -21,7 +21,7 @@ $html->css('cakewell.demo', null, array(), false);
 
 <?php
     echo $this->element( 'comment_form',
-                         array( 'form_id'  => $form_id,
+                         array( 'form_key' => $form_key,
                                 'dom_id'   => $dom_id ) );
 ?>
 

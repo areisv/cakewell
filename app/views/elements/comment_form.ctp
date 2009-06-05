@@ -18,15 +18,15 @@
         
     Usage:
         $html = $this->element( 'comment_form',
-                                array( 'form_id'  => 'sample var',
-                                       'dom_id' => '+6 hours' ) );
+                                array( 'form_key' => 'foo',
+                                       'dom_id'  => 'bar' ) );
 */
+
+if ( !isset($form_key) )
+    trigger_error('comment form element must be passed form_key', E_USER_WARNING);
 
 if ( !isset($dom_id) )
     trigger_error('comment form element must be passed dom_id', E_USER_WARNING);
-    
-if ( !isset($form_id) )
-    trigger_error('comment form element must be passed form_id', E_USER_WARNING);
 
 ?>
 
@@ -40,7 +40,7 @@ $(document).ready( function() {
     // this is a jquery ajax call
     $('#<?php print $dom_id; ?>').load(
         '/comment/form/',
-        { 'form_id' : '<?php print urlencode($form_id); ?>',
+        { 'form_key' : '<?php print urlencode($form_key); ?>',
           'dom_id' : '<?php print urlencode($dom_id); ?>' }
     );
 });

@@ -1,7 +1,11 @@
 <?php
 
-$author_email = ( !empty($author_email) ) ? sprintf('(%s)', $author_email) : '';
-$form_message = ( !empty($form_message) ) ? sprintf('<h4>%s</h4>', $form_message) : '';
+    $ajax_url = '/comment/form/';
+    $form_message = ( !empty($form_message) ) ? sprintf('<h4>%s</h4>', $form_message) : '';
+    $author = ( !empty($CommentData['author']) ) ? $CommentData['author'] : '';
+    $author_email = ( !empty($CommentData['author_email']) ) ? sprintf('(%s)', $CommentData['author_email']) : '';
+    $author_url = ( !empty($CommentData['author_url']) ) ? $CommentData['author_url'] : '';
+    $comment_text = ( !empty($CommentData['text']) ) ? sprintf('<h4>%s</h4>', $CommentData['text']) : '';
 
 ?>
 
@@ -11,28 +15,41 @@ function submit_preview_()
 {
     var dom_id = '<?php print $dom_id; ?>';
     var FormData = {
+        'subaction': 'save',
+        'form_key': '<?php echo $form_key; ?>',
         'recaptcha_challenge_field': Recaptcha.get_challenge(),
         'recaptcha_response_field': Recaptcha.get_response()
     };
 
-    $('#ajax_comment_form').find(':input').each( function(i) {
-        if ( !$(this).attr('name') ) return;
-        FormData[$(this).attr('name')] = $(this).val();
-    });
     $('#'+dom_id).load( '/comment/form/', FormData );
+}
+
+function edit_form_()
+{
+    var dom_id = '<?php print $dom_id; ?>';
+    var FormData = {
+        'subaction': 'edit',
+        'form_key': '<?php echo $form_key; ?>'
+    };
+    //console.log(FormData);
+    $('#'+dom_id).load( '<?php print $ajax_url; ?>', FormData );
 }
 
 function reset_form_()
 {
     var dom_id = '<?php print $dom_id; ?>';
-    $('#'+dom_id).load( '/comment/form/', { 'reset_comment': 'reset_' } );
+    var FormData = {
+        'subaction': 'reset',
+        'form_key': '<?php echo $form_key; ?>'
+    };
+    $('#'+dom_id).load( '<?php print $ajax_url; ?>', FormData );
 }
 
 $(document).ready( function() {
     //Recaptcha.destroy();
     Recaptcha.create('<?php echo RECAPTCHA_PUBLIC_KEY; ?>', 'recaptcha_element', {
         //theme: themeName,
-        //tabindex: 0,
+        tabindex: 0,
         callback: Recaptcha.focus_response_field
     });
 });
@@ -49,16 +66,16 @@ $(document).ready( function() {
     </div>
     
     <h5>to promote computer literacy, please complete the literacy test below</h5>
-    <div id="recaptcha_element">
-    </div>
-    <?php #echo $recaptcha_widget; ?>
-    
-
     
     <?php echo $form->create('Comment', array('url' => '/comment/form', 'id'=>'ajax_comment_form'));?>
-        <?php echo $form->hidden('submitted', array( 'id'=>'submitted', 'value'=>'preview_') );?>
+        <div id="recaptcha_element">
+        </div>
+        <?php #echo $recaptcha_widget; ?>
+    
         <?php echo $form->button('publish', 
             array('type'=>'button', 'onclick'=>'javascript:submit_preview_()'));?>
+        <?php echo $form->button('edit', 
+            array('type'=>'button', 'onclick'=>'javascript:edit_form_()'));?>
         <?php echo $form->button('reset', 
             array('type'=>'button', 'onclick'=>'javascript:reset_form_()'));?>
     <?php echo $form->end(); ?>
