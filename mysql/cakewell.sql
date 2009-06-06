@@ -19,9 +19,10 @@ CREATE TABLE IF NOT EXISTS `simple_records` (
 
 CREATE TABLE IF NOT EXISTS `comments` (
   `id` bigint(20) unsigned NOT NULL auto_increment,
-  `form_id` varchar(32) NOT NULL default '',
-  `dom_id` varchar(32) NOT NULL default '',
+  `meta_id` bigint(20) NOT NULL default '0',
   `parent_id` bigint(20) NOT NULL default '0',
+  `form_key` varchar(40) NOT NULL default '',
+  `dom_id` varchar(40) NOT NULL default '',
   `type` varchar(20) NOT NULL default '',
   `created` datetime default NULL,
   `approved` tinyint(4) NOT NULL default '1',
@@ -34,7 +35,8 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `agent` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`),
   KEY `approved` (`approved`),
-  KEY `form_id` (`form_id`),
+  KEY `meta_id` (`meta_id`),
+  KEY `form_key` (`form_key`),
   KEY `dom_id` (`dom_id`),
   KEY `parent_id` (`parent_id`),
   KEY `created` (`created`)

@@ -5,6 +5,7 @@ class Comment extends AppModel {
     var $name = 'Comment';
     var $useTable = 'comments';
     var $actsAs = array('Baffler');
+    var $honeypot_field = 'topyeno';
     
     var $PurgeList = array(
         // fields that should have any tags purged
@@ -12,7 +13,21 @@ class Comment extends AppModel {
     );
     
     var $validate = array
-    (        
+    (
+        'author_email' => array(
+            'rule' => array('email'),
+            'required' => true,
+            'allowEmpty' => false,
+            'message' => 'please enter a valid email'
+        ),
+        
+        'author_url' => array (
+            'rule' => 'url',
+            'required' => false,
+            'allowEmpty' => true,
+            'message' => 'please enter a valid url'
+        ),
+        
         'text' => array(
             'is_required' => array(
                 'rule' => array('is_required', 'text'),
@@ -20,29 +35,13 @@ class Comment extends AppModel {
             'max_length' => array(
                 'rule' => array('max_words', 'text', 250),
                 'message' => 'tl:dr &mdash; make it a bit shorter',),
+            'spam_check' => array(
+                'rule' => array('is_not_spam'),
+                'message' => 'This is kinda spammy, clean it up',),
             'validate_freetext' => array(
                 'rule' => array('validate_freetext', 'text'))
         ),
-        
-        'author_email' => array
-        (
-            'formal' => array(
-                'rule' => 'email',
-                'required' => true,
-                'allowEmpty' => false,
-                'message' => 'please enter a valid email'
-            ),
-        ),
-        
-        'author_url' => array
-        (
-            'formal' => array(
-                'rule' => 'url',
-                'required' => false,
-                'allowEmpty' => true,
-                'message' => 'please enter a valid url'
-            ),
-        ),
+    
     );
 
     
@@ -76,7 +75,13 @@ class Comment extends AppModel {
     {
         $word_count = str_word_count($data[$field]);
         return $word_count <= $max_words;
-    }        
+    }
+    
+    function is_not_spam($data)
+    {
+        if ( !empty($this->data[$this->name][$this->honeypot_field]) ) return 0;
+        return 1;
+    }
     
     function is_required($data, $field)
     {
