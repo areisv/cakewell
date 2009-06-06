@@ -2,10 +2,16 @@
 
     $ajax_url = '/comment/form/';
     $form_message = ( !empty($form_message) ) ? sprintf('<h4>%s</h4>', $form_message) : '';
-    $author = ( !empty($CommentData['author']) ) ? $CommentData['author'] : '';
-    $author_email = ( !empty($CommentData['author_email']) ) ? sprintf('(%s)', $CommentData['author_email']) : '';
-    $author_url = ( !empty($CommentData['author_url']) ) ? $CommentData['author_url'] : '';
-    $comment_text = ( !empty($CommentData['text']) ) ? sprintf('<h4>%s</h4>', $CommentData['text']) : '';
+    $author = ( !empty($CommentData['author']) ) ? $CommentData['author'] : 'anonymous';
+    $author_email = ( !empty($CommentData['author_email']) ) ? sprintf('| %s', $CommentData['author_email']) : '';
+    $text_ = ( !empty($CommentData['text']) ) ? $CommentData['text'] : '';
+    
+    if ( !empty($CommentData['author_url']) )
+        $author = sprintf( '<a href="%s" %s>%s</a>',
+                           $CommentData['author_url'],
+                           'onclick="window.open(this.href,\'_blank\');return false;"',
+                           $author);
+                                                    
 
 ?>
 
@@ -56,26 +62,34 @@ $(document).ready( function() {
 
 </script>
 
-<h1>Comment Form</h1>
-<h2>preview your comment</h2>
+<div class="ajax_comment_preview">
+<h2>Preview Comment</h2>
+<h5>if satisfied, confirm your humanity below and submit</h5>
 <?php echo $form_message; ?>
-    <div class="comment_preview">
-    <div class="comment_text"><?php print $comment_text; ?></div>
-    <div class="comment_user">user: <?php print sprintf('%s %s', $author, $author_email); ?></div>
-    <div class="comment_url">url: <?php print $author_url; ?></div>
-    </div>
-    
-    <h5>to promote computer literacy, please complete the literacy test below</h5>
-    
-    <?php echo $form->create('Comment', array('url' => '/comment/form', 'id'=>'ajax_comment_form'));?>
-        <div id="recaptcha_element">
+    <div class="preview">
+        <div class="comment_user">
+            <!-- a:user | email -->
+            <?php echo $author; ?>
+            <?php echo $author_email; ?>
         </div>
-        <?php #echo $recaptcha_widget; ?>
+        <div class="comment_text"><?php print $text_; ?></div>
+    </div>
+</div>
+
+<div class="ajax_comment_form">  
+    <div class="recaptcha">  
+        <h4>to promote computer literacy, please complete the literacy test below</h4>
     
-        <?php echo $form->button('publish', 
-            array('type'=>'button', 'onclick'=>'javascript:submit_preview_()'));?>
-        <?php echo $form->button('edit', 
-            array('type'=>'button', 'onclick'=>'javascript:edit_form_()'));?>
-        <?php echo $form->button('reset', 
-            array('type'=>'button', 'onclick'=>'javascript:reset_form_()'));?>
-    <?php echo $form->end(); ?>
+        <?php echo $form->create('Comment', array('url' => '/comment/form', 'id'=>'ajax_comment_form'));?>
+            <div id="recaptcha_element">
+            </div>
+    
+            <?php echo $form->button('publish', 
+                array('type'=>'button', 'onclick'=>'javascript:submit_preview_()'));?>
+            <?php echo $form->button('edit', 
+                array('type'=>'button', 'onclick'=>'javascript:edit_form_()'));?>
+            <?php echo $form->button('reset', 
+                array('type'=>'button', 'onclick'=>'javascript:reset_form_()'));?>
+        <?php echo $form->end(); ?>
+    </div>
+</div>

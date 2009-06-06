@@ -1,0 +1,168 @@
+
+/** Documentation
+
+    Cakewell Stylesheet Template
+    Author: Tom at klenwell@gmail.com
+
+    Notes:
+        
+______________________________________________________________________________*/
+
+/* Comment Form */
+div.ajax_comment_form {
+    padding:0.3em;
+    /* background-color:#f9f8f6; */
+    background-color:transparent;
+    border:0px solid #dcd9d3;
+    font-family:"Lucida Sans Unicode","Lucida Grande","Lucida Sans","Lucida",sans-serif;
+}
+div.ajax_comment_form h2 {
+    margin:0 0 0.4em;
+    font-size:1.4em;
+    font-family:"Arial","Helvetica","Nimbus Sans L",sans-serif;
+    font-weight:normal;
+    line-height:1em;
+}
+div.ajax_comment_form h5 {
+    line-height:1.4em;
+    margin:0;
+    font-size:0.9em;
+    font-weight:normal;
+}
+
+div.ajax_comment_form label { 
+    display:block;
+    float:left;
+    clear:left;
+    margin-right:1em;
+    padding:0.3em 0;
+    text-align:left;
+    width:10em;
+}
+
+div.ajax_comment_form input, div.ajax_comment_form select {
+    float:left;
+    width:20em;
+    margin-bottom:0.3em;
+    padding:0.4em;
+    font-size:0.9em;
+}
+div.ajax_comment_form textarea {
+    clear: both; display: block;
+    margin-bottom:0.3em;
+    height:12em; width:44em;
+    font-size:0.9em;
+    padding:0.4em;
+}
+
+div.ajax_comment_form button, div.ajax_comment_form input[type=button] {
+    width:6em;
+    margin-right:0.5em; padding:0;
+    font-family:"Lucida Sans Unicode","Lucida Grande","Lucida Sans","Lucida",sans-serif;
+    font-size:0.9em;
+}
+
+div.ajax_comment_form form {
+    margin:0; margin-right:4%;
+}
+div.ajax_comment_form fieldset {
+    width: auto;
+    border: 0px solid #ffeecc;
+    padding:0.3em 0;
+}
+div.ajax_comment_form fieldset fieldset {
+    padding: 16px 0;
+}
+fieldset fieldset legend {
+    /* font-size: 100%; */
+    font-weight: normal;
+    margin-left: 20px;
+}
+fieldset fieldset div {
+    clear: left;
+    margin: 0 20px;
+}
+form div {
+    clear: both;
+    vertical-align: text-top;
+}
+form div.input { }
+form div.required {
+    font-weight: bold;
+}
+form div.submit {
+    border: 0;
+    clear: both;
+    margin-top: 10px;
+    margin-left: 140px;
+}
+
+select {
+    clear: both;
+    vertical-align: text-bottom;
+}
+select[multiple=multiple] {
+    width: 100%;
+}
+option {
+    padding: 0 3px;
+}
+input[type=checkbox], input[type=radio] {
+    clear: left; float: left;
+    width: auto;
+    margin: 0px 6px 4px 2px;
+}
+input[type=text] {}
+input[type=submit] {}
+.honey { display:none; }
+
+/* Preview */
+div.ajax_comment_preview {
+    width:50em;
+    padding:0.3em;
+    font-family:"Lucida Sans Unicode","Lucida Grande","Lucida Sans","Lucida",sans-serif;
+}
+div.ajax_comment_preview h2 {
+    margin:0;
+    font-size:1.4em;
+    font-family:"Arial","Helvetica","Nimbus Sans L",sans-serif;
+    font-weight:normal;
+    line-height:1em;
+}
+div.ajax_comment_preview h5 {
+    margin:0 0 0.4em;
+    font-size:0.9em;
+    font-weight:normal;
+}
+div.ajax_comment_preview div.preview {
+    padding:0.3em 0;
+    background-color:#f9f8f6;
+    border:1px solid #eee;
+    border-width:1px 0;
+}
+div.ajax_comment_preview div.preview .comment_user {
+    line-height:1.4em;
+    margin:0;
+    font-size:0.9em;
+    font-weight:normal;
+}
+div.ajax_comment_preview div.preview .comment_text {
+    padding:0.4em;
+    border:1px solid #eee;
+    border-width:1px 0;
+    background-color:#fff;
+    line-height:1.3em;
+    font-size:0.9em;
+    font-weight:normal;
+}
+
+/* Recaptcha Form */
+div.ajax_comment_form div.recaptcha {}
+div.ajax_comment_form div.recaptcha h4 {
+    line-height:1.8em;
+    margin:0;
+    font-size:1.0em;
+    font-weight:normal;
+}
+
+

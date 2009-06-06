@@ -1,0 +1,15 @@
+
+/** Documentation
+
+    Cakewell Stylesheet Template
+    Author: Tom at klenwell@gmail.com
+
+    Notes:
+        
+______________________________________________________________________________*/
+
+#sample_background_image {
+    background-image:url('path/image.jpg');
+    background-position: 20% center;
+    background-repeat: no-repeat;
+}

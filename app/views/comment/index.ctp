@@ -10,7 +10,7 @@ $this->addScript('<script type="text/javascript" src="http://api.recaptcha.net/j
 
 // stylesheet (will add to $scripts_for_layout)
 $html->css('klenwell.basic', null, array(), false);
-$html->css('cakewell.demo', null, array(), false);
+#$html->css('cakewell.comment', null, array(), false);
 
 ?>
 <div class="cakewell-sandbox" id="cakewell-sandbox-commentform">
@@ -22,7 +22,8 @@ $html->css('cakewell.demo', null, array(), false);
 <?php
     echo $this->element( 'comment_form',
                          array( 'form_key' => $form_key,
-                                'dom_id'   => $dom_id ) );
+                                'dom_id'   => $dom_id,
+                                'meta_id'  => $meta_id ) );
 ?>
 
 </div>

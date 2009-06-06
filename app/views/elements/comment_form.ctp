@@ -28,6 +28,12 @@ if ( !isset($form_key) )
 if ( !isset($dom_id) )
     trigger_error('comment form element must be passed dom_id', E_USER_WARNING);
 
+if ( !isset($meta_id) )
+    $meta_id = null;
+
+// stylesheet (will add to $scripts_for_layout)
+$html->css('cakewell.comment.css', null, array(), false);
+
 ?>
 
 <script type="text/javascript">
@@ -41,7 +47,8 @@ $(document).ready( function() {
     $('#<?php print $dom_id; ?>').load(
         '/comment/form/',
         { 'form_key' : '<?php print urlencode($form_key); ?>',
-          'dom_id' : '<?php print urlencode($dom_id); ?>' }
+          'dom_id' : '<?php print urlencode($dom_id); ?>',
+          'meta_id' : '<?php print urlencode($meta_id); ?>' }
     );
 });
 

@@ -22,9 +22,20 @@ class CommentController extends AppController
     
     function index()
     {
+        /* An example usage of the comment element through a controller
+            form_key is a unique identifier for the form (this allows
+                multiple forms to be used in a single page).
+            dom_id is the DOM element on the page that should be replaced
+                by the form
+            meta_id would be the foreign_key id for the comment table. For
+                example this could the id for a post from a posts table
+                that was displayed on the page and that these comments
+                were to be associated with.
+        */
         $this->layout = 'jquery';
         $this->set('form_key', 'comment-index-test');
         $this->set('dom_id', 'comment-form');
+        $this->set('meta_id', 1);
     }
 
     function form()
@@ -34,6 +45,8 @@ class CommentController extends AppController
             return $this->error('', 'no form key');
         if ( !$dom_id = $this->_get_dom_id($form_key) )
             return $this->error('', 'no dom_id');
+        if ( !$meta_id = $this->_get_meta_id($form_key) )
+            $meta_id = null;
             
         // stage and session key
         $stage = $this->_get_stage($form_key);
@@ -44,7 +57,7 @@ class CommentController extends AppController
             $subaction = $this->params['form']['subaction'];
             
         // subaction tree
-        pr( array('subaction'=>$subaction, 'stage'=>$stage, 'dom_id'=>$dom_id, 'form_key'=>$form_key));
+        #pr( array('subaction'=>$subaction, 'stage'=>$stage, 'dom_id'=>$dom_id, 'form_key'=>$form_key));
         // reset
         if ( $subaction == 'reset' )
             $stage = $this->_reset_form($form_key);
@@ -52,7 +65,7 @@ class CommentController extends AppController
         elseif ( $subaction == 'edit' )
         {
             $CommentData = $this->_unpickle($form_key);
-            pr($CommentData);
+            #pr($CommentData);
             $this->Comment->set($CommentData);
             $this->Comment->validates($CommentData);
             $stage = $this->_set_stage($form_key, 1);
@@ -81,9 +94,15 @@ class CommentController extends AppController
             if ( $RecaptchaResponse->is_valid )
             {
                 $this->data['Comment'] = $this->_unpickle($form_key);
-                #pr($this->data);
                 $this->data['Comment']['recaptcha'] = $this->params['form']['recaptcha_response_field'];
+                $this->data['Comment']['author_ip'] = $this->RequestHandler->getClientIP();
+                $this->data['Comment']['agent'] = $_SERVER['HTTP_USER_AGENT'];
+                $this->data['Comment']['form_key'] = $form_key;
+                $this->data['Comment']['associate_id'] = $form_key;
+                $this->data['Comment']['dom_id'] = $dom_id;
+                $this->data['Comment']['meta_id'] = $meta_id;
                 $this->Comment->set($this->data);
+                
                 if ( $this->Comment->save() )
                     $stage = $this->_set_stage($form_key, 3);
                 else
@@ -113,6 +132,7 @@ class CommentController extends AppController
         }
 
         // show stage 1
+        $this->set('honeypot_field', $this->Comment->honeypot_field);
         return $this->render('form_1');
     }
     
@@ -170,6 +190,25 @@ class CommentController extends AppController
     {
         $this->Session->write($session_key, $dom_id);
         return $dom_id;
+    }
+    
+    function _get_meta_id($form_key)
+    {
+        $session_key = "$form_key.meta_id";
+        
+        if ( isset($this->params['form']['meta_id']) )
+            return $this->_set_dom_id($session_key, $this->params['form']['meta_id']);
+        
+        if ( $this->Session->check($session_key) )
+            return $this->Session->read($session_key);
+            
+        return null;
+    }
+    
+    function _set_meta_id($session_key, $meta_id)
+    {
+        $this->Session->write($session_key, $meta_id);
+        return $meta_id;
     }
     
     function _pickle($form_key, $CommentData=null)
