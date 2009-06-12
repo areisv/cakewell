@@ -47,6 +47,8 @@ class CommentController extends AppController
             return $this->error('', 'no dom_id');
         if ( !$meta_id = $this->_get_meta_id($form_key) )
             $meta_id = null;
+        if ( !$multiples_ok = $this->_get_multiples_ok($form_key) )
+            $multiples_ok = 1;
             
         // stage and session key
         $stage = $this->_get_stage($form_key);
@@ -121,7 +123,10 @@ class CommentController extends AppController
 
         // show stage 3
         if ( $stage == 3 )
+        {
+            $this->set('multiples_ok', $multiples_ok);
             return $this->render('form_3');
+        }
 
         // show stage 2
         if ( $stage == 2 )
@@ -132,6 +137,7 @@ class CommentController extends AppController
         }
 
         // show stage 1
+        $this->set('TagList', $this->Comment->actsAs['Baffler']['TagList']);
         $this->set('honeypot_field', $this->Comment->honeypot_field);
         return $this->render('form_1');
     }
@@ -209,6 +215,26 @@ class CommentController extends AppController
     {
         $this->Session->write($session_key, $meta_id);
         return $meta_id;
+    }
+    
+    function _get_multiples_ok($form_key)
+    {
+        $id = 'multiples_ok';
+        $session_key = "$form_key.$id";
+        
+        if ( isset($this->params['form'][$id]) )
+            return $this->_set_multiples_ok($session_key, $this->params['form'][$id]);
+        
+        if ( $this->Session->check($session_key) )
+            return $this->Session->read($session_key);
+            
+        return null;
+    }
+    
+    function _set_multiples_ok($session_key, $ok)
+    {
+        $this->Session->write($session_key, $ok);
+        return $ok;
     }
     
     function _pickle($form_key, $CommentData=null)

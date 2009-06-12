@@ -6,12 +6,19 @@
     $author_email = ( !empty($CommentData['author_email']) ) ? $CommentData['author_email'] : '';
     $author_url = ( !empty($CommentData['author_url']) ) ? $CommentData['author_url'] : '';
     $comment_text = ( !empty($CommentData['text']) ) ? $CommentData['text'] : '';
+    $taglist_ = '';
+    
+    if ( isset($TagList) )
+        $taglist_ = sprintf('<h4 class="%s">the following tags are ok: <span class="tags">%s</span></h4>',
+                            'taglist',
+                            implode(', ', $TagList)
+        );
     
     // testing
     if ( Configure::read('debug') > 1 )
     {
-        if ( empty($comment_text) ) $comment_text = sprintf('test prefill: %s', time());
-        if ( empty($author_email) ) $author_email = 'test@klenwell.com';
+        if ( empty($comment_text) ) $comment_text = sprintf("test prefill: <code>%s</code>\n\nautomatically filled when debug is active", time());
+        if ( empty($author_email) ) $author_email = 'test@example.com';
     }
     
 ?>
@@ -49,9 +56,11 @@ function reset_form_()
     <?php echo $form->create('Comment', array('url' => '/comment/form', 'id'=>'ajax_comment_form'));?>
     
         <fieldset>
-        <?php echo $form->input('text', array('label' => 'comment',
+        <?php echo $form->input('text', array('label' => 'comment' .  $taglist_,
                                               'value' => $comment_text,
+                                              'error' => false,     # use custom
                                               'rows'  => '10', 'cols' => '30' ));?>
+        <div class="error-message'><?php echo html_entity_decode($form->error('text'));?></div> 
         </fieldset>
         
         <fieldset>

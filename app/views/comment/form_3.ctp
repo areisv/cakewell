@@ -2,6 +2,16 @@
 
     $ajax_url = '/comment/form/';
     $form_message = ( !empty($form_message) ) ? sprintf('<h4>%s</h4>', $form_message) : '';
+    
+    $restart_t = '<div class="restart"><p>Click the button below to post another comment.</p>%s</div>';
+    $restart_html = '';
+    if ( $multiples_ok )
+        $restart_html = sprintf($restart_t,
+            $form->button('new comment', 
+                array('type'=>'button', 'onclick'=>'javascript:start_over_()')
+            )
+        );
+
 
 ?>
 
@@ -19,8 +29,8 @@ function start_over_()
 
 </script>
 
-<h1>Comment Received</h1>
-Thanks for the comment.  Click button below to post another comment.
-
-    <?php echo $form->button('new comment', 
-        array('type'=>'button', 'onclick'=>'javascript:start_over_()'));?>
+<div class="ajax_comment_complete">
+<h2>Comment Successful</h2>
+<p class="thanks">Thank you for your comment.</p>
+<?php echo $restart_html?>
+</div>

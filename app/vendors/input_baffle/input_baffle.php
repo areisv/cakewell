@@ -102,7 +102,7 @@ class InputBaffle
         foreach ( $this->HtmlChecker->getErrors() as $m )
         {
             $m = strtolower($m);
-            if ( $m == 'mismatched tag') $m = 'mismatched html tag: remove or correct';
+            if ( $m == 'mismatched tag') $m = 'mismatched html tag: please correct';
             $Warnings[] = $m;
         }
         return $Warnings;

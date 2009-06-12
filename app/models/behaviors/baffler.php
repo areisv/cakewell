@@ -10,11 +10,17 @@ class BafflerBehavior extends ModelBehavior {
     /*
         Initiate behaviour for the model using specified settings.
      */
-    function setup(&$Model, $settings = array())
+    function setup(&$Model, $ConfigOverride = array())
     {
         $BafflerConfig = array( 'debug'=>0,
              'TagList' => array('a', 'i', 'b', 'em', 'strong', 's')
         );
+
+        foreach ( $ConfigOverride as $key => $setting )
+            $BafflerConfig[$key] = $setting;
+        #pr($BafflerConfig);
+        
+        $this->settings[$Model->alias] = $BafflerConfig;        
         $this->Baffler = new InputBaffle($BafflerConfig);
     }
     
