@@ -23,6 +23,21 @@ div.ajax_comment_form h2 {
     font-weight:normal;
     line-height:1em;
 }
+div.ajax_comment_form h4.taglist {
+    margin:0;
+    padding-bottom:0.3em;
+    float:left; clear:left;
+    font-size:12px;
+    font-size:normal;
+    font-weight:normal;
+    color:#999;
+}
+div.ajax_comment_form h4.taglist span.tags {
+    color:#99c;
+    font-family:"Lucida Console", Monaco, monospace;
+    font-weight:bold;
+    
+}
 div.ajax_comment_form h5 {
     line-height:1.4em;
     margin:0;
@@ -155,6 +170,8 @@ div.ajax_comment_preview div.preview .comment_text {
     font-size:0.9em;
     font-weight:normal;
 }
+div.ajax_comment_preview div.preview code { display:inline; }
+div.ajax_comment_preview div.preview blockquote {  }
 
 /* Recaptcha Form */
 div.ajax_comment_form div.recaptcha {}
@@ -164,5 +181,20 @@ div.ajax_comment_form div.recaptcha h4 {
     font-size:1.0em;
     font-weight:normal;
 }
+
+/* Stage 3 (Thanks) */
+div.ajax_comment_complete {
+    padding:0.3em;
+    font-family:"Lucida Sans Unicode","Lucida Grande","Lucida Sans","Lucida",sans-serif;
+}
+div.ajax_comment_complete h2 {
+    margin:0;
+    font-size:1.4em;
+    font-family:"Arial","Helvetica","Nimbus Sans L",sans-serif;
+    font-weight:normal;
+    line-height:1em;
+}
+div.ajax_comment_preview p.thanks {}
+div.ajax_comment_preview p.restart {}
 
 

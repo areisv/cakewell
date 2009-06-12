@@ -4,7 +4,7 @@
     $form_message = ( !empty($form_message) ) ? sprintf('<h4>%s</h4>', $form_message) : '';
     $author = ( !empty($CommentData['author']) ) ? $CommentData['author'] : 'anonymous';
     $author_email = ( !empty($CommentData['author_email']) ) ? sprintf('| %s', $CommentData['author_email']) : '';
-    $text_ = ( !empty($CommentData['text']) ) ? $CommentData['text'] : '';
+    $text_ = ( !empty($CommentData['text']) ) ? nl2br($CommentData['text']) : '';
     
     if ( !empty($CommentData['author_url']) )
         $author = sprintf( '<a href="%s" %s>%s</a>',

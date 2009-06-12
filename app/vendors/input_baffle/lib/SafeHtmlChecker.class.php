@@ -45,7 +45,7 @@ class SafeHtmlChecker {
     var $tags = array(
         'all' => E_FLOW_CONTENTS,
         'p' => E_INLINE_CONTENTS,
-        'blockquote' => E_BLOCK_CONTENTS,
+        'blockquote' => E_FLOW_CONTENTS,
         // Lists
         'ul' => 'li',
         'ol' => 'li',

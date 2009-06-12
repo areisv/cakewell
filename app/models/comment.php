@@ -4,7 +4,10 @@ class Comment extends AppModel {
     
     var $name = 'Comment';
     var $useTable = 'comments';
-    var $actsAs = array('Baffler');
+    var $actsAs = array(
+        'Baffler' => array(
+            'TagList' => array('a', 'b', 'blockquote', 'code', 'em', 'i', 'strong', 's')
+        ));
     var $honeypot_field = 'topyeno';
     
     var $PurgeList = array(
