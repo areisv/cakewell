@@ -13,6 +13,7 @@ class CommentController extends AppController
     public $name = 'Comment';
     public $uses = array('Comment');
     public $components = array('RequestHandler');
+    public $helpers = array('CommentForm');
     public $layout = 'ajax';
     public $stage = 0;
     

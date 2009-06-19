@@ -23,9 +23,14 @@
     
 ?>
 
+<?php
+    // adds all javascript function needed for ajax submission
+    echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url);
+?>
+
 <script type="text/javascript">
 
-function submit_form_()
+function xsubmit_form_()
 {
     var dom_id = '<?php print $dom_id; ?>';
     var FormData = { 'subaction': 'preview',
@@ -40,7 +45,7 @@ function submit_form_()
     $('#'+dom_id).load( '<?php print $ajax_url; ?>', FormData );
 }
 
-function reset_form_()
+function xreset_form_()
 {
     var dom_id = '<?php print $dom_id; ?>';
     var FormData = { 'subaction': 'reset',
@@ -74,9 +79,9 @@ function reset_form_()
         
         <fieldset>
         <?php echo $form->button('preview', 
-            array('type'=>'button', 'onclick'=>'javascript:submit_form_()'));?>
+            array('type'=>'button', 'onclick'=>'javascript:submit_comment_form_()'));?>
         <?php echo $form->button('reset', 
-            array('type'=>'button', 'onclick'=>'javascript:reset_form_()'));?>
+            array('type'=>'button', 'onclick'=>'javascript:reset_comment_form_()'));?>
         </fieldset>
         
     <?php echo $form->end(); ?>

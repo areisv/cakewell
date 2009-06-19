@@ -15,6 +15,11 @@
 
 ?>
 
+<?php
+    // adds all javascript function needed for ajax submission
+    echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url);
+?>
+
 <script type="text/javascript">
 
 function submit_preview_()
@@ -85,11 +90,11 @@ $(document).ready( function() {
             </div>
     
             <?php echo $form->button('publish', 
-                array('type'=>'button', 'onclick'=>'javascript:submit_preview_()'));?>
+                array('type'=>'button', 'onclick'=>'javascript:submit_comment_preview_()'));?>
             <?php echo $form->button('edit', 
-                array('type'=>'button', 'onclick'=>'javascript:edit_form_()'));?>
+                array('type'=>'button', 'onclick'=>'javascript:edit_comment_form_()'));?>
             <?php echo $form->button('reset', 
-                array('type'=>'button', 'onclick'=>'javascript:reset_form_()'));?>
+                array('type'=>'button', 'onclick'=>'javascript:reset_comment_form_()'));?>
         <?php echo $form->end(); ?>
     </div>
 </div>
