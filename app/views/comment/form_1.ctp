@@ -7,7 +7,6 @@
     $author_url = ( !empty($CommentData['author_url']) ) ? $CommentData['author_url'] : '';
     $comment_text = ( !empty($CommentData['text']) ) ? $CommentData['text'] : '';
     $taglist_ = '';
-    pr($CommentData);
     
     if ( isset($TagList) )
         $taglist_ = sprintf('<h4 class="%s">the following tags are ok: <span class="tags">%s</span></h4>',

@@ -267,16 +267,8 @@ class CommentController extends AppController
     
     function _get_form_data($form_key)
     {
-        pr($this->_unpickle($form_key));
-        pr($this->data);
+        #pr($this->_unpickle($form_key)); pr($this->data);
         return Set::merge($this->_unpickle($form_key), $this->data['Comment']);
-        $CommentData = $this->_unpickle($form_key);
-        foreach ( $CommentData as $key => $val )
-        {
-            if ( isset($this->data['Comment'][$key]) )
-                $CommentData[$key] = $this->data['Comment'][$key];
-        }
-        return $CommentData;
     }
 
     
