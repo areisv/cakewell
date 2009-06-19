@@ -12,27 +12,10 @@
             )
         );
 
-
-?>
-
-<?php
     // adds all javascript function needed for ajax submission
     echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url);
 ?>
 
-<script type="text/javascript">
-
-function start_over_()
-{
-    var dom_id = '<?php print $dom_id; ?>';
-    var FormData = {
-        'subaction': 'reset',
-        'form_key': '<?php echo $form_key; ?>'
-    };
-    $('#'+dom_id).load( '<?php print $ajax_url; ?>', FormData );
-}
-
-</script>
 
 <div class="ajax_comment_complete">
 <h2>Comment Successful</h2>

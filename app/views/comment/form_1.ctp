@@ -7,6 +7,7 @@
     $author_url = ( !empty($CommentData['author_url']) ) ? $CommentData['author_url'] : '';
     $comment_text = ( !empty($CommentData['text']) ) ? $CommentData['text'] : '';
     $taglist_ = '';
+    pr($CommentData);
     
     if ( isset($TagList) )
         $taglist_ = sprintf('<h4 class="%s">the following tags are ok: <span class="tags">%s</span></h4>',
@@ -17,43 +18,14 @@
     // testing
     if ( Configure::read('debug') > 1 )
     {
-        if ( empty($comment_text) ) $comment_text = sprintf("test prefill: <code>%s</code>\n\nautomatically filled when debug is active", time());
+        if ( empty($comment_text) ) $comment_text = sprintf("test prefill: <code>%s</code>\n\nautomatically filled when debug is active\n\n<i>bad tag<i>", time());
         if ( empty($author_email) ) $author_email = 'test@example.com';
     }
     
-?>
-
-<?php
     // adds all javascript function needed for ajax submission
-    echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url);
+    echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url);    
 ?>
 
-<script type="text/javascript">
-
-function xsubmit_form_()
-{
-    var dom_id = '<?php print $dom_id; ?>';
-    var FormData = { 'subaction': 'preview',
-                     'form_key': '<?php echo $form_key; ?>' };
-
-    $('#ajax_comment_form').find(':input').each( function(i) {
-        if ( !$(this).attr('name') ) return;
-        FormData[$(this).attr('name')] = $(this).val();
-    });
-
-    //console.log(FormData);
-    $('#'+dom_id).load( '<?php print $ajax_url; ?>', FormData );
-}
-
-function xreset_form_()
-{
-    var dom_id = '<?php print $dom_id; ?>';
-    var FormData = { 'subaction': 'reset',
-                     'form_key': '<?php echo $form_key; ?>' };
-    $('#'+dom_id).load( '<?php print $ajax_url; ?>', FormData);
-}
-
-</script>
 
 <div class="ajax_comment_form">
 <h2>Leave a Comment</h2>

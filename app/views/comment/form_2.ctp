@@ -11,61 +11,12 @@
                            $CommentData['author_url'],
                            'onclick="window.open(this.href,\'_blank\');return false;"',
                            $author);
-                                                    
 
-?>
 
-<?php
     // adds all javascript function needed for ajax submission
     echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url);
 ?>
 
-<script type="text/javascript">
-
-function submit_preview_()
-{
-    var dom_id = '<?php print $dom_id; ?>';
-    var FormData = {
-        'subaction': 'save',
-        'form_key': '<?php echo $form_key; ?>',
-        'recaptcha_challenge_field': Recaptcha.get_challenge(),
-        'recaptcha_response_field': Recaptcha.get_response()
-    };
-
-    $('#'+dom_id).load( '/comment/form/', FormData );
-}
-
-function edit_form_()
-{
-    var dom_id = '<?php print $dom_id; ?>';
-    var FormData = {
-        'subaction': 'edit',
-        'form_key': '<?php echo $form_key; ?>'
-    };
-    //console.log(FormData);
-    $('#'+dom_id).load( '<?php print $ajax_url; ?>', FormData );
-}
-
-function reset_form_()
-{
-    var dom_id = '<?php print $dom_id; ?>';
-    var FormData = {
-        'subaction': 'reset',
-        'form_key': '<?php echo $form_key; ?>'
-    };
-    $('#'+dom_id).load( '<?php print $ajax_url; ?>', FormData );
-}
-
-$(document).ready( function() {
-    //Recaptcha.destroy();
-    Recaptcha.create('<?php echo RECAPTCHA_PUBLIC_KEY; ?>', 'recaptcha_element', {
-        //theme: themeName,
-        tabindex: 0,
-        callback: Recaptcha.focus_response_field
-    });
-});
-
-</script>
 
 <div class="ajax_comment_preview">
 <h2>Preview Comment</h2>
