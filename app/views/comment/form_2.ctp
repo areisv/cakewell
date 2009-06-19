@@ -13,9 +13,11 @@
                            $author);
 
 
-    // adds all javascript function needed for ajax submission
+    // adds all javascript functions needed for ajax submission
     echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url);
+    echo $commentForm->get_recaptcha_js(RECAPTCHA_PUBLIC_KEY);
 ?>
+
 
 
 <div class="ajax_comment_preview">

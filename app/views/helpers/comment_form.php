@@ -79,5 +79,24 @@ XHTML;
 
         return sprintf($tpl, $dom_id, $form_key, $ajax_url);
     }
+    
+    function get_recaptcha_js($recaptcha_key)
+    {
+        $tpl = <<<XHTML
+<script type="text/javascript">
+
+$(document).ready( function() {
+    //Recaptcha.destroy();
+    Recaptcha.create('%s', 'recaptcha_element', {
+        //theme: themeName,
+        tabindex: 0,
+        callback: Recaptcha.focus_response_field
+    });
+});
+
+</script>
+XHTML;
+        return sprintf($tpl, $recaptcha_key);
+    }
 }
 ?>
