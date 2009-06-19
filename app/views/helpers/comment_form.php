@@ -30,7 +30,7 @@ function submit_comment_form_()
         FormData[$(this).attr('name')] = $(this).val();
     });
 
-    console.log(FormData);
+    //console.log(FormData);
     $('#'+dom_id).load( ajax_url, FormData);
 }
 

@@ -120,7 +120,7 @@ class CommentController extends AppController
         // shared view settings
         $this->set('form_key', $form_key);
         $this->set('dom_id', $dom_id);
-        $this->set('CommentData', $this->_unpickle($form_key));
+        $this->set('CommentData', $this->_get_form_data($form_key));
 
         // show stage 3
         if ( $stage == 3 )
@@ -263,6 +263,20 @@ class CommentController extends AppController
         if ( $this->Session->check($session_key) )
             return $this->Session->read($session_key);
         return array();
+    }
+    
+    function _get_form_data($form_key)
+    {
+        pr($this->_unpickle($form_key));
+        pr($this->data);
+        return Set::merge($this->_unpickle($form_key), $this->data['Comment']);
+        $CommentData = $this->_unpickle($form_key);
+        foreach ( $CommentData as $key => $val )
+        {
+            if ( isset($this->data['Comment'][$key]) )
+                $CommentData[$key] = $this->data['Comment'][$key];
+        }
+        return $CommentData;
     }
 
     
