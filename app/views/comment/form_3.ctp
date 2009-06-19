@@ -8,11 +8,16 @@
     if ( $multiples_ok )
         $restart_html = sprintf($restart_t,
             $form->button('new comment', 
-                array('type'=>'button', 'onclick'=>'javascript:start_over_()')
+                array('type'=>'button', 'onclick'=>'javascript:reset_comment_form_()')
             )
         );
 
 
+?>
+
+<?php
+    // adds all javascript function needed for ajax submission
+    echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url);
 ?>
 
 <script type="text/javascript">
