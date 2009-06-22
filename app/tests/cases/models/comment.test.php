@@ -4,85 +4,42 @@
     http://github.com/mcurry/cakephp/tree/master/test_sample/tests
 */
  
-class ExtagCommentTestCase extends CakeTestCase {
+class CommentTestCase extends CakeTestCase {
 
-    var $ExtagComment = null;
+    var $Comment = null;
     var $fixtures = array(
-            'app.extag_comment',
-            'app.extag',
-            'app.extag_tagger',
-            'app.extag_tagged',
-            'app.extag_tagkey',
-            'app.extag_mod',
-            'app.editor',
-            );
+            'app.comment',
+        );
  
     function start()
     {
         parent::start();
-        $this->ExtagComment = ClassRegistry::init('ExtagComment');
+        $this->Comment = ClassRegistry::init('Comment');
     }
     
     function testInstance() {
-        $this->assertTrue(is_a($this->ExtagComment, 'ExtagComment'));
+        $this->assertTrue(is_a($this->Comment, 'Comment'));
     }
     
     function testProperties()
     {            
-        $this->assertEqual($this->ExtagComment->useTable, 'extag_comments');
-        $this->assertEqual($this->ExtagComment->name, 'ExtagComment');
+        $this->assertEqual($this->Comment->useTable, 'comments');
+        $this->assertEqual($this->Comment->name, 'Comment');
     }
     
-    function testValidate()
+    function testSchema()
     {
-        $CommentData = array(
-            'ExtagComment' => array(
-                'text' => 'A unit test for the model -- that\'s all'
-            )
-        );
-        $this->ExtagComment->create($CommentData);
-        $this->assertTrue($this->ExtagComment->validates());
+        $Cols = array_keys($this->Comment->_schema);
+        $this->assertEqual(15, count($Cols));
+        #debug($this->Comment->_schema);
     }
-    
-    function testInvalid()
-    {
-        $CommentData = array(
-            'ExtagComment' => array(
-                'text' => 'Too short'
-            )
-        );
-        $this->ExtagComment->create($CommentData);
-        $this->assertTrue(!$this->ExtagComment->validates());
-        #debug($this->ExtagComment->invalidFields());
-    }
-    
-    function testSanitize()
-    {
-        $CommentData = array(
-            'ExtagComment' => array(
-                'text' => '<script>A unit test </script>for the model -- <i>that\'s</i> <b>all<b>'
-            )
-        );
-        $expect = 'A unit test for the model -- <i>that\'s</i> <b>all<b>';
-        $this->ExtagComment->create($CommentData);
-        $this->assertFalse($this->ExtagComment->validates());
-        $this->assertEqual($expect, $this->ExtagComment->data['ExtagComment']['text']);
-
-        $InvalidFields = $this->ExtagComment->invalidFields();
-        $this->assertEqual('mismatched html tag: remove or correct', $InvalidFields['text']);
-    }
-    
     
     function testSave()
     {
-        $CommentData = array(
-            'ExtagComment' => array(
-                'text' => 'A unit test for the model -- that\'s all'
-            )
-        );
-        $this->ExtagComment->create($CommentData);
-        $this->assertTrue($Result = $this->ExtagComment->save());
-        #debug($Result);
+        $CommentRecord = new CommentRecord($this->Comment);
+        $Data = $this->Comment->save($CommentRecord->random());
+        $this->assertTrue($this->Comment->id);
+        #debug($Data);
     }
 }
 ?>
