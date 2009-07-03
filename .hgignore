@@ -6,7 +6,8 @@ app/config/core.php
 app/config/database.php
 app/controllers/sandbox_controller.php
 app/views/sandbox
+app/config/phpmailer.php
+app/plugins/twitter/config/core.php
 webroot/index.php
 webroot/test.php
 apache/local.conf
-
