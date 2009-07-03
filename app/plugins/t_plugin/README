@@ -1,0 +1,12 @@
+t_plugin is provided as a plugin template for CakePhp.  To create a real
+functional plugin, copy this directory and give it a new name.  You can
+then stub out your plugin by replacing t_plugin in file names and within
+the files by replacing t_plugin with your plugin name.
+
+So, for example, if you were going to create a "killer" plugin,
+t_plugin_app_model.php would be renamed killer_app_mod.php and the class
+renamed KllerAppModel.
+
+For more information on CakePhp plugin, refer to the following links:
+
+http://book.cakephp.org/view/115/Creating-a-Plugin
