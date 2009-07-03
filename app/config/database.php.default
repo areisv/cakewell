@@ -3,7 +3,7 @@
 
 /**
     Note below how I set up different configurations for unit tests, local test
-    versions, and production and then use the constructor to assign the default.    
+    versions, and production and then use the constructor to assign the default.
  */
 
 /**
@@ -54,7 +54,7 @@ class DATABASE_CONFIG {
         /*
             This is the config that fixtures in unit tests use.  Unit tests will
             automatically use this configuration.  No need to assign it below.
-            
+
             Change the database setting below and make sure that database exists
             in your mysql server.  It should be empty.  The fixtures will create
             it based on the configured database settings.
@@ -70,8 +70,8 @@ class DATABASE_CONFIG {
 		'schema' => '',
 		'prefix' => '',
 		'encoding' => ''
-	);	
-        
+	);
+
         var $test = array(
 		'driver' => 'mysql',
 		'persistent' => false,
@@ -84,7 +84,7 @@ class DATABASE_CONFIG {
 		'prefix' => '',
 		'encoding' => ''
 	);
-        
+
         var $production = array(
 		'driver' => 'mysql',
 		'persistent' => false,
@@ -97,7 +97,7 @@ class DATABASE_CONFIG {
 		'prefix' => '',
 		'encoding' => ''
 	);
-        
+
         function __construct()
         {
             $this->default = $this->test;
