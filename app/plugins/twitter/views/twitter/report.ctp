@@ -1,8 +1,12 @@
 <?php
 
-if ( empty($Report) ) $Report = array();
+if ( empty($header) ) $header = 'Cakewell Twitter Plugin';
+if ( empty($Data) ) $Data = array( 'no data' );
+
 
 ?>
 
-<h2>Cakewell Twitter Plugin</h2>
-<pre><?php echo print_r($Report,1); ?></pre>
+<?php printf('<h2>%s</h2>', $header); ?>
+<?php printf('<pre>%s</pre>', print_r($Data,1)); ?>
+
+<h5>using <a href="http://bakery.cakephp.org/articles/view/twitter-datasource">iscandr twitter datasource</a></h5>

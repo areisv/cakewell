@@ -5,7 +5,7 @@ class DemoController extends AppController
     var $name = 'Demo';
     var $uses = array('Mock', 'SimpleRecord');
     var $components = array('RequestHandler', 'Sample');
-    
+
 
     function index()
     {
@@ -17,7 +17,7 @@ class DemoController extends AppController
         $this->set('content', $content);
         $this->set('menu', $this->_get_controller_menu());
     }
-    
+
     function sandbox()
     {
         /*
@@ -36,7 +36,7 @@ class DemoController extends AppController
         $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
-    
+
     function controller_dump()
     {
         $REPORT = array($this->name => $this);
@@ -45,7 +45,7 @@ class DemoController extends AppController
         $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
-    
+
     function cake_constants()
     {
         $REPORT = array(
@@ -74,13 +74,13 @@ class DemoController extends AppController
             'WEBROOT_DIR' => WEBROOT_DIR,
             'WWW_ROOT' => WWW_ROOT,
         );
-        
+
         $this->set('header', 'Some CakePHP Constants (<a href="http://book.cakephp.org/view/122/Core-Definition-Constants">docs</a>)');
         $this->set('data', $REPORT);
         $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
-    
+
     function phpinfo()
     {
         ob_start();
@@ -89,11 +89,11 @@ class DemoController extends AppController
         $this->set('content_for_view', $phpinfo);
         $this->render('blank', 'blank');
     }
-    
+
     function test_simple_record_model()
     {
         $Records = $this->SimpleRecord->find('all', array('limit' => 3));
-        
+
         $REPORT = array(
             '$this->SimpleRecord->find(\'all\', array(\'limit\' => 3))' => $Records,
             '$this->SimpleRecord' => $this->SimpleRecord,
@@ -104,7 +104,7 @@ class DemoController extends AppController
         $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
-    
+
     function test_simple_record_save()
     {
         $Record = array(
@@ -112,28 +112,28 @@ class DemoController extends AppController
                 'value' => 'test: ' . md5(time()),
             )
         );
-        
+
         $this->SimpleRecord->create($Record);
         $result = $this->SimpleRecord->save();
-        
+
         $REPORT = array(
             '$this->SimpleRecord->save()' => $result,
             '$this->SimpleRecord->id' => $this->SimpleRecord->id,
         );
-        
+
         $this->set('header', 'Simple Record Save Example');
         $this->set('data', $REPORT);
         $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
-    
+
     function test_behavior()
     {
         $this->SimpleRecord->test_normalizer();
         $REPORT = array(
             '$this->SimpleRecord->test_normalizer()' => $this->SimpleRecord->test_normalizer(),
         );
-        
+
         $this->set('header', 'Normalizer Behavior Test');
         $this->set('data', $REPORT);
         $this->set('menu', $this->_get_controller_menu());
@@ -145,7 +145,7 @@ class DemoController extends AppController
         // import does not seem to work when $uses set to null
         #App::import('Mock');
         $Mock = new Mock();
-        
+
         $REPORT = array(
             '$Mock->find()' => $Mock->find(),
             'Mock Model Object' => $Mock,
@@ -156,7 +156,7 @@ class DemoController extends AppController
         $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
-    
+
     function test_component()
     {
         $result = $this->Sample->test();
@@ -179,21 +179,21 @@ class DemoController extends AppController
             'FULL_BASE_URL + Router::url(\'\', false)' => FULL_BASE_URL . Router::url('', false),
             '$this->RequestHandler' => $this->RequestHandler
         );
-        
+
         $this->set('header', 'showing RequestHandler info for client at ip ' . $this->RequestHandler->getClientIP());
         $this->set('data', $Report);
         $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
-    
+
     function test_recaptcha()
     {
         App::import('Vendor', 'recaptcha/recaptchalib');
-        
+
         $RecaptchaResponse = null;
         $RecaptchaError = null;
         $header = 'recaptcha demo';
-        
+
         if ( isset($_POST["submit"]) )
         {
             $RecaptchaResponse = recaptcha_check_answer (
@@ -201,7 +201,7 @@ class DemoController extends AppController
                                     $_SERVER["REMOTE_ADDR"],
                                     $_POST["recaptcha_challenge_field"],
                                     $_POST["recaptcha_response_field"] );
-            
+
             if ( $RecaptchaResponse->is_valid )
             {
                 $header = '<div class="ok">recaptcha successful</div>';
@@ -215,7 +215,7 @@ class DemoController extends AppController
         }
         $recaptcha_html = recaptcha_get_html( RECAPTCHA_PUBLIC_KEY,
                                                   $RecaptchaError );
-            
+
         $form_html = <<<XHTML
 <div class="recaptcha_form">
 <form action="{$this->here}" method="post">
@@ -231,18 +231,18 @@ XHTML;
         $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
-    
+
     function test_flash()
     {
         $this->flash('you are being redirected to the index', '/'.$this->viewPath);
     }
-    
+
     function test_redirect()
     {
         $this->redirect("/{$this->viewPath}/index");
         die();
     }
-    
+
     function test_set_merge()
     {
         $A1 = array(
@@ -259,11 +259,11 @@ XHTML;
                 'f5' => '1',
             )
         );
-        
+
         $merged_arrays = array_merge($A1, $A2);
         $added_arrays = $A1 + $A2;
         $merged_recursive = array_merge_recursive($A1, $A2);
-        
+
         function array_update($arr,$ins)
         {
             if(is_array($arr) && is_array($ins))
@@ -278,12 +278,12 @@ XHTML;
             }
             elseif(!is_array($arr)&&(strlen($arr)==0||$arr==0))
                 $arr=$ins;
-            
+
             return($arr);
         }
         $array_update = array_update($A1, $A2);
         $set_merge = Set::merge($A1, $A2);
-        
+
         $REPORT = array(
             'A1' => $A1,
             'A2' => $A2,
@@ -294,22 +294,32 @@ XHTML;
             'Set::merge' => $set_merge,
             'Set::isEqual($array_update, $set_merge)' => Set::isEqual($array_update, $set_merge),
         );
-        
+
         $this->set('header', 'Sandbox');
         $this->set('data', $REPORT);
         $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
-    
-    function _get_controller_menu()
+
+    function _get_controller_methods($filter_=1)
+    {
+        $MethodList = array_values(
+            array_diff( get_class_methods(__CLASS__), get_class_methods('AppController') )
+        );
+        if ( $filter_ )
+            foreach ( range(0,count($MethodList)-1) as $i )
+                if ( substr($MethodList[$i],0,1) == '_' )
+                    unset($MethodList[$i]);
+        return $MethodList;
+    }
+
+    function _get_controller_menu($filter=1)
     {
         $menu_html = '';
-        $MENU_LIST = array_diff(get_class_methods(__CLASS__), get_class_methods('AppController'));
+        $MENU_LIST = $this->_get_controller_methods($filter);
         foreach ( $MENU_LIST as $m )
-        {   
-            if ( substr($m,0,1) == '_' ) continue;
-            $menu_html .= "<li><a href='/{$this->viewPath}/$m'>$m</a></li>\n";
-        }
+            $menu_html .= sprintf('<li><a href="/%s/%s">%s</a></li>%s',
+                $this->viewPath, $m, $m, "\n");
         return $menu_html;
     }
 }
