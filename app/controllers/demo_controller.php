@@ -4,7 +4,7 @@ class DemoController extends AppController
 {
     var $name = 'Demo';
     var $uses = array('Mock', 'SimpleRecord');
-    var $components = array('RequestHandler', 'Sample');
+    var $components = array('RequestHandler', 'Twitter', 'Sample');
 
 
     function index()
@@ -60,6 +60,7 @@ class DemoController extends AppController
             'CSS' => CSS,
             'DEBUG' => DEBUG,
             'Configure::read("debug")' => Configure::read('debug'),
+            'ConnectionManager::sourceList' => ConnectionManager::sourceList(),
             'ELEMENTS' => ELEMENTS,
             'FULL_BASE_URL' => FULL_BASE_URL,
             'JS' => JS,
@@ -75,7 +76,7 @@ class DemoController extends AppController
             'WWW_ROOT' => WWW_ROOT,
         );
 
-        $this->set('header', 'Some CakePHP Constants (<a href="http://book.cakephp.org/view/122/Core-Definition-Constants">docs</a>)');
+        $this->set('header', 'Some CakePHP Constants and Globals (<a href="http://book.cakephp.org/view/122/Core-Definition-Constants">docs</a>)');
         $this->set('data', $REPORT);
         $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
@@ -228,6 +229,17 @@ XHTML;
         // output
         $this->set('header', $header . $form_html);
         $this->set('data', ( isset($RecaptchaResponse) ) ? print_r($RecaptchaResponse,1) : '');
+        $this->set('menu', $this->_get_controller_menu());
+        $this->render('report');
+    }
+
+    function test_twitter_component()
+    {
+        $TweetData = $this->Twitter->get_tweets();
+
+        // output
+        $this->set('header', 'Twitter Component: $this->Twitter->get_tweets()');
+        $this->set('data', $TweetData);
         $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }

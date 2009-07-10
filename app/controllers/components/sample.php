@@ -1,37 +1,41 @@
 <?php
 
-/** Documentation
+/*
+    A CakePhp Component Template
+    Author: Tom at klenwell@gmail.com
+    Last Update: $Date$
 
-Sample CakePhp Component Class
-Last Update: $Date$
+    A very simple example of a component.  Useful as a template.
 
-A very simple example of a component.  Useful as a template.
+    USAGE (in controller)
+        var $components = array('Sample');
 
-Usage (in controller):
-    var $components = array('Sample');
-    
-    print $this->Sample->test();
+        print $this->Sample->test();
 
-______________________________________________________________________________*/
+    NOTES
+        Controllers should be name _controller (e.g. posts_controller)
+*/
 
-class SampleComponent extends Object 
+
+
+class SampleComponent extends Object
 {
     public $Ctrl = null;
-  
+
     // called before Controller:beforeFilter()
-    function initialize() 
+    function initialize()
     {
     }
 
     // called after Controller::beforeFilter()
-    function startup(&$controller) 
+    function startup(&$controller)
     {
         $this->Ctrl = $controller;
     }
 
-    function test() 
+    function test()
     {
         return sprintf('testing component %s for controller %s', __CLASS__, $this->Ctrl->name);
-    }    
+    }
 }
 ?>
