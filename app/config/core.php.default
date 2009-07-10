@@ -205,13 +205,16 @@
 
 
 /* Additional Constants */
-    
+
     // Project Root Directory Path
     define('PROJECT_ROOT', dirname(dirname(dirname(__FILE__))) . DS);
-    
+
     // ReCaptcha Keys (http://recaptcha.net/)
     define('RECAPTCHA_DOMAIN', 'YOUR_KEY_DOMAIN');
     define('RECAPTCHA_PUBLIC_KEY', 'PUBLIC_KEY_HERE');
     define('RECAPTCHA_PRIVATE_KEY', 'PRIVATE_KEY_HERE');
 
+    // Twitter Login
+    define('TWITTER_USER', 'YOUR_TWITTER_USERNAME');
+    define('TWITTER_PASS', 'YOUR_TWITTER_PASSWORD');
 ?>
