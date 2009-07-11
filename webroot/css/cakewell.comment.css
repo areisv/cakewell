@@ -1,12 +1,55 @@
 
-/** Documentation
+/* Documentation
 
     Cakewell Stylesheet Template
     Author: Tom at klenwell@gmail.com
 
-    Notes:
-        
-______________________________________________________________________________*/
+    Usage (Cakephp):
+        $html->css('cakewell.comment.css', null, array(), false);
+
+*/
+
+/* Comment List */
+div.comment-list {
+    font-family:Arial, Helvetica, sans-serif;
+    padding:4px;
+    background-color:#eee;
+}
+div.comment-list div.comment-list-comment {
+    margin:4px 0 8px;
+    padding:4px;
+}
+div.comment-list div.comment-list-comment-child { }
+div.comment-list div.comment-text {
+    padding:4px;
+    font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
+    background-color:#fff;
+}
+
+div.comment-list div.comment-header {
+    padding:2px 4px;
+    background-color:#ccc;
+    color:#060;
+    font-size:0.8em;
+}
+div.comment-list div.comment-footer {
+    padding:2px 4px;
+    background-color:#060;
+    color:#eee;
+    font-size:0.8em;
+}
+div.comment-list div.comment-footer a { color:#fff; }
+div.comment-list div.comment-footer a:hover { color:#ff0; }
+div.comment-list div.comment-author {
+    float:left;
+}
+div.comment-list div.comment-datestamp {
+    float:left;
+    font-size:0.9em;
+}
+
+
+
 
 /* Comment Form */
 div.ajax_comment_form {
@@ -36,7 +79,7 @@ div.ajax_comment_form h4.taglist span.tags {
     color:#99c;
     font-family:"Lucida Console", Monaco, monospace;
     font-weight:bold;
-    
+
 }
 div.ajax_comment_form h5 {
     line-height:1.4em;
@@ -45,7 +88,7 @@ div.ajax_comment_form h5 {
     font-weight:normal;
 }
 
-div.ajax_comment_form label { 
+div.ajax_comment_form label {
     display:block;
     float:left;
     clear:left;
@@ -196,5 +239,3 @@ div.ajax_comment_complete h2 {
 }
 div.ajax_comment_preview p.thanks {}
 div.ajax_comment_preview p.restart {}
-
-

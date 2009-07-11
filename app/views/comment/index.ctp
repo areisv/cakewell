@@ -16,14 +16,28 @@ $html->css('klenwell.basic', null, array(), false);
 <div class="cakewell-sandbox" id="cakewell-sandbox-commentform">
 
 <div id="<?php echo $dom_id; ?>">
-    <!-- Will be dynamically replaced by jquery -->
+    <!-- Will be dynamically replaced by jquery via the comment_form element -->
+</div>
+
+<div id="<?php echo $list_dom; ?>">
+    <!-- Will be dynamically replaced by jquery via the comment_list element -->
 </div>
 
 <?php
     echo $this->element( 'comment_form',
                          array( 'form_key' => $form_key,
                                 'dom_id'   => $dom_id,
-                                'meta_id'  => $meta_id ) );
+                                'meta_id'  => $meta_id,
+                                'callback' => $callback ) );
+?>
+
+<?php
+    echo $this->element( 'comment_list',
+                         array( 'list_dom' => $list_dom,
+                                'form_key' => $form_key,
+                                'dom_id'   => $dom_id,
+                                'meta_id'  => $meta_id,
+                                'limit' => 'null') );
 ?>
 
 </div>

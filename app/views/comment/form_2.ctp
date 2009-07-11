@@ -5,7 +5,7 @@
     $author = ( !empty($CommentData['author']) ) ? $CommentData['author'] : 'anonymous';
     $author_email = ( !empty($CommentData['author_email']) ) ? sprintf('| %s', $CommentData['author_email']) : '';
     $text_ = ( !empty($CommentData['text']) ) ? nl2br($CommentData['text']) : '';
-    
+
     if ( !empty($CommentData['author_url']) )
         $author = sprintf( '<a href="%s" %s>%s</a>',
                            $CommentData['author_url'],
@@ -14,7 +14,7 @@
 
 
     // adds all javascript functions needed for ajax submission
-    echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url);
+    echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url, $callback);
     echo $commentForm->get_recaptcha_js(RECAPTCHA_PUBLIC_KEY);
 ?>
 
@@ -34,19 +34,19 @@
     </div>
 </div>
 
-<div class="ajax_comment_form">  
-    <div class="recaptcha">  
+<div class="ajax_comment_form">
+    <div class="recaptcha">
         <h4>to promote computer literacy, please complete the literacy test below</h4>
-    
+
         <?php echo $form->create('Comment', array('url' => '/comment/form', 'id'=>'ajax_comment_form'));?>
             <div id="recaptcha_element">
             </div>
-    
-            <?php echo $form->button('publish', 
+
+            <?php echo $form->button('publish',
                 array('type'=>'button', 'onclick'=>'javascript:submit_comment_preview_()'));?>
-            <?php echo $form->button('edit', 
+            <?php echo $form->button('edit',
                 array('type'=>'button', 'onclick'=>'javascript:edit_comment_form_()'));?>
-            <?php echo $form->button('reset', 
+            <?php echo $form->button('reset',
                 array('type'=>'button', 'onclick'=>'javascript:reset_comment_form_()'));?>
         <?php echo $form->end(); ?>
     </div>
