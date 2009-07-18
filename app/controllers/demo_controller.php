@@ -46,6 +46,21 @@ class DemoController extends AppController
         $this->render('report');
     }
 
+    function config_test()
+    {
+        $REPORT = array(
+            'App.mode' => Configure::Read('App.mode'),
+            'App.server_name' => Configure::Read('App.server_name'),
+            'Configure::Read(\'App\')' => Configure::Read('App'),
+            'PROJECT_ROOT' => PROJECT_ROOT
+        );
+
+        $this->set('header', 'Cakewell Domain-Specific Auto-Configuration Values');
+        $this->set('data', $REPORT);
+        $this->set('menu', $this->_get_controller_menu());
+        $this->render('report');
+    }
+
     function cake_constants()
     {
         $REPORT = array(
