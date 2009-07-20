@@ -13,12 +13,11 @@
  *  This approach is adapted from the model described here:
  *  http://bakery.cakephp.org/articles/view/one-core-one-app-multiple-domains
  *
- *  For the sake of clarity, some of the default comments have been edited
- *  out of this file.  To see the original version of this file, see these
- *  two sites:
+ *  To see the original version of this file with comments, visit:
+ *  https://trac.cakephp.org/browser/branches/1.2.x.x/app/config/core.php
  *
- *  http://book.cakephp.org/view/39/Configuration
- *  http://api.cakephp.org/source/console/libs/templates/skel/config
+ *  For more information on CakePhp core configuration, visit:
+ *  http://book.cakephp.org/view/42/The-Configuration-Class
  *
  * CakePHP Debug Level:
  *
