@@ -4,8 +4,7 @@ class DemoController extends AppController
 {
     var $name = 'Demo';
     var $uses = array('Mock', 'SimpleRecord');
-    var $components = array('RequestHandler', 'Twitter', 'Sample');
-
+    var $components = array('RequestHandler', 'Twitter', 'Sample', 'Gatekeeper');
 
     function index()
     {
@@ -257,6 +256,39 @@ XHTML;
         $this->set('data', $TweetData);
         $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
+    }
+
+    function test_gatekeeper_component($restrict=null, $redirect=null, $message=null)
+    {
+        $restrict = ( $restrict == 'restrict' ) ? 1 : null;
+        $redirect = ( $redirect == 'redirect' ) ? 1 : null;
+        $message = ( $message == 'message' ) ? 1 : null;
+        #debug(sprintf('%s %s', $redirect, $message));
+        #debug((int) ($redirect || $message));
+
+        if ( $restrict )
+        {
+            if ( $redirect ) $redirect = '/demo/index';
+            if ( $message ) $message = 'the gatekeeper is blocking you';
+            if ( !$this->Gatekeeper->restrict_to_domains(array(), $redirect, $message) )
+                return $this->flash($message, $redirect);
+        }
+
+
+        $Menu = array(
+            'click one of the links below to test',
+            '<a href="/demo/test_gatekeeper_component/restrict/redirect/message">block: redirect with message</a>',
+            '<a href="/demo/test_gatekeeper_component/restrict/redirect/nomessage">block: redirect with no message</a>',
+            '<a href="/demo/test_gatekeeper_component/restrict/noredirect/message">block: no redirect with message</a>',
+            '<a href="/demo/test_gatekeeper_component/restrict/noredirect/nomessage">block: redirect to home</a>',
+            '<a href="/demo/test_gatekeeper_component/norestrict/">no block: reload this page</a>',
+
+        );
+
+        $this->set('header', 'Gatekeeper Component');
+        $this->set('content', sprintf('<pre>%s</pre>', print_r($Menu,1)));
+        $this->set('menu', $this->_get_controller_menu());
+        $this->render('index');
     }
 
     function test_flash()
