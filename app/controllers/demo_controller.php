@@ -77,11 +77,14 @@ class DemoController extends AppController
             'ConnectionManager::sourceList' => ConnectionManager::sourceList(),
             'ELEMENTS' => ELEMENTS,
             'FULL_BASE_URL' => FULL_BASE_URL,
+            'FULL_BASE_URL . Router::url(\'\', false)' => FULL_BASE_URL . Router::url('', false),
+            '$this->here' => $this->here,
             'JS' => JS,
             'LAYOUTS' => LAYOUTS,
             'LIBS' => LIBS,
             'LOGS' => LOGS,
             'MODELS' => MODELS,
+            '$this->params[\'url\']' => $this->params['url'],
             'TMP' => TMP,
             'ROOT' => ROOT,
             'VENDORS' => VENDORS,
@@ -270,23 +273,44 @@ XHTML;
         {
             if ( $redirect ) $redirect = '/demo/index';
             if ( $message ) $message = 'the gatekeeper is blocking you';
-            if ( !$this->Gatekeeper->restrict_to_domains(array(), $redirect, $message) )
-                return $this->flash($message, $redirect);
+            $this->Gatekeeper->restrict_to_domains(array(), $redirect, $message);
         }
-
 
         $Menu = array(
             'click one of the links below to test',
             '<a href="/demo/test_gatekeeper_component/restrict/redirect/message">block: redirect with message</a>',
             '<a href="/demo/test_gatekeeper_component/restrict/redirect/nomessage">block: redirect with no message</a>',
-            '<a href="/demo/test_gatekeeper_component/restrict/noredirect/message">block: no redirect with message</a>',
+            '<a href="/demo/test_gatekeeper_component/restrict/noredirect/message">block: redirect to home with message</a>',
             '<a href="/demo/test_gatekeeper_component/restrict/noredirect/nomessage">block: redirect to home</a>',
             '<a href="/demo/test_gatekeeper_component/norestrict/">no block: reload this page</a>',
-
         );
 
         $this->set('header', 'Gatekeeper Component');
         $this->set('content', sprintf('<pre>%s</pre>', print_r($Menu,1)));
+        $this->set('menu', $this->_get_controller_menu());
+        $this->render('index');
+    }
+
+    function test_gatekeeper_block_production()
+    {
+        $this->Gatekeeper->restrict_from_app_modes( array('production'),
+            '/demo/',
+            'this action is blocked in production mode');
+
+        $this->set('header', 'Gatekeeper Test');
+        $this->set('content', 'this message should not be visible in production mode');
+        $this->set('menu', $this->_get_controller_menu());
+        $this->render('index');
+    }
+
+    function test_gatekeeper_block_test()
+    {
+        $this->Gatekeeper->restrict_from_app_modes( array('test'),
+            '/demo/',
+            'this action is blocked in test mode');
+
+        $this->set('header', 'Gatekeeper Test');
+        $this->set('content', 'this message should not be visible in test mode');
         $this->set('menu', $this->_get_controller_menu());
         $this->render('index');
     }

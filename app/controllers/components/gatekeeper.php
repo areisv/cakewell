@@ -18,8 +18,8 @@
 
 class GatekeeperComponent extends Object
 {
-    public $Ctrl = null;
-    var $FlashTuple = array();
+    var $Ctrl = null;
+    var $components = array( 'Session' );
 
     // called before Controller:beforeFilter()
     function initialize()
@@ -32,16 +32,13 @@ class GatekeeperComponent extends Object
         $this->Ctrl = $controller;
     }
 
-    function beforeRender(&$controller)
-    {
-    }
 
     function restrict_to_domains($DomainList, $redirect_url=null, $message=null)
     {
         /*
             Restricts access *TO* the domains in the DomainList array.
         */
-        if ( !$domain = Configure::Read('App.foo') )
+        if ( !$domain = Configure::Read('App.server_name') )
             $domain = $_SERVER['SERVER_NAME'];
 
         if ( in_array($domain, $DomainList) )
@@ -53,12 +50,48 @@ class GatekeeperComponent extends Object
     function restrict_from_domains($DomainList, $redirect_url=null, $message=null)
     {
         /*
-            Restricts access *TO* the domains in the DomainList array.
+            Restricts access *FROM* the domains in the DomainList array.
         */
-        if ( !$domain = Configure::Read('App.foo') )
+        if ( !$domain = Configure::Read('App.server_name') )
             $domain = $_SERVER['SERVER_NAME'];
 
         if ( !in_array($domain, $DomainList) )
+            return 1;
+
+        return $this->_restrict($redirect_url, $message);
+    }
+
+    function restrict_to_app_modes($ModeList, $redirect_url=null, $message=null)
+    {
+        /*
+            This method bases restriction on the App.mode configuration setting
+            specific to the Cakewell configuration model.  If
+        */
+        if ( !$mode = Configure::Read('App.mode') )
+        {
+            trigger_error('App.mode configuration value not found', E_USER_ERROR);
+            die('access denied by gatekeeper');
+        }
+
+        if ( in_array($mode, $ModeList) )
+            return 1;
+
+        return $this->_restrict($redirect_url, $message);
+    }
+
+    function restrict_from_app_modes($ModeList, $redirect_url=null, $message=null)
+    {
+        /*
+            This method bases restriction on the App.mode configuration setting
+            specific to the Cakewell configuration model.  If
+        */
+        if ( !$mode = Configure::Read('App.mode') )
+        {
+            trigger_error('App.mode configuration value not found', E_USER_ERROR);
+            die('access denied by gatekeeper');
+        }
+
+        if ( !in_array($mode, $ModeList) )
             return 1;
 
         return $this->_restrict($redirect_url, $message);
@@ -70,10 +103,9 @@ class GatekeeperComponent extends Object
         // if redirect url, message -> flash
         if ( !empty($redirect_url) && !empty($message) )
         {
-            #$this->Ctrl->flash($message, '/');
-            return 0;
+            $this->Session->setFlash($message);
+            $this->Ctrl->redirect($redirect_url);
         }
-
 
         // if redirect, no message -> redirect
         elseif ( !empty($redirect_url) && empty($message) )
@@ -81,27 +113,21 @@ class GatekeeperComponent extends Object
             $this->Ctrl->redirect($redirect_url);
         }
 
-        // if no redirect, message -> die
+        // if no redirect, message -> redirect to home
         elseif ( empty($redirect_url) && !empty($message) )
         {
-            #$this->Ctrl->autoRender=false;
-            #$this->Ctrl->set('content_for_layout', $message);
-            #$this->Ctrl->render('/layouts/ajax', $this->Ctrl->layout);
-            #$this->Ctrl->flash($message, '/');
+            $this->Session->setFlash($message);
+            $this->Ctrl->redirect('/');
         }
 
         // if no redirect, no message -> redirect home
         else
         {
+            $this->Session->setFlash(sprintf('%s is not accessible', $this->Ctrl->here));
             $this->Ctrl->redirect('/');
         }
 
-        return 0;
-    }
-
-    function _flash($message, $redirect_url)
-    {
-        $this->FlashTuple = array($message, $redirect_url);
+        die(sprintf('%s is not accessible', $this->Ctrl->here));
     }
 
     function test()
