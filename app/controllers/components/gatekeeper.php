@@ -98,6 +98,29 @@ class GatekeeperComponent extends Object
     }
 
 
+    function get_controller_methods($CtrlObj, $filter_=1)
+    {
+        $MethodList = array_values(
+            array_diff( get_class_methods($CtrlObj), get_class_methods('AppController') )
+        );
+        if ( $filter_ )
+            foreach ( range(0,count($MethodList)-1) as $i )
+                if ( substr($MethodList[$i],0,1) == '_' )
+                    unset($MethodList[$i]);
+        return $MethodList;
+    }
+
+    function get_controller_menu($CtrlObj, $filter=1)
+    {
+        $menu_html = '';
+        $MenuList = $this->get_controller_methods($CtrlObj, $filter);
+        foreach ( $MenuList as $m )
+            $menu_html .= sprintf('<li><a href="/%s/%s">%s</a></li>%s',
+                $CtrlObj->viewPath, $m, $m, "\n");
+        return $menu_html;
+    }
+
+
     function _restrict($redirect_url=null, $message=null)
     {
         // if redirect url, message -> flash

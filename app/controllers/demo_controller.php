@@ -6,6 +6,11 @@ class DemoController extends AppController
     var $uses = array('Mock', 'SimpleRecord');
     var $components = array('RequestHandler', 'Twitter', 'Sample', 'Gatekeeper');
 
+    function beforeRender()
+    {
+        $this->set('menu', $this->Gatekeeper->get_controller_menu($this));
+    }
+
     function index()
     {
         $summary = "A simple demonstration of CakePHP.";
@@ -14,7 +19,6 @@ class DemoController extends AppController
 
         $this->set('header', 'Index of DemoController');
         $this->set('content', $content);
-        $this->set('menu', $this->_get_controller_menu());
     }
 
     function sandbox()
@@ -32,7 +36,7 @@ class DemoController extends AppController
         );
         $this->set('header', 'Sandbox');
         $this->set('data', $REPORT);
-        $this->set('menu', $this->_get_controller_menu());
+        $this->set('menu', $this->Gatekeeper->get_controller_menu($this));
         $this->render('report');
     }
 
@@ -41,7 +45,6 @@ class DemoController extends AppController
         $REPORT = array($this->name => $this);
         $this->set('header', 'Dumping the Controller Object');
         $this->set('data', $REPORT);
-        $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
 
@@ -56,7 +59,6 @@ class DemoController extends AppController
 
         $this->set('header', 'Cakewell Domain-Specific Auto-Configuration Values');
         $this->set('data', $REPORT);
-        $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
 
@@ -95,7 +97,6 @@ class DemoController extends AppController
 
         $this->set('header', 'Some CakePHP Constants and Globals (<a href="http://book.cakephp.org/view/122/Core-Definition-Constants">docs</a>)');
         $this->set('data', $REPORT);
-        $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
 
@@ -119,7 +120,6 @@ class DemoController extends AppController
 
         $this->set('header', 'Simple Record Model');
         $this->set('data', $REPORT);
-        $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
 
@@ -141,7 +141,6 @@ class DemoController extends AppController
 
         $this->set('header', 'Simple Record Save Example');
         $this->set('data', $REPORT);
-        $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
 
@@ -154,7 +153,6 @@ class DemoController extends AppController
 
         $this->set('header', 'Normalizer Behavior Test');
         $this->set('data', $REPORT);
-        $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
 
@@ -171,7 +169,6 @@ class DemoController extends AppController
 
         $this->set('header', 'A Mock Model');
         $this->set('data', $REPORT);
-        $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
 
@@ -180,7 +177,6 @@ class DemoController extends AppController
         $result = $this->Sample->test();
         $this->set('header', 'Component Test');
         $this->set('data', $result);
-        $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
 
@@ -200,7 +196,6 @@ class DemoController extends AppController
 
         $this->set('header', 'showing RequestHandler info for client at ip ' . $this->RequestHandler->getClientIP());
         $this->set('data', $Report);
-        $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
 
@@ -246,7 +241,6 @@ XHTML;
         // output
         $this->set('header', $header . $form_html);
         $this->set('data', ( isset($RecaptchaResponse) ) ? print_r($RecaptchaResponse,1) : '');
-        $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
 
@@ -257,7 +251,6 @@ XHTML;
         // output
         $this->set('header', 'Twitter Component: $this->Twitter->get_tweets()');
         $this->set('data', $TweetData);
-        $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
     }
 
@@ -287,7 +280,6 @@ XHTML;
 
         $this->set('header', 'Gatekeeper Component');
         $this->set('content', sprintf('<pre>%s</pre>', print_r($Menu,1)));
-        $this->set('menu', $this->_get_controller_menu());
         $this->render('index');
     }
 
@@ -299,7 +291,6 @@ XHTML;
 
         $this->set('header', 'Gatekeeper Test');
         $this->set('content', 'this message should not be visible in production mode');
-        $this->set('menu', $this->_get_controller_menu());
         $this->render('index');
     }
 
@@ -311,8 +302,16 @@ XHTML;
 
         $this->set('header', 'Gatekeeper Test');
         $this->set('content', 'this message should not be visible in test mode');
-        $this->set('menu', $this->_get_controller_menu());
         $this->render('index');
+    }
+
+    function test_gatekeeper_method_list()
+    {
+        $MethodList = $this->Gatekeeper->get_controller_methods( $this );
+
+        $this->set('header', 'Gatekeeper Method List');
+        $this->set('data', $MethodList);
+        $this->render('report');
     }
 
     function test_flash()
@@ -380,30 +379,7 @@ XHTML;
 
         $this->set('header', 'Sandbox');
         $this->set('data', $REPORT);
-        $this->set('menu', $this->_get_controller_menu());
         $this->render('report');
-    }
-
-    function _get_controller_methods($filter_=1)
-    {
-        $MethodList = array_values(
-            array_diff( get_class_methods(__CLASS__), get_class_methods('AppController') )
-        );
-        if ( $filter_ )
-            foreach ( range(0,count($MethodList)-1) as $i )
-                if ( substr($MethodList[$i],0,1) == '_' )
-                    unset($MethodList[$i]);
-        return $MethodList;
-    }
-
-    function _get_controller_menu($filter=1)
-    {
-        $menu_html = '';
-        $MENU_LIST = $this->_get_controller_methods($filter);
-        foreach ( $MENU_LIST as $m )
-            $menu_html .= sprintf('<li><a href="/%s/%s">%s</a></li>%s',
-                $this->viewPath, $m, $m, "\n");
-        return $menu_html;
     }
 }
 
