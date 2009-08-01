@@ -1,4 +1,4 @@
--- 
+--
 -- Database: `cakewell`
 --
 
@@ -12,9 +12,14 @@ CREATE TABLE IF NOT EXISTS `simple_records` (
     value varchar(80) NOT NULL,
     updated DATETIME,
     created DATETIME,
-    
+
     PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- Insert 2 Default Records
+INSERT INTO `simple_records` (`id`, `value`, `updated`, `created`) VALUES
+(1, 'cakewell db: first post', '2008-01-01 00:00:00', '2008-01-01 12:00:00'),
+(2, 'a default record', '2008-01-01 00:00:00', '2008-01-01 12:00:00');
 
 
 CREATE TABLE IF NOT EXISTS `comments` (
