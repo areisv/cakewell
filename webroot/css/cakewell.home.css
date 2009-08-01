@@ -1,0 +1,77 @@
+
+/** Cakewell Home Stylesheet
+
+    Last Update: $date$
+    Author: Tom at klenwell@gmail.com
+
+    NOTES
+    A basic stylesheet for the cakephp demo app.
+*/
+
+h1, h2, h3, h4, h5, h6 { margin-bottom:0.5em; }
+hr { margin:1em 0; color:#CC6666; }
+li { margin:0.5em 0; }
+form div, form, table { clear:none; }
+
+/* BASIC LAYOUT */
+html, body, table#shell { height:100%; }
+body
+{
+ margin:0; padding:0;
+ font-family:Arial, Helvetica, sans-serif;
+ background:#fff;
+ _text-align:center;
+}
+table#shell { margin:0 auto; }
+table#shell td { vertical-align:center; background:#fff; _text-align:center; }
+.page {
+ width:720px;
+ margin:0 auto; padding:2px 0;
+ color:#9999ff;
+ background:#fff;
+}
+
+a { color:#9999ff; text-decoration:none; }
+a:hover { color:#3333ff; }
+
+/* CORE */
+#core_panel {
+ width:720px;
+ margin:0 auto;
+}
+#core_panel h1 {
+ margin:0;
+ text-align:center;
+ letter-spacing:0.2em;
+ font:normal 48px "Century Gothic", Futura, Arial, Verdana, sans-serif;
+}
+#core_panel div#blurb {
+ margin:0.5em 0 3em;
+ text-align:center;
+ color:#6666ff;
+}
+
+/* Navbar */
+.navbar
+{
+ width:600px;
+ margin:16px auto;
+ text-align:center;
+ padding:4px;
+ border:1px solid #d9d9f3; border-width:1px 0;
+}
+.navbar a { margin:3em; }
+
+/* FOOTER PANEL */
+#footer_panel {
+ width:auto; clear:both;
+ margin-top:4px; padding:4px;
+ text-align:center;
+ font-size:12px;
+ line-height:1.4em;
+ color:#ccc;
+}
+#footer_panel span.version { color:#99f; }
+#footer_left { float:left; }
+#footer_right { float:right; }
+
