@@ -14,12 +14,22 @@
     my development server and I find the names of the Cake path constants below
     ambiguous.  So I use var names here that I find more explicit that allow
     me to use a single core cake installation with multiple "apps" or projects.
-    
+
     NOTE: these settings should also be applied to test.php in this directory.
 */
-$CakePhpAppDirParent = dirname(dirname(__FILE__));
-$CakePhpAppDirName = 'app';
-$CakePhpCoreDir = dirname($CakePhpAppDirParent) . '/cake_core';
+// Some Alternate Host (e.g. shared hosting)
+if ( $_SERVER['SERVER_NAME'] == 'cakewell.klenwell.com' )
+{
+    $CakePhpAppDirParent = sprintf('%s/protected', dirname($_SERVER['DOCUMENT_ROOT']));
+    $CakePhpAppDirName = 'app';
+    $CakePhpCoreDir = sprintf('%s/cake_core', $CakePhpAppDirParent);
+}
+else
+{
+    $CakePhpAppDirParent = dirname(dirname(__FILE__));
+    $CakePhpAppDirName = 'app';
+    $CakePhpCoreDir = sprintf('%s/cake_core', dirname($CakePhpAppDirParent));
+}
 
 
 /**

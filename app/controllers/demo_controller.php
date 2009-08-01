@@ -102,6 +102,9 @@ class DemoController extends AppController
 
     function phpinfo()
     {
+        $this->Gatekeeper->restrict_from_app_modes( array('production'),
+            '/demo/',
+            'this action is blocked in production mode');
         ob_start();
         phpinfo();
         $phpinfo = ob_get_clean();
@@ -125,6 +128,9 @@ class DemoController extends AppController
 
     function test_simple_record_save()
     {
+        $this->Gatekeeper->restrict_from_app_modes( array('production'),
+            '/demo/',
+            'this action is blocked in production mode');
         $Record = array(
             'SimpleRecord' => array(
                 'value' => 'test: ' . md5(time()),
