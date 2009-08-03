@@ -2,8 +2,9 @@
 /* SVN FILE: $Id: default.ctp 6311 2008-01-02 06:33:52Z phpnut $ */
 
 $head_title = 'Cakewell';
+$ga_element = $this->element('analytics', array('code' => GA_CODE));
 $cc_element = $this->element('cclicense');
-$tests_link = $html->link('demo controller', '/demo/index');
+$demo_link = $html->link('demo controller', '/demo/index');
 $version = Configure::version();
 
 ?>
@@ -23,16 +24,17 @@ $version = Configure::version();
 		echo $scripts_for_layout;
 	?>
 </head>
+
 <body>
 <div id="container">
 
 <div id="header">
-<h1 style="float:right;"><?php echo $tests_link; ?></h1>
+<h1 style="float:right;"><?php echo $demo_link; ?></h1>
 <h1><?php echo $html->link(__('Cakewell Demo: home', true), '/'); ?></h1>
 </div>
-        
-        
-<div id="content">   
+
+
+<div id="content">
 <?php
     if ($session->check('Message.flash')):
         $session->flash();
@@ -41,21 +43,21 @@ $version = Configure::version();
 
 <?php echo $content_for_layout; ?>
 </div>
-        
-        
+
+
 <div id="footer">
-<div style="float:left">
-<?php echo $cc_element; ?>
-</div>
-<?php echo $html->link(
+    <div style="float:left"><?php echo $cc_element; ?></div>
+    <?php echo $html->link(
         $html->image('cake.power.gif', array('alt'=> __("CakePHP: the rapid development php framework", true), 'border'=>"0")),
         'http://www.cakephp.org/',
         array('target'=>'_new'), null, false
-);
-?>
-<div style="font-size:10px;">cakephp version: <?php echo $version; ?></div>
+    );
+    ?>
+    <div style="font-size:10px;">cakephp version: <?php echo $version; ?></div>
 </div>
-	</div>
+
+</div>
+        <?php echo $ga_element; ?>
 	<?php echo $cakeDebug; ?>
 </body>
 </html>
