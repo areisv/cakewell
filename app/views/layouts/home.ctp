@@ -1,9 +1,17 @@
 <?php
-/* SVN FILE: $Id: default.ctp 6311 2008-01-02 06:33:52Z phpnut $ */
+
+/*  Cakewell Home Layout
+
+    Last Update: $date$
+    Author: Tom at klenwell@gmail.com
+
+    NOTES
+    Includes google analytics element
+*/
 
 $head_title = 'Cakewell';
-$cc_element = $this->element('cclicense');
-$tests_link = $html->link('demo controller', '/demo/index');
+$ga_element = $this->element('analytics', array('code' => GA_CODE));
+#$cc_element = $this->element('cclicense');
 $version = Configure::version();
 
 ?>
@@ -56,8 +64,7 @@ $version = Configure::version();
 
 </td></tr></table>
 
-<!-- Google Analytics -->
-<!-- end Google Analytics -->
+<?php echo $ga_element; ?>
 
 
 </body>
