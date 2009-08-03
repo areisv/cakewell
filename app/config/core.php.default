@@ -167,6 +167,9 @@
     Configure::write('App.project_root', dirname(dirname(dirname(__FILE__))) . DS);
     define('PROJECT_ROOT', Configure::read('App.project_root'));
 
+    // Google Service Settings
+    define('GA_CODE', 'UA-CODE-HERE');
+
     // ReCaptcha Keys (http://recaptcha.net/)
     define('RECAPTCHA_DOMAIN', 'YOUR_KEY_DOMAIN');
     define('RECAPTCHA_PUBLIC_KEY', 'PUBLIC_KEY_HERE');

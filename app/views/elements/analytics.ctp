@@ -1,12 +1,12 @@
 <?php
 /*
     A simple element displaying google analytics code
-    
+
     PHP could be included, but this one is just a basic example used in the
     default template to demonstrate how the template can use elements.
 */
 
-$display = ( $code == 'code_here' || empty($code) ) ? false : true;
+$display = ( $code == 'UA-CODE-HERE' || empty($code) ) ? false : true;
 
 ?>
 
