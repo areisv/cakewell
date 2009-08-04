@@ -4,6 +4,7 @@ syntax: glob
 app/tmp
 app/config/core.php
 app/config/database.php
+app/config/domains/test.php
 app/controllers/sandbox_controller.php
 app/views/sandbox
 app/config/phpmailer.php
