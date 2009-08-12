@@ -8,11 +8,19 @@
         $html->css('cakewell.comment.css', null, array(), false);
 
 */
+/* Override cakephp clears */
+form, form div, table, input, textarea { clear:none; }
 
 /* Comment List */
+div#comment-list-parent {
+    float:right;
+    width:40%;
+    border:2px solid #eee;
+    border-width:2px 0;
+}
+div#comment-list-parent h3 { color:blue; }
 div#comment-form-list {
-    width:400px;
-    border:1px dotted #ddd;
+    padding:4px;
 }
 div.comment-list {
     font-family:Arial, Helvetica, sans-serif;
@@ -146,8 +154,8 @@ fieldset fieldset div {
     clear: left;
     margin: 0 20px;
 }
+
 form div {
-    clear: both;
     vertical-align: text-top;
 }
 form div.input { }

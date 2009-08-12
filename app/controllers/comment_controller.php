@@ -39,6 +39,7 @@ class CommentController extends AppController
         $this->set('meta_id', 1);
         $this->set('list_dom', 'comment-form-list');
         $this->set('callback', 'load_comment_list');
+        $this->render('index', 'default');
     }
 
     function two_forms()
