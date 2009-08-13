@@ -42,7 +42,7 @@ class CommentController extends AppController
         $this->render('index', 'default');
     }
 
-    function two_forms()
+    function multiform()
     {
         $this->layout = 'jquery';
         $this->set('form_key1', 'comment-index-test');
