@@ -12,48 +12,13 @@
 form, form div, table, input, textarea { clear:none; }
 
 /* Comment List */
-div#comment-form-list {
-    padding:4px;
+div#comment-list-parent {
+    float:right;
+    width:40%;
+    border:2px solid #eee;
+    border-width:2px 0;
 }
-div.comment-list {
-    font-family:Arial, Helvetica, sans-serif;
-    padding:4px;
-}
-div.comment-list div.comment-list-comment {
-    margin:4px 0 8px;
-    padding:1px;
-    border:1px solid #ccc; border-width:1px 0;
-}
-div.comment-list div.comment-list-comment-child { }
-div.comment-list div.comment-text {
-    margin:4px 0;
-    padding:8px;
-    font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
-    background-color:#f9f9f9;
-    color:#333;
-}
-
-div.comment-list div.comment-header {
-    padding:2px 4px;
-    background-color:#f3f3f3;
-    color:#666;
-    font-size:0.8em;
-}
-div.comment-list div.comment-footer {
-    padding:2px 4px;
-    background-color:#f3f3f3;
-    color:#666;
-    font-size:0.8em;
-}
-div.comment-list div.comment-footer a { color:#99f; }
-div.comment-list div.comment-footer a:hover { color:#ccf; }
-div.comment-list div.comment-author {
-    float:left;
-}
-div.comment-list div.comment-datestamp {
-    float:left;
-    font-size:0.9em;
-}
+div#comment-list-parent h3 { color:blue; }
 
 
 

@@ -19,6 +19,7 @@ $this->addScript($head_content);
 
 // stylesheet (will add to $scripts_for_layout)
 $html->css('klenwell.basic', null, array(), false);
+$html->css('cakewell.comment.index', null, array(), false);
 #$html->css('cakewell.comment', null, array(), false);
 
 ?>
