@@ -23,8 +23,6 @@
 
     // adds all javascript function needed for ajax submission
     echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url, $callback);
-    $dom_id_ = $commentForm->dedash($dom_id);
-    $form_key_ = $commentForm->dedash($form_key);
 ?>
 
 
@@ -52,11 +50,9 @@
 
         <fieldset>
         <?php echo $form->button('preview',
-            array('type'=>'button',
-                  'onclick'=>sprintf('javascript:submit_comment_form_%s_%s()', $dom_id_, $form_key_)));?>
+            array('type'=>'button', 'onclick'=>'javascript:submit_comment_form_()'));?>
         <?php echo $form->button('reset',
-            array('type'=>'button',
-                  'onclick'=>sprintf('javascript:reset_comment_form_%s_%s()', $dom_id_, $form_key_)));?>
+            array('type'=>'button', 'onclick'=>'javascript:reset_comment_form_()'));?>
         </fieldset>
 
     <?php echo $form->end(); ?>
