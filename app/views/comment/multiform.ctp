@@ -18,39 +18,71 @@ XHTML;
 $this->addScript($head_content);
 
 // stylesheet (will add to $scripts_for_layout)
-$html->css('klenwell.basic', null, array(), false);
-#$html->css('cakewell.comment', null, array(), false);
+$html->css('cakewell.comment.multiform', null, array(), false);
 
 ?>
 
-<div class="cakewell-sandbox" id="cakewell-sandbox-commentform">
+<div class="cakewell-comment" id="cakewell-comment-multiform">
 
-<div id="comment-list-parent">
-     <h3>comments</h3>
-    <div id="<?php echo $list_dom; ?>">
-        <!-- Will be dynamically replaced by jquery via the comment_list element -->
+
+<table><tr>
+
+<td id="form1">
+    <h3>comment form 1</h3>
+    <div id="<?php echo $dom_id1; ?>"></div>
+    <div id="comment-list-parent-1">
+        <h3>comments (form 1)</h3>
+        <div id="<?php echo $list_dom1; ?>"></div>
     </div>
-</div>
+</td>
 
-<div id="<?php echo $dom_id; ?>">
-    <!-- Will be dynamically replaced by jquery via the comment_form element -->
-</div>
+<td id="form2">
+    <h3>comment form 2</h3>
+    <div id="<?php echo $dom_id2; ?>"></div>
+    <div id="comment-list-parent-2">
+        <h3>comments (form 2)</h3>
+        <div id="<?php echo $list_dom2; ?>"></div>
+    </div>
+</td>
+
+</tr></table>
 
 <?php
+    // comment form 1
     echo $this->element( 'comment_form',
-                         array( 'form_key' => $form_key,
-                                'dom_id'   => $dom_id,
-                                'meta_id'  => $meta_id,
+                         array( 'form_key' => $form_key1,
+                                'dom_id'   => $dom_id1,
+                                'meta_id'  => $meta_id1,
                                 'callback' => $callback ) );
 ?>
 
 <?php
+    // comment list 1
     echo $this->element( 'comment_list',
-                         array( 'list_dom' => $list_dom,
-                                'form_key' => $form_key,
-                                'dom_id'   => $dom_id,
-                                'meta_id'  => $meta_id,
-                                'limit' => 'null') );
+                         array( 'list_dom' => $list_dom1,
+                                'form_key' => $form_key1,
+                                'dom_id'   => $dom_id1,
+                                'meta_id'  => $meta_id1,
+                                'limit' => 10) );
+?>
+
+<?php
+    // comment form 2
+    echo $this->element( 'comment_form',
+                         array( 'form_key' => $form_key2,
+                                'dom_id'   => $dom_id2,
+                                'meta_id'  => $meta_id2,
+                                'callback' => $callback ) );
+?>
+
+<?php
+    // comment list 2
+    echo $this->element( 'comment_list',
+                         array( 'list_dom' => $list_dom2,
+                                'form_key' => $form_key2,
+                                'dom_id'   => $dom_id2,
+                                'meta_id'  => $meta_id2,
+                                'limit' => 10) );
 ?>
 
 </div>

@@ -45,11 +45,15 @@ class CommentController extends AppController
     function multiform()
     {
         $this->layout = 'jquery';
-        $this->set('form_key1', 'comment-index-test');
-        $this->set('dom_id1', 'comment-form');
-        $this->set('form_key2', 'comment-index-test-2');
-        $this->set('dom_id2', 'comment-form-2');
-        $this->set('meta_id', 1);
+        $this->set('form_key1', 'comment-multiform-1');
+        $this->set('dom_id1', 'comment-multiform-1');
+        $this->set('list_dom1', 'multiform-comment-list-1');
+        $this->set('meta_id1', 0);
+        $this->set('form_key2', 'comment-multiform-2');
+        $this->set('dom_id2', 'comment-multiform-2');
+        $this->set('list_dom2', 'multiform-comment-list-2');
+        $this->set('meta_id2', 0);
+        $this->set('callback', 'load_comment_list');
     }
 
     function show()
