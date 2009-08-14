@@ -10,6 +10,7 @@
 */
 /* Override cakephp clears */
 form, form div, table, input, textarea { clear:none; }
+input, textarea { width: auto; }
 
 /* Comment List */
 div#comment-form-list {

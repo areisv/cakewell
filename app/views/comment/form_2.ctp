@@ -17,7 +17,6 @@
 
 
     // adds all javascript functions needed for ajax submission
-    #echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url, $callback);
     echo $commentForm->get_reset_comment_js($form_key, $dom_id, $ajax_url, $callback);
     echo $commentForm->get_submit_preview_js($form_key, $dom_id, $ajax_url, $callback);
     echo $commentForm->get_recaptcha_js(RECAPTCHA_PUBLIC_KEY);

@@ -90,15 +90,13 @@ class CommentController extends AppController
         // fuid out of the data array
         if ( isset($this->data['Comment'][$RequestDict['fuid']]) )
             $this->data['Comment'] = $this->data['Comment'][$RequestDict['fuid']];
-        ##pr($this->data);
-        ##pr($RequestDict);
+        pr($this->data);
+        pr($RequestDict);
 
         // stage and session key
         $stage = $this->_get_stage($RequestDict['fuid']);
-        pr("stage $stage");
 
         // subaction tree
-        #pr( array('subaction'=>$subaction, 'stage'=>$stage, 'dom_id'=>$dom_id, 'form_key'=>$form_key));
         // reset
         if ( $RequestDict['subaction'] == 'reset' )
             $stage = $this->_reset_form($RequestDict['fuid']);
@@ -106,7 +104,6 @@ class CommentController extends AppController
         elseif ( $RequestDict['subaction'] == 'edit' )
         {
             $CommentData = $this->_unpickle($RequestDict['fuid']);
-            #pr($CommentData);
             $this->Comment->set($CommentData);
             $this->Comment->validates($CommentData);
             $stage = $this->_set_stage($RequestDict['fuid'], 1);
@@ -195,7 +192,6 @@ class CommentController extends AppController
     function _get_stage($fuid)
     {
         $session_key = "$fuid.stage";
-        pr("fuid: $fuid ($session_key) " . (int) $this->Session->check($session_key));
         if ( !$this->Session->check($session_key) )
             return $this->_set_stage($fuid, 1);
         return $this->Session->read($session_key);
@@ -208,10 +204,10 @@ class CommentController extends AppController
         return $num;
     }
 
-    function _reset_form($form_key)
+    function _reset_form($fuid)
     {
-        $this->_pickle($form_key);
-        return $this->_set_stage($form_key, 1);
+        $this->_pickle($fuid);
+        return $this->_set_stage($fuid, 1);
     }
 
     function _get_dom_id($fuid)
