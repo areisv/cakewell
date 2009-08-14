@@ -77,22 +77,25 @@ class CommentController extends AppController
         // get Request dict
         $RequestDict = $this->_parse_form_request();
 
+        // sanity checks
+        if ( is_null($RequestDict['fuid']) )
+            return $this->error('', 'no fuid');
+        if ( is_null($RequestDict['form_key']) )
+            return $this->error('', 'no form key');
+        if ( is_null($RequestDict['dom_id']) )
+            return $this->error('', 'no dom_id');
+
         // cake autoform is keyed to fuid to allow for multiple forms on a page
         // since only one form can be submitted at a time, we can factor the
         // fuid out of the data array
         if ( isset($this->data['Comment'][$RequestDict['fuid']]) )
             $this->data['Comment'] = $this->data['Comment'][$RequestDict['fuid']];
         ##pr($this->data);
-        pr($RequestDict);
-
-        // sanity checks
-        if ( is_null($RequestDict['form_key']) )
-            return $this->error('', 'no form key');
-        if ( is_null($RequestDict['dom_id']) )
-            return $this->error('', 'no dom_id');
+        ##pr($RequestDict);
 
         // stage and session key
         $stage = $this->_get_stage($RequestDict['fuid']);
+        pr("stage $stage");
 
         // subaction tree
         #pr( array('subaction'=>$subaction, 'stage'=>$stage, 'dom_id'=>$dom_id, 'form_key'=>$form_key));
@@ -129,9 +132,11 @@ class CommentController extends AppController
                                     $this->params['form']['recaptcha_challenge_field'],
                                     $this->params['form']['recaptcha_response_field'] );
 
+            pr($this->_unpickle($RequestDict['fuid']));
+
             if ( $RecaptchaResponse->is_valid )
             {
-                $this->data['Comment'] = $this->_unpickle($RequestDict['form_key']);
+                $this->data['Comment'] = $this->_unpickle($RequestDict['fuid']);
                 $this->data['Comment']['recaptcha'] = $this->params['form']['recaptcha_response_field'];
                 $this->data['Comment']['author_ip'] = $this->RequestHandler->getClientIP();
                 $this->data['Comment']['agent'] = $_SERVER['HTTP_USER_AGENT'];
@@ -142,7 +147,7 @@ class CommentController extends AppController
                 $this->Comment->set($this->data);
 
                 if ( $this->Comment->save() )
-                    $stage = $this->_set_stage($RequestDict['form_key'], 3);
+                    $stage = $this->_set_stage($RequestDict['fuid'], 3);
                 else
                     $this->set('form_message', 'unable to save comment');
             }
@@ -156,7 +161,7 @@ class CommentController extends AppController
         $this->set('form_key', $RequestDict['form_key']);
         $this->set('dom_id', $RequestDict['dom_id']);
         $this->set('callback', $RequestDict['callback']);
-        $this->set('CommentData', $this->_get_form_data($RequestDict['form_key']));
+        $this->set('CommentData', $this->_get_form_data($RequestDict['fuid']));
 
         // show stage 3
         if ( $stage == 3 )
@@ -190,6 +195,7 @@ class CommentController extends AppController
     function _get_stage($fuid)
     {
         $session_key = "$fuid.stage";
+        pr("fuid: $fuid ($session_key) " . (int) $this->Session->check($session_key));
         if ( !$this->Session->check($session_key) )
             return $this->_set_stage($fuid, 1);
         return $this->Session->read($session_key);

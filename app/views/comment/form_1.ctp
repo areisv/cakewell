@@ -1,14 +1,14 @@
 <?php
 
     // set form unique id
-    $fuid = $commentForm->fuid($dom_id, $form_key);
+    $fuid = $commentForm->fuid($form_key, $dom_id);
 
     $ajax_url = '/comment/form/';
     $form_message = ( !empty($form_message) ) ? sprintf('<h4>%s</h4>', $form_message) : '';
-    $author = ( !empty($CommentData[$fuid]['author']) ) ? $CommentData[$fuid]['author'] : '';
-    $author_email = ( !empty($CommentData[$fuid]['author_email']) ) ? $CommentData[$fuid]['author_email'] : '';
-    $author_url = ( !empty($CommentData[$fuid]['author_url']) ) ? $CommentData[$fuid]['author_url'] : '';
-    $comment_text = ( !empty($CommentData[$fuid]['text']) ) ? $CommentData[$fuid]['text'] : '';
+    $author = ( !empty($CommentData['author']) ) ? $CommentData['author'] : '';
+    $author_email = ( !empty($CommentData['author_email']) ) ? $CommentData['author_email'] : '';
+    $author_url = ( !empty($CommentData['author_url']) ) ? $CommentData['author_url'] : '';
+    $comment_text = ( !empty($CommentData['text']) ) ? $CommentData['text'] : '';
     $taglist_ = '';
 
     if ( isset($TagList) )
