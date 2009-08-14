@@ -74,7 +74,16 @@ class CommentController extends AppController
 
     function form()
     {
+        // get Request dict
         $RequestDict = $this->_parse_form_request();
+
+        // cake autoform is keyed to fuid to allow for multiple forms on a page
+        // since only one form can be submitted at a time, we can factor the
+        // fuid out of the data array
+        if ( isset($this->data['Comment'][$RequestDict['fuid']]) )
+            $this->data['Comment'] = $this->data['Comment'][$RequestDict['fuid']];
+        ##pr($this->data);
+        pr($RequestDict);
 
         // sanity checks
         if ( is_null($RequestDict['form_key']) )
@@ -83,21 +92,21 @@ class CommentController extends AppController
             return $this->error('', 'no dom_id');
 
         // stage and session key
-        $stage = $this->_get_stage($RequestDict['form_key']);
+        $stage = $this->_get_stage($RequestDict['fuid']);
 
         // subaction tree
         #pr( array('subaction'=>$subaction, 'stage'=>$stage, 'dom_id'=>$dom_id, 'form_key'=>$form_key));
         // reset
         if ( $RequestDict['subaction'] == 'reset' )
-            $stage = $this->_reset_form($RequestDict['form_key']);
+            $stage = $this->_reset_form($RequestDict['fuid']);
 
         elseif ( $RequestDict['subaction'] == 'edit' )
         {
-            $CommentData = $this->_unpickle($RequestDict['form_key']);
+            $CommentData = $this->_unpickle($RequestDict['fuid']);
             #pr($CommentData);
             $this->Comment->set($CommentData);
             $this->Comment->validates($CommentData);
-            $stage = $this->_set_stage($RequestDict['form_key'], 1);
+            $stage = $this->_set_stage($RequestDict['fuid'], 1);
         }
 
         // preview (submit comment form)
@@ -106,8 +115,8 @@ class CommentController extends AppController
             $this->Comment->set($this->data);
             if ( $this->Comment->validates($this->data) )
             {
-                $this->_pickle($RequestDict['form_key'], $this->Comment->data);
-                $stage = $this->_set_stage($RequestDict['form_key'], 2);
+                $this->_pickle($RequestDict['fuid'], $this->Comment->data);
+                $stage = $this->_set_stage($RequestDict['fuid'], 2);
             }
         }
 
@@ -178,17 +187,17 @@ class CommentController extends AppController
     }
 
 
-    function _get_stage($form_key)
+    function _get_stage($fuid)
     {
-        $session_key = "$form_key.stage";
+        $session_key = "$fuid.stage";
         if ( !$this->Session->check($session_key) )
-            return $this->_set_stage($form_key, 1);
+            return $this->_set_stage($fuid, 1);
         return $this->Session->read($session_key);
     }
 
-    function _set_stage($form_key, $num)
+    function _set_stage($fuid, $num)
     {
-        $session_key = "$form_key.stage";
+        $session_key = "$fuid.stage";
         $this->Session->write($session_key, $num);
         return $num;
     }
@@ -199,10 +208,9 @@ class CommentController extends AppController
         return $this->_set_stage($form_key, 1);
     }
 
-
-    function _get_dom_id($form_key)
+    function _get_dom_id($fuid)
     {
-        $session_key = "$form_key.dom_id";
+        $session_key = "$fuid.dom_id";
 
         if ( isset($this->params['form']['dom_id']) )
             return $this->_set_dom_id($session_key, urldecode($this->params['form']['dom_id']));
@@ -219,9 +227,9 @@ class CommentController extends AppController
         return $dom_id;
     }
 
-    function _get_meta_id($form_key)
+    function _get_meta_id($fuid)
     {
-        $session_key = "$form_key.meta_id";
+        $session_key = "$fuid.meta_id";
 
         if ( isset($this->params['form']['meta_id']) )
             return $this->_set_dom_id($session_key, urldecode($this->params['form']['meta_id']));
@@ -238,10 +246,10 @@ class CommentController extends AppController
         return $meta_id;
     }
 
-    function _get_multiples_ok($form_key)
+    function _get_multiples_ok($fuid)
     {
         $id = 'multiples_ok';
-        $session_key = "$form_key.$id";
+        $session_key = "$fuid.$id";
 
         if ( isset($this->params['form'][$id]) )
             return $this->_set_multiples_ok($session_key, $this->params['form'][$id]);
@@ -258,9 +266,9 @@ class CommentController extends AppController
         return $ok;
     }
 
-    function _pickle($form_key, $CommentData=null)
+    function _pickle($fuid, $CommentData=null)
     {
-        $session_key = sprintf('%s.CommentData', $form_key);
+        $session_key = sprintf('%s.CommentData', $fuid);
         if ( isset($CommentData['Comment']) )
             $CommentData = $CommentData['Comment'];
 
@@ -276,25 +284,26 @@ class CommentController extends AppController
         return $CommentData;
     }
 
-    function _unpickle($form_key)
+    function _unpickle($fuid)
     {
-        $session_key = sprintf('%s.CommentData', $form_key);
+        $session_key = sprintf('%s.CommentData', $fuid);
 
         if ( $this->Session->check($session_key) )
             return $this->Session->read($session_key);
         return array();
     }
 
-    function _get_form_data($form_key)
+    function _get_form_data($fuid)
     {
         #pr($this->_unpickle($form_key)); pr($this->data);
-        return Set::merge($this->_unpickle($form_key), $this->data['Comment']);
+        return Set::merge($this->_unpickle($fuid), $this->data['Comment']);
     }
 
     function _parse_form_request()
     {
         $RequestDict = array(
             'subaction' => null,
+            'fuid' => null,
             'form_key' => null,
             'dom_id' => null,
             'meta_id' => null,
@@ -305,15 +314,18 @@ class CommentController extends AppController
         if ( isset($this->params['form']['subaction']) )
             $RequestDict['subaction'] = $this->params['form']['subaction'];
 
+        if ( isset($this->params['form']['fuid']) )
+            $RequestDict['fuid'] = urldecode($this->params['form']['fuid']);
+
         if ( isset($this->params['form']['form_key']) )
             $RequestDict['form_key'] = urldecode($this->params['form']['form_key']);
 
         if ( isset($this->params['form']['callback']) )
             $RequestDict['callback'] = urldecode($this->params['form']['callback']);
 
-        $RequestDict['dom_id'] = $this->_get_dom_id($RequestDict['form_key']);
-        $RequestDict['meta_id'] = $this->_get_meta_id($RequestDict['form_key']);
-        $RequestDict['multiples_ok'] = $this->_get_multiples_ok($RequestDict['form_key']);
+        $RequestDict['dom_id'] = $this->_get_dom_id($RequestDict['fuid']);
+        $RequestDict['meta_id'] = $this->_get_meta_id($RequestDict['fuid']);
+        $RequestDict['multiples_ok'] = $this->_get_multiples_ok($RequestDict['fuid']);
 
         return $RequestDict;
     }

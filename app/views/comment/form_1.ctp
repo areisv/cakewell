@@ -1,11 +1,14 @@
 <?php
 
+    // set form unique id
+    $fuid = $commentForm->fuid($dom_id, $form_key);
+
     $ajax_url = '/comment/form/';
     $form_message = ( !empty($form_message) ) ? sprintf('<h4>%s</h4>', $form_message) : '';
-    $author = ( !empty($CommentData['author']) ) ? $CommentData['author'] : '';
-    $author_email = ( !empty($CommentData['author_email']) ) ? $CommentData['author_email'] : '';
-    $author_url = ( !empty($CommentData['author_url']) ) ? $CommentData['author_url'] : '';
-    $comment_text = ( !empty($CommentData['text']) ) ? $CommentData['text'] : '';
+    $author = ( !empty($CommentData[$fuid]['author']) ) ? $CommentData[$fuid]['author'] : '';
+    $author_email = ( !empty($CommentData[$fuid]['author_email']) ) ? $CommentData[$fuid]['author_email'] : '';
+    $author_url = ( !empty($CommentData[$fuid]['author_url']) ) ? $CommentData[$fuid]['author_url'] : '';
+    $comment_text = ( !empty($CommentData[$fuid]['text']) ) ? $CommentData[$fuid]['text'] : '';
     $taglist_ = '';
 
     if ( isset($TagList) )
@@ -21,18 +24,20 @@
         if ( empty($author_email) ) $author_email = 'test@example.com';
     }
 
-    // adds all javascript function needed for ajax submission
-    echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url, $callback);
+    // generate necessary javascript functions for ajax submission using helper
+    #echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url, $callback);
+    echo $commentForm->get_submit_comment_js($form_key, $dom_id,$ajax_url, $callback);
+    echo $commentForm->get_reset_comment_js($form_key, $dom_id, $ajax_url, $callback);
 ?>
 
 
 <div class="ajax_comment_form">
 <h2>Leave a Comment</h2>
 <h5>e-mail address required, but will not be published</h5>
-    <?php echo $form->create('Comment', array('url' => '/comment/form', 'id'=>'ajax_comment_form'));?>
+    <?php echo $form->create('Comment', array('url' => '/comment/form', 'id'=> $fuid ));?>
 
         <fieldset>
-        <?php echo $form->input('text', array('label' => 'comment' .  $taglist_,
+        <?php echo $form->input("Comment.$fuid.text", array('label' => 'comment' .  $taglist_,
                                               'value' => $comment_text,
                                               'error' => false,     # use custom
                                               'rows'  => '10', 'cols' => '30' ));?>
@@ -40,19 +45,19 @@
         </fieldset>
 
         <fieldset>
-        <?php echo $form->input('author', array('label' => 'your name', 'value'=>$author) );?>
-        <?php echo $form->input('author_email', array('label' => 'your email address*', 'value'=>$author_email) );?>
-        <?php echo $form->input('author_url', array('label' => 'your web address', 'value'=>$author_url) );?>
+        <?php echo $form->input("Comment.$fuid.author", array('label' => 'your name', 'value'=>$author) );?>
+        <?php echo $form->input("Comment.$fuid.author_email", array('label' => 'your email address*', 'value'=>$author_email) );?>
+        <?php echo $form->input("Comment.$fuid.author_url", array('label' => 'your web address', 'value'=>$author_url) );?>
         <div class="honey">
-            <?php echo $form->input($honeypot_field, array('id'=>$honeypot_field, 'label'=>'required') );?>
+            <?php echo $form->input("Comment.$fuid.$honeypot_field", array('id'=>$honeypot_field, 'label'=>'required') );?>
         </div>
         </fieldset>
 
         <fieldset>
         <?php echo $form->button('preview',
-            array('type'=>'button', 'onclick'=>'javascript:submit_comment_form_()'));?>
+            array('type'=>'button', 'onclick'=>"javascript:cakewell_submit_comment_form('$fuid')"));?>
         <?php echo $form->button('reset',
-            array('type'=>'button', 'onclick'=>'javascript:reset_comment_form_()'));?>
+            array('type'=>'button', 'onclick'=>"javascript:cakewell_reset_comment_form('$fuid')"));?>
         </fieldset>
 
     <?php echo $form->end(); ?>
