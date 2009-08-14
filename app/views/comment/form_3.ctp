@@ -1,4 +1,6 @@
 <?php
+    // set form unique id
+    $fuid = $commentForm->fuid($form_key, $dom_id);
 
     $ajax_url = '/comment/form/';
     $form_message = ( !empty($form_message) ) ? sprintf('<h4>%s</h4>', $form_message) : '';
@@ -8,12 +10,13 @@
     if ( $multiples_ok )
         $restart_html = sprintf($restart_t,
             $form->button('new comment',
-                array('type'=>'button', 'onclick'=>'javascript:reset_comment_form_()')
+                array('type'=>'button', 'onclick'=>"javascript:cakewell_reset_comment_form('$fuid')")
             )
         );
 
     // adds all javascript function needed for ajax submission
-    echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url, $callback);
+    #echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url, $callback);
+    echo $commentForm->get_reset_comment_js($form_key, $dom_id, $ajax_url, $callback);
 
     // adds callback
     echo $commentForm->get_callback($callback);

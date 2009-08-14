@@ -46,6 +46,7 @@ XHTML;
     function get_submit_preview_js($form_key, $dom_id, $ajax_url, $callback='')
     {
         $tpl = <<<XHTML
+<script type="text/javascript">
 function cakewell_submit_comment_preview(fuid)
 {
     var form_key = '%s';
@@ -55,7 +56,9 @@ function cakewell_submit_comment_preview(fuid)
 
     var FormData = {
         'subaction': 'save',
+        'fuid': fuid,
         'form_key': form_key,
+        'dom_id': dom_id,
         'callback': callback,
         'recaptcha_challenge_field': Recaptcha.get_challenge(),
         'recaptcha_response_field': Recaptcha.get_response()
@@ -69,6 +72,7 @@ function cakewell_submit_comment_preview(fuid)
     //console.log(FormData);
     $('#'+dom_id).load(ajax_url, FormData);
 }
+</script>
 XHTML;
         return sprintf($tpl, $form_key, $dom_id, $ajax_url, $callback);
     }
@@ -76,6 +80,7 @@ XHTML;
     function get_edit_comment_js($form_key, $dom_id, $ajax_url, $callback='')
     {
         $tpl = <<<XHTML
+<script type="text/javascript">
 function cakewell_edit_comment_form(fuid)
 {
     var form_key = '%s';
@@ -85,7 +90,9 @@ function cakewell_edit_comment_form(fuid)
 
     var FormData = {
         'subaction': 'edit',
+        'fuid': fuid,
         'form_key': form_key,
+        'dom_id': dom_id,
         'callback': callback
     };
 
@@ -97,6 +104,7 @@ function cakewell_edit_comment_form(fuid)
     //console.log(FormData);
     $('#'+dom_id).load(ajax_url, FormData);
 }
+</script>
 XHTML;
         return sprintf($tpl, $form_key, $dom_id, $ajax_url, $callback);
     }
@@ -114,7 +122,9 @@ function cakewell_reset_comment_form(fuid)
 
     var FormData = {
         'subaction': 'edit',
+        'fuid': fuid,
         'form_key': form_key,
+        'dom_id': dom_id,
         'callback': callback
     };
 

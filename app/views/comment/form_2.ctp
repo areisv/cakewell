@@ -1,25 +1,25 @@
 <?php
     // set form unique id
-    $fuid = $commentForm->fuid($dom_id, $form_key);
+    $fuid = $commentForm->fuid($form_key, $dom_id);
 
     $ajax_url = '/comment/form/';
     $form_message = ( !empty($form_message) ) ? sprintf('<h4>%s</h4>', $form_message) : '';
-    $author = ( !empty($CommentData[$fuid]['author']) ) ? $CommentData[$fuid]['author'] : '';
-    $author_email = ( !empty($CommentData[$fuid]['author_email']) ) ? sprintf('| %s', $CommentData[$fuid]['author_email']) : '';
-    $author_url = ( !empty($CommentData[$fuid]['author_url']) ) ? $CommentData[$fuid]['author_url'] : '';
-    $text_ = ( !empty($CommentData[$fuid]['text']) ) ? nl2br($CommentData[$fuid]['text']) : '';
+    $author = ( !empty($CommentData['author']) ) ? $CommentData['author'] : '';
+    $author_email = ( !empty($CommentData['author_email']) ) ? sprintf('| %s', $CommentData['author_email']) : '';
+    $author_url = ( !empty($CommentData['author_url']) ) ? $CommentData['author_url'] : '';
+    $text_ = ( !empty($CommentData['text']) ) ? nl2br($CommentData['text']) : '';
 
-    if ( !empty($CommentData[$fuid]['author_url']) )
+    if ( !empty($CommentData['author_url']) )
         $author = sprintf( '<a href="%s" %s>%s</a>',
-                           $CommentData[$fuid]['author_url'],
+                           $CommentData['author_url'],
                            'onclick="window.open(this.href,\'_blank\');return false;"',
                            $author);
 
 
     // adds all javascript functions needed for ajax submission
     #echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url, $callback);
-    echo $commentForm->get_reset_comment_js($dom_id, $form_key, $ajax_url, $callback);
-    echo $commentForm->get_submit_preview_js($dom_id, $form_key, $ajax_url, $callback);
+    echo $commentForm->get_reset_comment_js($form_key, $dom_id, $ajax_url, $callback);
+    echo $commentForm->get_submit_preview_js($form_key, $dom_id, $ajax_url, $callback);
     echo $commentForm->get_recaptcha_js(RECAPTCHA_PUBLIC_KEY);
 ?>
 

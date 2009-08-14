@@ -45,6 +45,11 @@ if ( !isset($callback) )
 if ( !isset($multiples_ok) )
     $multiples_ok = 1;
 
+// set fuid
+App::import('Helper', 'CommentForm');
+$commentForm = new CommentFormHelper();
+$fuid = $commentForm->fuid($form_key, $dom_id);
+
 // stylesheet (will add to $scripts_for_layout)
 $html->css('cakewell.comment.css', null, array(), false);
 
@@ -63,6 +68,7 @@ $(document).ready( function() {
         { 'form_key' : '<?php print urlencode($form_key); ?>',
           'dom_id' : '<?php print urlencode($dom_id); ?>',
           'meta_id' : '<?php print urlencode($meta_id); ?>',
+          'fuid' : '<?php print urlencode($fuid); ?>',
           'multiples_ok' : '<?php print urlencode($multiples_ok); ?>',
           'callback' : '<?php print urlencode($callback); ?>' }
     );
