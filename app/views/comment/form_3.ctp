@@ -15,7 +15,6 @@
         );
 
     // adds all javascript function needed for ajax submission
-    #echo $commentForm->get_javascript_functions($dom_id, $form_key, $ajax_url, $callback);
     echo $commentForm->get_reset_comment_js($form_key, $dom_id, $ajax_url, $callback);
 
     // adds callback

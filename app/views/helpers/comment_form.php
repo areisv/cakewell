@@ -64,12 +64,6 @@ function cakewell_submit_comment_preview(fuid)
         'recaptcha_response_field': Recaptcha.get_response()
     };
 
-    $('#'+fuid).find(':input').each( function(i) {
-        if ( !$(this).attr('name') ) return;
-        FormData[$(this).attr('name')] = $(this).val();
-    });
-
-    //console.log(FormData);
     $('#'+dom_id).load(ajax_url, FormData);
 }
 </script>
@@ -96,12 +90,6 @@ function cakewell_edit_comment_form(fuid)
         'callback': callback
     };
 
-    $('#'+fuid).find(':input').each( function(i) {
-        if ( !$(this).attr('name') ) return;
-        FormData[$(this).attr('name')] = $(this).val();
-    });
-
-    //console.log(FormData);
     $('#'+dom_id).load(ajax_url, FormData);
 }
 </script>
@@ -121,19 +109,13 @@ function cakewell_reset_comment_form(fuid)
     var callback = '%s';
 
     var FormData = {
-        'subaction': 'edit',
+        'subaction': 'reset',
         'fuid': fuid,
         'form_key': form_key,
         'dom_id': dom_id,
         'callback': callback
     };
 
-    $('#'+fuid).find(':input').each( function(i) {
-        if ( !$(this).attr('name') ) return;
-        FormData[$(this).attr('name')] = $(this).val();
-    });
-
-    //console.log(FormData);
     $('#'+dom_id).load(ajax_url, FormData);
 }
 </script>
