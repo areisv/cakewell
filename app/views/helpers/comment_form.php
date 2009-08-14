@@ -7,82 +7,128 @@ class CommentFormHelper extends Helper {
 
     function get_javascript_functions($dom_id, $form_key, $ajax_url, $callback='null')
     {
+        trigger_error('deprecated');
+    }
+
+    function get_submit_comment_js($form_key, $dom_id, $ajax_url, $callback='')
+    {
         $tpl = <<<XHTML
 <script type="text/javascript">
-
-var CommentFormGlobals = {
-    'dom_id'   : '%s',
-    'form_key' : '%s',
-    'ajax_url' : '%s',
-    'callback' : '%s'
-};
-
-function submit_comment_form_()
+function cakewell_submit_comment_form(fuid)
 {
-    var dom_id = CommentFormGlobals['dom_id'];
-    var ajax_url = CommentFormGlobals['ajax_url'];
+    var form_key = '%s';
+    var dom_id = '%s';
+    var ajax_url = '%s';
+    var callback = '%s';
+
     var FormData = {
         'subaction': 'preview',
-        'form_key': CommentFormGlobals['form_key'],
-        'callback': CommentFormGlobals['callback']
+        'fuid': fuid,
+        'form_key': form_key,
+        'dom_id': dom_id,
+        'callback': callback
     };
 
-    $(':input').each( function(i) {
+    $('#'+fuid).find(':input').each( function(i) {
         if ( !$(this).attr('name') ) return;
         FormData[$(this).attr('name')] = $(this).val();
     });
 
     //console.log(FormData);
-    $('#'+dom_id).load( ajax_url, FormData);
+    $('#'+dom_id).load(ajax_url, FormData);
 }
+</script>
+XHTML;
+        return sprintf($tpl, $form_key, $dom_id, $ajax_url, $callback);
+    }
 
-function submit_comment_preview_()
+
+    function get_submit_preview_js($form_key, $dom_id, $ajax_url, $callback='')
+    {
+        $tpl = <<<XHTML
+function cakewell_submit_comment_preview(fuid)
 {
-    var dom_id = CommentFormGlobals['dom_id'];
-    var ajax_url = CommentFormGlobals['ajax_url'];
+    var form_key = '%s';
+    var dom_id = '%s';
+    var ajax_url = '%s';
+    var callback = '%s';
+
     var FormData = {
         'subaction': 'save',
-        'form_key': CommentFormGlobals['form_key'],
-        'callback': CommentFormGlobals['callback'],
+        'form_key': form_key,
+        'callback': callback,
         'recaptcha_challenge_field': Recaptcha.get_challenge(),
         'recaptcha_response_field': Recaptcha.get_response()
     };
 
-    $('#'+dom_id).load( ajax_url, FormData );
-}
+    $('#'+fuid).find(':input').each( function(i) {
+        if ( !$(this).attr('name') ) return;
+        FormData[$(this).attr('name')] = $(this).val();
+    });
 
-function edit_comment_form_()
+    //console.log(FormData);
+    $('#'+dom_id).load(ajax_url, FormData);
+}
+XHTML;
+        return sprintf($tpl, $form_key, $dom_id, $ajax_url, $callback);
+    }
+
+    function get_edit_comment_js($form_key, $dom_id, $ajax_url, $callback='')
+    {
+        $tpl = <<<XHTML
+function cakewell_edit_comment_form(fuid)
 {
-    var dom_id = CommentFormGlobals['dom_id'];
-    var ajax_url = CommentFormGlobals['ajax_url'];
+    var form_key = '%s';
+    var dom_id = '%s';
+    var ajax_url = '%s';
+    var callback = '%s';
+
     var FormData = {
         'subaction': 'edit',
-        'form_key': CommentFormGlobals['form_key'],
-        'callback': CommentFormGlobals['callback']
+        'form_key': form_key,
+        'callback': callback
     };
 
-    //console.log(FormData);
-    $('#'+dom_id).load( ajax_url, FormData );
-}
+    $('#'+fuid).find(':input').each( function(i) {
+        if ( !$(this).attr('name') ) return;
+        FormData[$(this).attr('name')] = $(this).val();
+    });
 
-function reset_comment_form_()
+    //console.log(FormData);
+    $('#'+dom_id).load(ajax_url, FormData);
+}
+XHTML;
+        return sprintf($tpl, $form_key, $dom_id, $ajax_url, $callback);
+    }
+
+    function get_reset_comment_js($form_key, $dom_id, $ajax_url, $callback='')
+    {
+        $tpl = <<<XHTML
+<script type="text/javascript">
+function cakewell_reset_comment_form(fuid)
 {
-    var dom_id = CommentFormGlobals['dom_id'];
-    var ajax_url = CommentFormGlobals['ajax_url'];
+    var form_key = '%s';
+    var dom_id = '%s';
+    var ajax_url = '%s';
+    var callback = '%s';
+
     var FormData = {
-        'subaction': 'reset',
-        'form_key': CommentFormGlobals['form_key'],
-        'callback': CommentFormGlobals['callback']
+        'subaction': 'edit',
+        'form_key': form_key,
+        'callback': callback
     };
 
-    //console.log(FormData);
-    $('#'+dom_id).load( ajax_url, FormData);
-}
+    $('#'+fuid).find(':input').each( function(i) {
+        if ( !$(this).attr('name') ) return;
+        FormData[$(this).attr('name')] = $(this).val();
+    });
 
+    //console.log(FormData);
+    $('#'+dom_id).load(ajax_url, FormData);
+}
 </script>
 XHTML;
-
-        return sprintf($tpl, $dom_id, $form_key, $ajax_url, $callback);
+        return sprintf($tpl, $form_key, $dom_id, $ajax_url, $callback);
     }
 
     function get_recaptcha_js($recaptcha_key)
@@ -117,6 +163,18 @@ XHTML;
 XHTML;
 
         return sprintf($tpl, $callback, $callback);
+    }
+
+    // normalizer
+    function n($s)
+    {
+        return preg_replace('%[\s\-]%', '_', trim($s));
+    }
+
+    // get unique form id
+    function fuid($form_key, $dom_id)
+    {
+        return sprintf('%s_%s', $this->n($form_key), $this->n($dom_id));
     }
 }
 ?>
