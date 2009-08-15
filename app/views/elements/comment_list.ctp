@@ -50,24 +50,45 @@ $html->css('cakewell.comment.css', null, array(), false);
 
 <script type="text/javascript">
 
-function load_comment_list()
-{
-    // display a loading message or image
-    $('#<?php print $list_dom; ?>').html('loading comments');
+// Add this listings data to a global
+if ( typeof GlobalCakeCommentList == 'undefined' ) GlobalCakeCommentList = [];
+GlobalCakeCommentList.push([
+    '<?php print $list_dom; ?>',
+    '<?php print urlencode($form_key); ?>',
+    '<?php print urlencode($dom_id); ?>',
+    '<?php print urlencode($meta_id); ?>',
+    '<?php print urlencode($limit); ?>'
+]);
 
-    // this is a jquery ajax call
-    $('#<?php print $list_dom; ?>').load(
-        '/comment/show/',
-        { 'list_dom' : '<?php print urlencode($list_dom); ?>',
-          'form_key' : '<?php print urlencode($form_key); ?>',
-          'dom_id' : '<?php print urlencode($dom_id); ?>',
-          'meta_id' : '<?php print urlencode($meta_id); ?>',
-          'limit' : '<?php print urlencode($limit); ?>' }
-    );
+if ( typeof load_cakewell_comments == 'undefined' )
+{
+    var load_cakewell_comments = function()
+    {
+        jQuery.each(GlobalCakeCommentList, function() {
+            load_comment_list_to_dom(this)
+        });
+    }
+
+    var load_comment_list_to_dom = function(L)
+    {
+        // display a loading message or image
+        $('#'+L[0]).html('loading comments');
+
+        // this is a jquery ajax call
+        $('#'+L[0]).load(
+            '/comment/show/',
+            { 'list_dom' : L[0],
+              'form_key' : L[1],
+              'dom_id' : L[2],
+              'meta_id' : L[3],
+              'limit' : L[4] }
+        );
+    }
 }
 
+
 $(document).ready( function() {
-    load_comment_list();
+    load_cakewell_comments();
 });
 
 </script>

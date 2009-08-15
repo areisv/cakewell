@@ -13,7 +13,8 @@ class CommentFormHelper extends Helper {
 <script type="text/javascript">
 
     // Define global dict
-    if ( typeof CakewellCommentDict == 'undefined' ) var CakewellCommentDict = {};
+    if ( typeof CakewellCommentDict == 'undefined' )
+        var CakewellCommentDict = {};
 
     CakewellCommentDict['%s'] = {
         'form_key' : '%s',
@@ -51,8 +52,18 @@ if ( typeof cakewell_submit_comment_form == 'undefined' )
             'callback': callback
         };
 
-        $('#'+fuid).find(':input').each( function(i) {
+        /* this does not work -- for some reason, when an invalid form is
+           resubmitted, some of the fields (including email field) get
+           detached from the form element.  Code block below it does work.
+            $('#'+fuid).find(':input').each( function(i) {
             if ( !$(this).attr('name') ) return;
+            FormData[$(this).attr('name')] = $(this).val();
+        }); */
+
+        $(':input').each( function(i) {
+            console.log('name: ' + $(this).attr('name'));
+            if ( !$(this).attr('name') ) return;
+            if ( $(this).attr('name').indexOf(fuid) == -1 ) return;
             FormData[$(this).attr('name')] = $(this).val();
         });
 

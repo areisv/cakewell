@@ -38,7 +38,7 @@ class CommentController extends AppController
         $this->set('dom_id', 'comment-form');
         $this->set('meta_id', 1);
         $this->set('list_dom', 'comment-form-list');
-        $this->set('callback', 'load_comment_list');
+        $this->set('callback', 'load_cakewell_comments');
         $this->render('index', 'default');
     }
 
@@ -53,7 +53,7 @@ class CommentController extends AppController
         $this->set('dom_id2', 'comment-multiform-2');
         $this->set('list_dom2', 'multiform-comment-list-2');
         $this->set('meta_id2', 0);
-        $this->set('callback', 'load_comment_list');
+        $this->set('callback', 'load_cakewell_comments');
     }
 
     function show()
