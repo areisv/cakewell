@@ -36,6 +36,7 @@ class CommentFormWebTest extends WebTestCase {
         // simulate ajax request to get form
         $cue = 'Leave a Comment';
         $AjaxPost = array(
+            'fuid' => 'irrelevant_to_test',
             'dom_id' => 'comment-form',
             'form_key' => 'comment-index-test',
             'meta_id' => '1',
@@ -58,6 +59,7 @@ class CommentFormWebTest extends WebTestCase {
         $cue = 'recaptcha failed: please try again';
         $AjaxPost = array(
             'subaction' => 'save',
+            'fuid' => 'irrelevant_to_test',
             'form_key' => 'comment-index-test',
             'recaptcha_challenge_field' => '02gFpr6y58yu1P38PqjbSfk8uRSYFewnbzzA3TxWcyAhxLEHOxjPESpho7ehUVz-e8Rqa77tY8Fqfburii95NuEHIIinTYN5IVXEToIQZa9v6lB2kLoyeTABaGywcxMubBTWWDDIGA2KIpL-WgTqJ3yH2W8nRAmqc6YGbtDT1mz4WXQJa4fk9btJpxZdY9wyX7PqwQseJLtRroLeRZmuyd93iWpWCfRl3tV8Uncu_NE2wDQBALAAwhwm_bBKhckReQSnPP0gftZoRM5O46Uo8WEccoc4kB',
             'recaptcha_response_field' => 'abject failure'
@@ -77,6 +79,7 @@ class CommentFormWebTest extends WebTestCase {
     {
         $cue = 'Leave a Comment';
         $AjaxPost = array(
+            'fuid' => 'irrelevant_to_test',
             'form_key' => 'comment-index-test',
             'subaction' => 'reset'
         );
@@ -97,6 +100,7 @@ class CommentFormWebTest extends WebTestCase {
             'data[Comment][text]' => "Comment form test\n\nA test comment",
             'data[Comment][author_email]' => 'cakewell@code.google.com',
             'data[Comment][author]' => 'cakewell web test',
+            'fuid' => 'irrelevant_to_test',
             'form_key' => 'comment-index-test',
             'subaction' => 'preview'
         );

@@ -181,8 +181,6 @@ class CommentController extends AppController
 
     function error($message='', $error='unspecified')
     {
-        $this->set('message', $message);
-        $this->set('error', $error);
         return $this->render('error');
     }
 
