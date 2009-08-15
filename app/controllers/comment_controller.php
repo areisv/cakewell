@@ -129,12 +129,9 @@ class CommentController extends AppController
                                     $this->params['form']['recaptcha_challenge_field'],
                                     $this->params['form']['recaptcha_response_field'] );
 
-            pr($this->_unpickle($RequestDict['fuid']));
-
             if ( $RecaptchaResponse->is_valid )
             {
                 $this->data['Comment'] = $this->_unpickle($RequestDict['fuid']);
-                debug($RequestDict);
                 $this->data['Comment']['recaptcha'] = $this->params['form']['recaptcha_response_field'];
                 $this->data['Comment']['author_ip'] = $this->RequestHandler->getClientIP();
                 $this->data['Comment']['agent'] = $_SERVER['HTTP_USER_AGENT'];
@@ -235,12 +232,12 @@ class CommentController extends AppController
         $session_key = "$fuid.meta_id";
 
         if ( isset($this->params['form']['meta_id']) )
-            return $this->_set_dom_id($session_key, urldecode($this->params['form']['meta_id']));
+            return $this->_set_meta_id($session_key, urldecode($this->params['form']['meta_id']));
 
         if ( $this->Session->check($session_key) )
             return $this->Session->read($session_key);
 
-        return null;
+        return 0;
     }
 
     function _set_meta_id($session_key, $meta_id)
@@ -309,7 +306,7 @@ class CommentController extends AppController
             'fuid' => null,
             'form_key' => null,
             'dom_id' => null,
-            'meta_id' => null,
+            'meta_id' => 0,
             'multiples_ok' => 1,
             'callback' => 'null'
         );

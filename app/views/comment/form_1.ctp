@@ -26,8 +26,8 @@
 
     // generate necessary javascript functions for ajax submission using helper
     echo $commentForm->get_js_globals($form_key, $dom_id, $ajax_url, $callback);
-    echo $commentForm->get_submit_comment_js($form_key, $dom_id,$ajax_url, $callback);
-    echo $commentForm->get_reset_comment_js($form_key, $dom_id, $ajax_url, $callback);
+    echo $commentForm->get_submit_comment_js();
+    echo $commentForm->get_reset_comment_js();
 ?>
 
 
