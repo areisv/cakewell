@@ -15,34 +15,33 @@ class CommentFormHelper extends Helper {
     // Define global dict
     if ( typeof CakewellCommentDict == 'undefined' ) var CakewellCommentDict = {};
 
-    CakewellCommentDict[%s] = {
-        'form_key' = '%s',
-        'dom_id' = '%s',
-        'ajax_url' = '%s',
-        'callback' = '%s'
+    CakewellCommentDict['%s'] = {
+        'form_key' : '%s',
+        'dom_id'   : '%s',
+        'ajax_url' : '%s',
+        'callback' : '%s'
     };
 
 </script>
 XHTML;
 
-        return sprintf($tpl, $form_key, $dom_id, $ajax_url, $callback);
+        return sprintf($tpl, $fuid, $form_key, $dom_id, $ajax_url, $callback);
     }
 
     function get_submit_comment_js()
     {
         $tpl = <<<XHTML
 <script type="text/javascript">
-
 /* notice how we accommodate multiple forms in a single page making ajax
    requests for this snippet */
 if ( typeof cakewell_submit_comment_form == 'undefined' )
 {
     var cakewell_submit_comment_form = function(fuid)
     {
-        var form_key = CakewellCommentDict[fuid];
-        var dom_id = CakewellCommentDict[fuid];
-        var ajax_url = CakewellCommentDict[fuid];
-        var callback = CakewellCommentDict[fuid];
+        var form_key = CakewellCommentDict[fuid]['form_key'];
+        var dom_id = CakewellCommentDict[fuid]['dom_id'];
+        var ajax_url = CakewellCommentDict[fuid]['ajax_url'];
+        var callback = CakewellCommentDict[fuid]['callback'];
 
         var FormData = {
             'subaction': 'preview',
@@ -61,91 +60,99 @@ if ( typeof cakewell_submit_comment_form == 'undefined' )
         $('#'+dom_id).load(ajax_url, FormData);
     }
 }
-
 </script>
 XHTML;
         return $tpl;
     }
 
 
-    function get_submit_preview_js($form_key, $dom_id, $ajax_url, $callback='')
+    function get_submit_preview_js()
     {
         $tpl = <<<XHTML
 <script type="text/javascript">
-function cakewell_submit_comment_preview(fuid)
+if ( typeof cakewell_submit_comment_preview == 'undefined' )
 {
-    var form_key = '%s';
-    var dom_id = '%s';
-    var ajax_url = '%s';
-    var callback = '%s';
+    var cakewell_submit_comment_preview = function(fuid)
+    {
+        var form_key = CakewellCommentDict[fuid]['form_key'];
+        var dom_id = CakewellCommentDict[fuid]['dom_id'];
+        var ajax_url = CakewellCommentDict[fuid]['ajax_url'];
+        var callback = CakewellCommentDict[fuid]['callback'];
 
-    var FormData = {
-        'subaction': 'save',
-        'fuid': fuid,
-        'form_key': form_key,
-        'dom_id': dom_id,
-        'callback': callback,
-        'recaptcha_challenge_field': Recaptcha.get_challenge(),
-        'recaptcha_response_field': Recaptcha.get_response()
-    };
+        var FormData = {
+            'subaction': 'save',
+            'fuid': fuid,
+            'form_key': form_key,
+            'dom_id': dom_id,
+            'callback': callback,
+            'recaptcha_challenge_field': Recaptcha.get_challenge(),
+            'recaptcha_response_field': Recaptcha.get_response()
+        };
 
-    $('#'+dom_id).load(ajax_url, FormData);
+        $('#'+dom_id).load(ajax_url, FormData);
+    }
 }
 </script>
 XHTML;
-        return sprintf($tpl, $form_key, $dom_id, $ajax_url, $callback);
+        return $tpl;
     }
 
-    function get_edit_comment_js($form_key, $dom_id, $ajax_url, $callback='')
+    function get_edit_comment_js()
     {
         $tpl = <<<XHTML
 <script type="text/javascript">
-function cakewell_edit_comment_form(fuid)
+if ( typeof cakewell_edit_comment_form == 'undefined' )
 {
-    var form_key = '%s';
-    var dom_id = '%s';
-    var ajax_url = '%s';
-    var callback = '%s';
+    var cakewell_edit_comment_form = function(fuid)
+    {
+        var form_key = CakewellCommentDict[fuid]['form_key'];
+        var dom_id = CakewellCommentDict[fuid]['dom_id'];
+        var ajax_url = CakewellCommentDict[fuid]['ajax_url'];
+        var callback = CakewellCommentDict[fuid]['callback'];
 
-    var FormData = {
-        'subaction': 'edit',
-        'fuid': fuid,
-        'form_key': form_key,
-        'dom_id': dom_id,
-        'callback': callback
-    };
+        var FormData = {
+            'subaction': 'edit',
+            'fuid': fuid,
+            'form_key': form_key,
+            'dom_id': dom_id,
+            'callback': callback
+        };
 
-    $('#'+dom_id).load(ajax_url, FormData);
+        $('#'+dom_id).load(ajax_url, FormData);
+    }
 }
 </script>
 XHTML;
-        return sprintf($tpl, $form_key, $dom_id, $ajax_url, $callback);
+        return $tpl;
     }
 
-    function get_reset_comment_js($form_key, $dom_id, $ajax_url, $callback='')
+    function get_reset_comment_js()
     {
         $tpl = <<<XHTML
 <script type="text/javascript">
-function cakewell_reset_comment_form(fuid)
+if ( typeof cakewell_reset_comment_form == 'undefined' )
 {
-    var form_key = '%s';
-    var dom_id = '%s';
-    var ajax_url = '%s';
-    var callback = '%s';
+    var cakewell_reset_comment_form = function(fuid)
+    {
+        var form_key = CakewellCommentDict[fuid]['form_key'];
+        var dom_id = CakewellCommentDict[fuid]['dom_id'];
+        var ajax_url = CakewellCommentDict[fuid]['ajax_url'];
+        var callback = CakewellCommentDict[fuid]['callback'];
 
-    var FormData = {
-        'subaction': 'reset',
-        'fuid': fuid,
-        'form_key': form_key,
-        'dom_id': dom_id,
-        'callback': callback
-    };
+        var FormData = {
+            'subaction': 'reset',
+            'fuid': fuid,
+            'form_key': form_key,
+            'dom_id': dom_id,
+            'callback': callback
+        };
 
-    $('#'+dom_id).load(ajax_url, FormData);
+        $('#'+dom_id).load(ajax_url, FormData);
+    }
 }
 </script>
 XHTML;
-        return sprintf($tpl, $form_key, $dom_id, $ajax_url, $callback);
+        return $tpl;
     }
 
     function get_recaptcha_js($recaptcha_key)
