@@ -90,8 +90,8 @@ class CommentController extends AppController
         // fuid out of the data array
         if ( isset($this->data['Comment'][$RequestDict['fuid']]) )
             $this->data['Comment'] = $this->data['Comment'][$RequestDict['fuid']];
-        pr($this->data);
-        pr($RequestDict);
+        ##pr($this->data);
+        ##pr($RequestDict);
 
         // stage and session key
         $stage = $this->_get_stage($RequestDict['fuid']);
@@ -134,6 +134,7 @@ class CommentController extends AppController
             if ( $RecaptchaResponse->is_valid )
             {
                 $this->data['Comment'] = $this->_unpickle($RequestDict['fuid']);
+                debug($RequestDict);
                 $this->data['Comment']['recaptcha'] = $this->params['form']['recaptcha_response_field'];
                 $this->data['Comment']['author_ip'] = $this->RequestHandler->getClientIP();
                 $this->data['Comment']['agent'] = $_SERVER['HTTP_USER_AGENT'];

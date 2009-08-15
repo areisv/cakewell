@@ -37,7 +37,7 @@ if ( !isset($dom_id) )
     trigger_error('comment form element must be passed dom_id', E_USER_WARNING);
 
 if ( !isset($meta_id) )
-    $meta_id = 'null';
+    $meta_id = '0';
 
 if ( !isset($callback) )
     $callback = 'null';
