@@ -5,41 +5,66 @@ class CommentFormHelper extends Helper {
     #var $helpers = array('Html');
     var $name = 'CommentForm';
 
-    function get_javascript_functions($dom_id, $form_key, $ajax_url, $callback='null')
+    function get_js_globals($form_key, $dom_id, $ajax_url, $callback='null')
     {
-        trigger_error('deprecated');
+        $fuid = $this->fuid($form_key, $dom_id);
+
+        $tpl = <<<XHTML
+<script type="text/javascript">
+
+    // Define global dict
+    if ( typeof CakewellCommentDict == 'undefined' ) var CakewellCommentDict = {};
+
+    CakewellCommentDict[%s] = {
+        'form_key' = '%s',
+        'dom_id' = '%s',
+        'ajax_url' = '%s',
+        'callback' = '%s'
+    };
+
+</script>
+XHTML;
+
+        return sprintf($tpl, $form_key, $dom_id, $ajax_url, $callback);
     }
 
-    function get_submit_comment_js($form_key, $dom_id, $ajax_url, $callback='')
+    function get_submit_comment_js()
     {
         $tpl = <<<XHTML
 <script type="text/javascript">
-function cakewell_submit_comment_form(fuid)
+
+/* notice how we accommodate multiple forms in a single page making ajax
+   requests for this snippet */
+if ( typeof cakewell_submit_comment_form == 'undefined' )
 {
-    var form_key = '%s';
-    var dom_id = '%s';
-    var ajax_url = '%s';
-    var callback = '%s';
+    var cakewell_submit_comment_form = function(fuid)
+    {
+        var form_key = CakewellCommentDict[fuid];
+        var dom_id = CakewellCommentDict[fuid];
+        var ajax_url = CakewellCommentDict[fuid];
+        var callback = CakewellCommentDict[fuid];
 
-    var FormData = {
-        'subaction': 'preview',
-        'fuid': fuid,
-        'form_key': form_key,
-        'dom_id': dom_id,
-        'callback': callback
-    };
+        var FormData = {
+            'subaction': 'preview',
+            'fuid': fuid,
+            'form_key': form_key,
+            'dom_id': dom_id,
+            'callback': callback
+        };
 
-    $('#'+fuid).find(':input').each( function(i) {
-        if ( !$(this).attr('name') ) return;
-        FormData[$(this).attr('name')] = $(this).val();
-    });
+        $('#'+fuid).find(':input').each( function(i) {
+            if ( !$(this).attr('name') ) return;
+            FormData[$(this).attr('name')] = $(this).val();
+        });
 
-    //console.log(FormData);
-    $('#'+dom_id).load(ajax_url, FormData);
+        //console.log(FormData);
+        $('#'+dom_id).load(ajax_url, FormData);
+    }
 }
+
 </script>
 XHTML;
-        return sprintf($tpl, $form_key, $dom_id, $ajax_url, $callback);
+        return $tpl;
     }
 
 
