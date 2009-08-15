@@ -76,7 +76,6 @@ XHTML;
         return $tpl;
     }
 
-
     function get_submit_preview_js()
     {
         $tpl = <<<XHTML
@@ -203,7 +202,7 @@ XHTML;
     // normalizer
     function n($s)
     {
-        return preg_replace('%[\s\-]%', '_', trim($s));
+        return preg_replace('%[\s\-#]%', '_', trim($s));
     }
 
     // get unique form id
