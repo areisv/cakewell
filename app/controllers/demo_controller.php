@@ -262,10 +262,10 @@ XHTML;
 
     function test_gatekeeper_component($restrict=null, $redirect=null, $message=null)
     {
-        $restrict = ( $restrict == 'restrict' ) ? 1 : null;
-        $redirect = ( $redirect == 'redirect' ) ? 1 : null;
-        $message = ( $message == 'message' ) ? 1 : null;
-        #debug(sprintf('%s %s', $redirect, $message));
+        $restrict = ( $restrict == 'restrict' ) ? 1 : 0;
+        $redirect = ( $redirect == 'redirect' ) ? 1 : 0;
+        $message = ( $message == 'message' ) ? 1 : 0;
+        #debug(sprintf('%s %s %s', $restrict, $redirect, $message));
         #debug((int) ($redirect || $message));
 
         if ( $restrict )

@@ -12,6 +12,9 @@
 
     Router::connect('/', array('controller' => 'pages', 'action' => 'home'));
     Router::connect('/cake', array('controller' => 'pages', 'action' => 'display', 'cake'));
+    Router::connect('/gatekeeper/block',
+        array('controller' => 'demo', 'action' => 'test_gatekeeper_component',
+              'restrict', 'redirect', 'message'));
 
     // Pages Controller (a default)
     # Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
