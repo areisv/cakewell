@@ -1,57 +1,40 @@
 <?php
 
-if ( !isset($header) ) $header = 'Cakewell Sandbox';
-$summary = ( isset($summary) ) ? '<h3>'.$summary.'</h3>' : '';
-if ( !isset($output) ) $output = 'no output';
-if ( is_array($output) ) $output = htmlspecialchars(print_r($output, 1));
-
-// this will update the head section with raw markup
-$head_content = <<<XHTML
-    <!-- Google jQuery -->
-    <script src="http://www.google.com/jsapi"></script>
-    <script>
-        google.load("jquery", "1.3.2");
-        google.load("jqueryui", "1.7.1");
-    </script>
-    <script type="text/javascript" src="http://api.recaptcha.net/js/recaptcha_ajax.js"></script>
-XHTML;
-$this->addScript($head_content);
-
 // stylesheet (will add to $scripts_for_layout)
 $html->css('klenwell.basic', null, array(), false);
 $html->css('cakewell.comment.index', null, array(), false);
-#$html->css('cakewell.comment', null, array(), false);
 
 ?>
 
-<div class="cakewell-sandbox" id="cakewell-sandbox-commentform">
+<div class="cakewell-sandbox" id="cakewell-sandbox-index">
 
-<div id="comment-list-parent">
-     <h3>comments</h3>
-    <div id="<?php echo $list_dom; ?>">
-        <!-- Will be dynamically replaced by jquery via the comment_list element -->
-    </div>
+<h2>Cakewell Comment Form Element</h2>
+
+<div class="examples">
+<h3>examples</h3>
+<ul>
+    <li><a href="/comment/demo">simple form example</a></li>
+    <li><a href="/comment/multiform">two forms on one page</a></li>
+</ul>
 </div>
 
-<div id="<?php echo $dom_id; ?>">
-    <!-- Will be dynamically replaced by jquery via the comment_form element -->
+<h3>overview</h3>
+<div class="overview">
+    <p>The Cakewell Comment controller demonstrates a wizard-like
+    ajax-driven comment form that frustrates spammers and bots by integrating
+    the <a href="http://recaptcha.net/" onclick="window.open(this.href,'_blank');return false;">
+    reCAPTCHA</a> service.</p>
+
+    <p>Comment forms are made available to any page within the site through a simple
+    <a href="http://code.google.com/p/cakewell/source/browse/app/views/elements/comment_form.ctp"
+    onclick="window.open(this.href,'_blank');return false;">element</a> that
+    neatly interfaces with the <a href="http://code.google.com/p/cakewell/source/browse/app/controllers/comment_controller.php"
+    onclick="window.open(this.href,'_blank');return false;">comment controller</a>.</p>
+
+    <p>The source code</a> for the demo forms below, along with all the other code used
+    in this site, can be found on the <a href="http://code.google.com/p/cakewell/"
+    onclick="window.open(this.href,'_blank');return false;">Cakewell Google Code</a> site.</p>
 </div>
 
-<?php
-    echo $this->element( 'comment_form',
-                         array( 'form_key' => $form_key,
-                                'dom_id'   => $dom_id,
-                                'meta_id'  => $meta_id,
-                                'callback' => $callback ) );
-?>
-
-<?php
-    echo $this->element( 'comment_list',
-                         array( 'list_dom' => $list_dom,
-                                'form_key' => $form_key,
-                                'dom_id'   => $dom_id,
-                                'meta_id'  => $meta_id,
-                                'limit' => 'null') );
-?>
 
 </div>

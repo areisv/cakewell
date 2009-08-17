@@ -106,7 +106,7 @@ div.ajax_comment_form fieldset fieldset {
 fieldset fieldset legend {
     /* font-size: 100%; */
     font-weight: normal;
-    margin-left: 20px;
+    margin-left: 20px;overview
 }
 fieldset fieldset div {
     clear: left;
@@ -211,3 +211,20 @@ div.ajax_comment_complete h2 {
 }
 div.ajax_comment_preview p.thanks {}
 div.ajax_comment_preview p.restart {}
+
+
+/* Page-Specific Settings */
+h4.index-link { margin:1em 1em 2em; }
+
+div#cakewell-sandbox-index div.overview {
+    padding-right:400px;
+}
+div#cakewell-sandbox-index div.examples {
+    float:right;
+    width:300px;
+    margin-left:2em;
+    margin-bottom:3em;
+}
+div.examples li {
+    margin-bottom:1em;
+}
