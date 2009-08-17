@@ -18,12 +18,13 @@ XHTML;
 $this->addScript($head_content);
 
 // stylesheet (will add to $scripts_for_layout)
-$html->css('cakewell.comment.multiform', null, array(), false);
+$html->css('cakewell.comment.index', null, array(), false);
 
 ?>
 
 <div class="cakewell-comment" id="cakewell-comment-multiform">
 
+<h4 class="index-link"><a href="/comment">comment index</a></h4>
 
 <table><tr>
 

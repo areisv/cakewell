@@ -23,6 +23,11 @@ class CommentController extends AppController
 
     function index()
     {
+        $this->render('index', 'default');
+    }
+
+    function demo()
+    {
         /* An example usage of the comment element through a controller
             form_key is a unique identifier for the form (this allows
                 multiple forms to be used in a single page).
@@ -39,7 +44,7 @@ class CommentController extends AppController
         $this->set('meta_id', 1);
         $this->set('list_dom', 'comment-form-list');
         $this->set('callback', 'load_cakewell_comments');
-        $this->render('index', 'default');
+        $this->render('demo', 'default');
     }
 
     function multiform()
@@ -54,6 +59,7 @@ class CommentController extends AppController
         $this->set('list_dom2', 'multiform-comment-list-2');
         $this->set('meta_id2', 0);
         $this->set('callback', 'load_cakewell_comments');
+        $this->render('multiform', 'default');
     }
 
     function show()
