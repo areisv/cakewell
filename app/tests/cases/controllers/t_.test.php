@@ -2,6 +2,8 @@
 
 /*
     Controller Test Template
+    Author: Tom at klenwell@gmail.com
+    Last Update: $Date$
 
     Replace Pages with your controller's name
 */
