@@ -1,12 +1,11 @@
 <?php
 
 /*
-    Helper Test Template
-
-    Replace Foo with your controller's name
+    Helper Unit Test Template
+    Author: Tom at klenwell@gmail.com
+    Last Update: $Date$
 */
 App::import('Helper', 'Html');
-#uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'js');
 
 
 class SampleHelperTest extends CakeTestCase {
