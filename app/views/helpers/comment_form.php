@@ -61,7 +61,6 @@ if ( typeof cakewell_submit_comment_form == 'undefined' )
         }); */
 
         $(':input').each( function(i) {
-            console.log('name: ' + $(this).attr('name'));
             if ( !$(this).attr('name') ) return;
             if ( $(this).attr('name').indexOf(fuid) == -1 ) return;
             FormData[$(this).attr('name')] = $(this).val();
