@@ -1,0 +1,16 @@
+<?php
+/**
+ *  Cakewell Mode-Specific CakePHP Core Config File
+ *  Production Mode (these settings are intended for the production environment)
+ *
+ *  See the core.php.default config file comments for more info.
+ *
+ *  Be careful regarding define('CONSTANT') conflicts.  If in doubt, use:
+ *      if ( !defined('CONSTANT') ) define('CONSTANT', 'foo');
+ */
+
+    Configure::write('App.mode_config_file', __FILE__);     // for demo
+    Configure::write('debug', 0);
+    Configure::write('Cache.disable', false);
+
+?>

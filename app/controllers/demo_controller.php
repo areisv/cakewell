@@ -52,12 +52,12 @@ class DemoController extends AppController
     {
         $REPORT = array(
             'App.mode' => Configure::Read('App.mode'),
-            'App.server_name' => Configure::Read('App.server_name'),
-            'Configure::Read(\'App\')' => Configure::Read('App'),
-            'PROJECT_ROOT' => PROJECT_ROOT
+            'App.domain' => Configure::Read('App.domain'),
+            'debug' => Configure::read('debug'),
+            'Configure::Read(\'App\')' => Configure::Read('App')
         );
 
-        $this->set('header', 'Cakewell Domain-Specific Auto-Configuration Values');
+        $this->set('header', 'Cakewell Context-Specific App Values');
         $this->set('data', $REPORT);
         $this->render('report');
     }
@@ -86,6 +86,7 @@ class DemoController extends AppController
             'LIBS' => LIBS,
             'LOGS' => LOGS,
             'MODELS' => MODELS,
+            'PROJECT_ROOT (Cakewell only)' => PROJECT_ROOT,
             '$this->params[\'url\']' => $this->params['url'],
             'TMP' => TMP,
             'ROOT' => ROOT,
