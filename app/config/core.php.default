@@ -33,7 +33,10 @@
  * In development mode, you need to click the flash message to continue.
  */
 
-/** EDITABLE **
+
+/** EDITABLE **/
+
+    /**
      * Domain Map
      * This is a cakewell innovation that maps different domains (via
      * $_SERVER['SERVER_NAME']) to different App.Mode configuration values,
@@ -49,41 +52,37 @@
         'example.com'               => 'production'
     );
 
-/* NON-EDITABLE
-        $_SERVER['SERVER_NAME'] not set in some context (e.g. cron jobs)
-        In this case, we look for to see if command line parameter gives
-        us the value, following the example here:
-        http://bakery.cakephp.org/articles/view/one-core-one-app-multiple-domains
-    */
-    if ( empty($_SERVER['SERVER_NAME']) )
-    {
-        // look at last cli value
-        if ( count($_SERVER['argv']) )
-            $_SERVER['SERVER_NAME'] = $_SERVER['argv'][count($_SERVER['argv'])-1];
-    }
+    /**
+     * App Globals
+     * Add any constants or config settings that are not domain specific here.
+     * These can be set on a domain- or mode-specific basis above in the
+     * in domain or mode config files.
+     */
 
-    // Set App.Mode Value
-    // defaults
-    Configure::write('App.mode', 'production');     // default value
-    Configure::write('App.server_name', '');
+    // Project Root Directory Path
+    Configure::write('App.project_root', dirname(dirname(dirname(__FILE__))) . DS);
+    define('PROJECT_ROOT', Configure::read('App.project_root'));
 
-    // from map above
-    foreach ( $ConfigDomainMap as $server_name => $app_mode )
-    {
-        if ( $server_name == $_SERVER['SERVER_NAME'] )
-        {
-            Configure::write('App.mode', $app_mode);
-            Configure::write('App.server_name', $server_name);
-        }
-    }
+    // Google Service Settings
+    define('GA_CODE', 'UA-CODE-HERE');
 
+    // ReCaptcha Keys (http://recaptcha.net/)
+    define('RECAPTCHA_DOMAIN', 'YOUR_KEY_DOMAIN');
+    define('RECAPTCHA_PUBLIC_KEY', 'PUBLIC_KEY_HERE');
+    define('RECAPTCHA_PRIVATE_KEY', 'PRIVATE_KEY_HERE');
 
+    // Twitter Login
+    define('TWITTER_USER', 'YOUR_TWITTER_USERNAME');
+    define('TWITTER_PASS', 'YOUR_TWITTER_PASSWORD');
 
     /**
      * Default Config Settings
      * These are the basic CakePhp core settings (with comments scrubbed.)
      * These can be overridden on a App.Mode-specific basis below.  By default,
      * these are more conservative (i.e. secure).
+     *
+     * For original version with comments, see:
+     * https://trac.cakephp.org/browser/branches/1.2.x.x/app/config/core.php
      */
     Configure::write('debug', 0);
     Configure::write('App.encoding', 'UTF-8');
@@ -104,7 +103,7 @@
     //Configure::write('Session.table', 'cake_sessions');
     //Configure::write('Session.database', 'default');
 
-    // Admin Routest*
+    // Admin Routes*
     //Configure::write('Routing.admin', 'admin');
 
     // Pretty Urls without mod_rewrite*
@@ -114,68 +113,13 @@
     //Configure::write('Asset.filter.css', 'css.php');
     //Configure::write('Asset.filter.js', 'custom_javascript_output_filter.php');
 
-    /**
-     * App.Mode Config Overrides
-     * These are based on the settings mapped to server name above
-     */
 
-
-/** EDITABLE **
-     * App.Mode-specific Settings
-     * These settings will override the default settings above
-     */
-    if ( Configure::read('App.mode') == 'test' )
-    {
-        Configure::write('debug', 2);
-    }
-    elseif ( Configure::read('App.mode') == 'production' )
-    {
-        Configure::write('debug', 0);
-        Configure::write('Cache.disable', false);
-    }
-    else
-    {
-        // this should not happen, so raise error
-        trigger_error('App.mode not properly set', E_USER_ERROR);
-        die('fatal error during core configuration');
-    }
+/* NON-EDITABLE **/
 
     /**
-     * Domain-Specific Config Files
-     * If a file with name match App.Mode settings found in config/domains
-     * folder, load it.  An example file:
-     *
-     * config/domains/test.php
+     * Load magic file to load set Config.domain and mode values and load
+     * any domain or mode-specific config files
      */
-    $app_domain_config_file = sprintf( '%s/%s/%s.php',
-                                       CONFIGS,
-                                       'domains',
-                                       Configure::read('App.mode') );
-    if ( file_exists($app_domain_config_file) )
-        require_once($app_domain_config_file);
+    require_once(CONFIGS . 'magic.php');
 
-
-
-/** EDITABLE **
-     * App Globals
-     * Add any constants or config settings that are not domain specific here.
-     * These can be set on a domain-specific basis above.  They can also be
-     * see in domain config files.
-     */
-
-    // Project Root Directory Path
-    Configure::write('App.project_root', dirname(dirname(dirname(__FILE__))) . DS);
-    define('PROJECT_ROOT', Configure::read('App.project_root'));
-
-    // Google Service Settings
-    define('GA_CODE', 'UA-CODE-HERE');
-
-    // ReCaptcha Keys (http://recaptcha.net/)
-    define('RECAPTCHA_DOMAIN', 'YOUR_KEY_DOMAIN');
-    define('RECAPTCHA_PUBLIC_KEY', 'PUBLIC_KEY_HERE');
-    define('RECAPTCHA_PRIVATE_KEY', 'PRIVATE_KEY_HERE');
-
-    // Twitter Login
-    define('TWITTER_USER', 'YOUR_TWITTER_USERNAME');
-    define('TWITTER_PASS', 'YOUR_TWITTER_PASSWORD');
 ?>

@@ -4,7 +4,10 @@ syntax: glob
 app/tmp
 app/config/core.php
 app/config/database.php
-app/config/domains/test.php
+app/config/modes/test.php
+app/config/modes/production.php
+app/config/domains/cakewell.php
+app/config/domains/cakewell.klenwell.com.php
 app/controllers/sandbox_controller.php
 app/views/sandbox
 app/config/phpmailer.php
