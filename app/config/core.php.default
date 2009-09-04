@@ -3,14 +3,14 @@
  *  Cakewell CakePHP Core Config File
  *
  *  TL;DR Notes:
- *      Configures on a per-domain basis
- *      Editable sections are marked ** EDITABLE **
+ *      Configures app on a per-domain and/or per-mode basis
+ *      Set defaults in the ** EDITABLE ** section below
  *
  *  A modified core config file that attempts to automatically accomodate
  *  multiple domains by modifying the confiugation settings to the server (based
  *  on the $_SERVER['SERVER_NAME'] value).
  *
- *  This approach is adapted from the model described here:
+ *  This approach is adapted from the methodology described here:
  *  http://bakery.cakephp.org/articles/view/one-core-one-app-multiple-domains
  *
  *  To see the original version of this file with comments, visit:
@@ -40,7 +40,7 @@
      * Domain Map
      * This is a cakewell innovation that maps different domains (via
      * $_SERVER['SERVER_NAME']) to different App.Mode configuration values,
-     * which represent different configuration settings (at bottom).
+     * which represent different configuration settings.
      *
      * The App.Mode value also then becomes the key for the DB config file.
      */
@@ -54,9 +54,9 @@
 
     /**
      * App Globals
-     * Add any constants or config settings that are not domain specific here.
-     * These can be set on a domain- or mode-specific basis above in the
-     * in domain or mode config files.
+     * Add any constants or config settings that are not domain-specific here.
+     * These can be set on a domain- or mode-specific basis in config files
+     * in the appropriate subdirectory.
      */
 
     // Project Root Directory Path
@@ -78,11 +78,14 @@
     /**
      * Default Config Settings
      * These are the basic CakePhp core settings (with comments scrubbed.)
-     * These can be overridden on a App.Mode-specific basis below.  By default,
-     * these are more conservative (i.e. secure).
+     * These can be overridden on in the modes or domains config files.  By
+     * default, these are more conservative (i.e. secure).
      *
      * For original version with comments, see:
      * https://trac.cakephp.org/browser/branches/1.2.x.x/app/config/core.php
+     *
+     * For section marked *, make sure you refer to documentation before
+     * changing these settings.
      */
     Configure::write('debug', 0);
     Configure::write('App.encoding', 'UTF-8');
@@ -94,12 +97,12 @@
     Configure::write('Acl.database', 'default');
     Cache::config('default', array('engine' => 'File'));
 
-    // Session Options* (*make sure you refer to documentation before editing this)
+    // Session Options* (*make sure you refer to documentation)
     Configure::write('Session.save', 'php');
     Configure::write('Session.start', true);
     Configure::write('Session.checkAgent', true);
     Configure::write('Security.level', 'high');
-    Configure::write('Security.salt', 'cakewell-DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
+    Configure::write('Security.salt', 'your-secret-app-salt-here');
     //Configure::write('Session.table', 'cake_sessions');
     //Configure::write('Session.database', 'default');
 
@@ -117,7 +120,7 @@
 /* NON-EDITABLE **/
 
     /**
-     * Load magic file to load set Config.domain and mode values and load
+     * Load magic file to set Config.domain and mode values and load
      * any domain or mode-specific config files
      */
     require_once(CONFIGS . 'magic.php');
