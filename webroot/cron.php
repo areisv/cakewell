@@ -90,7 +90,7 @@ $CakePhpCoreDir = '/home/klenwell/root/qed/cake_core';
 	}
 
         // Dispatch the controller action given to it
-        // CLI exceptioin
+        // CLI exception
         if ( !isset($argc) || $argc != 2 ) {
             $exception_controller = '/cron/exception';
             $Dispatcher= new Dispatcher();

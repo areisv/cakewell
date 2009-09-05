@@ -24,8 +24,7 @@ class CronController extends AppController
     {
         // check CAKEWELL_CRON constant, set in webroot/cron.php
         if ( !defined('CAKEWELL_CRON') )
-            $this->Gatekeeper->_restrict('/demo',
-                'cron actions are restricted to backend');
+            die('cron exception: cron flag not set by dispatcher');
     }
 
     function index()
@@ -35,13 +34,12 @@ class CronController extends AppController
 
     function exception()
     {
-        $this->Gatekeeper->_restrict('/demo',
-                'cron failure: cron actions are restricted to backend');
+        die("\ncron error: cron must be called from the command line\n\n");
     }
 
     function test()
     {
-        $this->set('content_for_layout', 'cron test successful');
+        $this->set('content_for_layout', "\ncakewell cron test successful\n\n");
         $this->render('/layouts/blank');
     }
 }
