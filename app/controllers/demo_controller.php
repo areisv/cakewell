@@ -15,9 +15,37 @@ class DemoController extends AppController
     {
         $summary = "A simple demonstration of CakePHP.";
 
-        $content = "<h4>choose a menu action at right</h4>";
+        $content = <<<XHTML
+<div class="intro">
+    <p>The Demo controller includes several public actions presenting basic
+    CakePhp features and settings.  They are listed in the menu to the
+    right.</p>
 
-        $this->set('header', 'Index of DemoController');
+    <p>The complete source code for this site can be found at the Cakewell
+    Google Code Site.  For example, the controller and view files for this
+    page can be found at the following links:</p>
+
+    <ul>
+        <li><a onclick="window.open(this.href,'_blank');return false;"
+            href="http://code.google.com/p/cakewell/source/browse/app/controllers/demo_controller.php">
+            controllers/demo_controller.php</a></li>
+        <li><a onclick="window.open(this.href,'_blank');return false;"
+            href="http://code.google.com/p/cakewell/source/browse/app/views/demo/index.ctp">
+            views/demo/index.ctp</a></li>
+    </ul>
+
+    <p>Additional controllers can be found at the links below.</p>
+</div>
+
+<div class="section">
+    <h4><a href="/comment">Comment Controller</a></h4>
+    <p>This controller presents an ajax-driven three-stage comment form that
+    incorporates the reCAPTCHA widget.</p>
+</div>
+
+XHTML;
+
+        $this->set('header', 'Welcome to the Cakewell CakePhp Demo');
         $this->set('content', $content);
     }
 
