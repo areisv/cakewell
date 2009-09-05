@@ -17,12 +17,26 @@ class CronController extends AppController
 {
     var $name = 'Cron';
     var $uses = null; #array('ModelName');   // or: null;
-    #var $components = array('RequestHandler');
+    var $components = array('RequestHandler', 'Gatekeeper');
     var $layout = 'blank';
+
+    function beforeFilter()
+    {
+        // check CAKEWELL_CRON constant, set in webroot/cron.php
+        if ( !defined('CAKEWELL_CRON') )
+            $this->Gatekeeper->_restrict('/demo',
+                'cron actions are restricted to backend');
+    }
 
     function index()
     {
         $this->test();
+    }
+
+    function exception()
+    {
+        $this->Gatekeeper->_restrict('/demo',
+                'cron failure: cron actions are restricted to backend');
     }
 
     function test()

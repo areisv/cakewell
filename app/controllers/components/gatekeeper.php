@@ -22,14 +22,12 @@ class GatekeeperComponent extends Object
     var $components = array( 'Session' );
 
     // called before Controller:beforeFilter()
-    function initialize()
-    {
+    function initialize(&$controller) {
+        $this->Ctrl = $controller;
     }
 
     // called after Controller::beforeFilter()
-    function startup(&$controller)
-    {
-        $this->Ctrl = $controller;
+    function startup(&$controller) {
     }
 
 

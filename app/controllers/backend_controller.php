@@ -31,7 +31,7 @@ class BackendController extends AppController
     function clear_cache($all=0)
     {
         /*
-            clears app cache using CakePhp's clearCache function.  If all
+            clears app cache using CakePhp's clearCache function.  If $all
             parameter is true, then it clears the views, models, and persistent
             subdirectories.  Otherwise, just the views (clearCache default
             behavior).
