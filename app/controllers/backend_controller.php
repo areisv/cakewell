@@ -13,7 +13,7 @@ class BackendController extends AppController
 {
     var $name = 'Backend';
     var $uses = null;   // or: array('ModelName');
-    var $components = array('RequestHandler');
+    var $components = array('RequestHandler', 'Gatekeeper');
 
     var $CacheList = array('views', 'models', 'persistent');
 
@@ -36,6 +36,12 @@ class BackendController extends AppController
             subdirectories.  Otherwise, just the views (clearCache default
             behavior).
         */
+        // restrict in production until Authwell ready
+        $this->Gatekeeper->restrict_from_app_modes( array('production'),
+            '/backend/',
+            'this action is blocked until the Auth component is complete');
+
+
         $SubdirectoryList = $this->CacheList;
         $ClearedDirs = array();
 

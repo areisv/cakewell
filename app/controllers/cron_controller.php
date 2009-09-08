@@ -9,6 +9,15 @@
         $ php cakewell/webroot/cron.php /cron/test
 
     NOTES
+        Bear in mind, the .htaccess file in webroot contains this line:
+
+            RewriteCond %{REQUEST_FILENAME} !-f
+
+        This means calls to /cron get routed to the webroot/cron.php rather
+        than the index.php file.  Redirects, too, get pointed to cron.php,
+        which can create redirect loops, if you rely on $this->redirect for
+        exception-handling.  Better usually just to die or throw a fatal error.
+
         For more info, see:
         http://bakery.cakephp.org/articles/view/calling-controller-actions-from-cron-and-the-command-line
 */
@@ -17,7 +26,7 @@ class CronController extends AppController
 {
     var $name = 'Cron';
     var $uses = null; #array('ModelName');   // or: null;
-    var $components = array('RequestHandler', 'Gatekeeper');
+    var $components = array('RequestHandler');
     var $layout = 'blank';
 
     function beforeFilter()
