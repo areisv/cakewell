@@ -4,11 +4,17 @@ class DemoController extends AppController
 {
     var $name = 'Demo';
     var $uses = array('Mock', 'SimpleRecord');
-    var $components = array('RequestHandler', 'Twitter', 'Sample', 'Gatekeeper');
+    var $components = array('RequestHandler', 'Twitter', 'Sample', 'Gatekeeper',
+            'SourceView');
+
+    var $build_source_view = 1;
 
     function beforeRender()
     {
         $this->set('menu', $this->Gatekeeper->get_controller_menu($this));
+
+        if ( $this->build_source_view() )
+            $this->set('source_view', $this->SourceView->build_icon_block());
     }
 
     function index()
@@ -55,6 +61,8 @@ XHTML;
           This is an open action for quick-testing new shit and things I'm
           not sure about.
         */
+        $this->SourceView->introspect();
+
         $re = '%[^0-9]%';
         $in = 'a9b9c9-9d9e9-9f9g9!9';
         $out = preg_replace($re, '', $in);
@@ -74,6 +82,12 @@ XHTML;
         $this->set('header', 'Dumping the Controller Object');
         $this->set('data', $REPORT);
         $this->render('report');
+    }
+
+    function view_dump()
+    {
+        $this->set('header', 'Dumping a View Object');
+        $this->render('view_dump');
     }
 
     function config_test()
