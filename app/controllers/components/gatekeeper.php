@@ -11,7 +11,7 @@
     USAGE (in controller)
         var $components = array('Gatekeeper');
 
-        print $this->Gatekeeper->test();
+        $this->Gatekeeper->restrict_to_app_models(array('test'), '/restrict/');
 */
 
 
@@ -63,7 +63,7 @@ class GatekeeperComponent extends Object
     {
         /*
             This method bases restriction on the App.mode configuration setting
-            specific to the Cakewell configuration model.  If
+            specific to the Cakewell configuration model.
         */
         if ( !$mode = Configure::Read('App.mode') )
         {
@@ -81,7 +81,7 @@ class GatekeeperComponent extends Object
     {
         /*
             This method bases restriction on the App.mode configuration setting
-            specific to the Cakewell configuration model.  If
+            specific to the Cakewell configuration model.
         */
         if ( !$mode = Configure::Read('App.mode') )
         {

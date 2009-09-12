@@ -159,7 +159,7 @@ XHTML;
         phpinfo();
         $phpinfo = ob_get_clean();
         $this->set('content_for_view', $phpinfo);
-        $this->render('blank', 'blank');
+        $this->render('blank', 'default');
     }
 
     function test_simple_record_model()
