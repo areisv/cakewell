@@ -22,6 +22,9 @@ div.source_view_icon_block table td {
 }
 div.source_view_icon_block table td.mvc_head { display:none; }
 div.source_view_icon_block table td.icons {}
+div.source_view_icon_block table td.icons a:hover img {
+    background-color:blue;
+}
 
 
 /* General Style Info */

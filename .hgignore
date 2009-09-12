@@ -12,6 +12,7 @@ app/controllers/sandbox_controller.php
 app/views/sandbox
 app/config/phpmailer.php
 app/plugins/twitter/config/core.php
+Graphics
 webroot/index.php
 webroot/test.php
 apache/local.conf

@@ -5,20 +5,21 @@
     Author: Tom at klenwell@gmail.com
     Last Update: $Date$
 
-    Creates links to CakePhp files based on controller values.  Conceptually,
-    this would make more sense as a helper or an elements, but the controller
-    offers more of the necessary information to infer the links and is simply
-    more than convenient than building an element.
+    Creates links to a source code repository based on controller values.
+    Conceptually, this would make more sense as a helper or an elements, but
+    the controller offers more of the necessary information to infer the links
+    and is simply more than convenient than building an element.
 
     USAGE (in controller)
         var $components = array('SourceView');
         ...
-        print $this->SourceView->build_icon_block('http://my-repository.com/hg/project/app/');
+        $this->SourceView->base_url = 'http://my-repo.com/browse/my-app/app/'
+        print $this->SourceView->build_icon_block();
 
     NOTES
         Assumes CakePhp naming conventions are followed
 
-        Sample Introspective Structure:
+        Sample Introspective Data Array:
 
             [ModelList] => Array
                 (
@@ -62,8 +63,6 @@
 
 
 */
-
-
 
 class SourceViewComponent extends Object
 {
@@ -166,6 +165,7 @@ XHTML;
                 {
                     foreach ( $Model->Behaviors->_attached as $behavior )
                     {
+                        if ( isset($this->BehaviorList[$behavior]) ) continue;
                         $behavior_app_path = sprintf('%s/%s/%s.php',
                             'models', 'behaviors', Inflector::underscore($behavior));
                         $behavior_full_path = sprintf('%s%s', APP, $behavior_app_path);
