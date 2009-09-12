@@ -7,14 +7,13 @@ class DemoController extends AppController
     var $components = array('RequestHandler', 'Twitter', 'Sample', 'Gatekeeper',
             'SourceView');
 
-    var $build_source_view = 0;
+    var $build_source_view = 1;
 
     function beforeRender()
     {
         $this->set('menu', $this->Gatekeeper->get_controller_menu($this));
-        debug($this->SourceView->build_icon_block());
         if ( $this->build_source_view )
-            $this->set('source_view', $this->SourceView->build_icon_block());
+            $this->set('source_links', $this->SourceView->build_icon_block());
     }
 
     function index()

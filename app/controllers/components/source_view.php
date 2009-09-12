@@ -69,8 +69,10 @@ class SourceViewComponent extends Object
 {
     var $base_url = 'http://code.google.com/p/cakewell/source/browse/app/';
     var $base_img_url = '/img/source_icons/';
+    var $title_row = 'cakewell source';
 
     var $ModelList = array();
+    var $BehaviorList = array();
     var $ControllerList = array();
     var $ComponentList = array();
     var $ViewList = array();
@@ -106,9 +108,9 @@ XHTML;
         $html_t = <<<XHTML
 <div class="source_view_icon_block">
 <table>
-<tr><td colspan="3">source</td></tr>
+<tr><td class="title_row" colspan="3">%s</td></tr>
 <tr><td class="mvc_head">model</td><td class="mvc_head">controller</td><td class="mvc_head">view</td></tr>
-<tr><td class="model_icons">%s</td><td class="controller_icons">%s</td><td class="view_icons">%s</td></tr>
+<tr><td class="icons model_icons">%s</td><td class="icons controller_icons">%s</td><td class="icons view_icons">%s</td></tr>
 </table>
 </div>
 XHTML;
@@ -120,12 +122,10 @@ XHTML;
         $this->introspect();
 
         foreach ( $this->ModelList as $name => $Data )
-        {
             $ModelHtml[] = $this->link_icon($name, 'model', $Data['path']);
 
-            foreach ( $Data['behaviors'] as $name => $path )
-                $ModelHtml[] = $this->link_icon($name, 'behavior', $path);
-        }
+        foreach ( $this->BehaviorList as $name => $path )
+            $ModelHtml[] = $this->link_icon($name, 'behavior', $path);
 
         foreach ( $this->ControllerList as $name => $path )
             $ControllerHtml[] = $this->link_icon($name, 'controller', $path);
@@ -140,6 +140,7 @@ XHTML;
             $ViewHtml[] = $this->link_icon($name, 'helper', $path);
 
         return sprintf($html_t,
+                       $this->title_row,
                        implode("\n", $ModelHtml),
                        implode("\n", $ControllerHtml),
                        implode("\n", $ViewHtml));
@@ -169,7 +170,7 @@ XHTML;
                             'models', 'behaviors', Inflector::underscore($behavior));
                         $behavior_full_path = sprintf('%s%s', APP, $behavior_app_path);
                         if ( !file_exists($behavior_full_path) ) continue;
-                        $this->ModelList[$Model->name]['behaviors'][$behavior] = $behavior_app_path;
+                        $this->BehaviorList[$behavior] = $behavior_app_path;
                     }
                 }
             }
@@ -201,7 +202,7 @@ XHTML;
 
         $view_app_path = sprintf('%s/%s/%s.ctp', 'views', $this->Ctrl->viewPath, $this->Ctrl->action);
         $view_full_path = sprintf('%s%s', APP, $view_app_path);
-        if ( file_exists($view_full_path) ) $this->ViewList['view'] = $view_full_path;
+        if ( file_exists($view_full_path) ) $this->ViewList[$this->Ctrl->action] = $view_app_path;
 
         # introspect helpers
         if ( empty($this->Ctrl->helpers) ) $this->Ctrl->helpers = array();
@@ -209,7 +210,7 @@ XHTML;
         {
             $helper_app_path = sprintf('%s/%s/%s.php',
                 'views', 'helpers', Inflector::underscore($helper));
-            $helper_full_path = sprintf('%s%s', APP, $comp_app_path);
+            $helper_full_path = sprintf('%s%s', APP, $helper_app_path);
             if ( !file_exists($helper_full_path) ) continue;
             $this->HelperList[$helper] = $helper_app_path;
         }

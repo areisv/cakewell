@@ -4,7 +4,7 @@
 $head_title = 'Cakewell';
 $ga_element = $this->element('analytics', array('code' => GA_CODE));
 $cc_element = $this->element('cclicense');
-$demo_link = $html->link('demo controller', '/demo/index');
+$demo_link = $html->link('cakewell demo index', '/demo/index');
 $version = Configure::version();
 
 ?>
@@ -19,7 +19,7 @@ $version = Configure::version();
 		echo $html->charset();
 		echo $html->meta('icon');
 
-		echo $html->css('cake.generic');
+		echo $html->css('cakewell.generic');
 
 		echo $scripts_for_layout;
 	?>
@@ -29,8 +29,10 @@ $version = Configure::version();
 <div id="container">
 
 <div id="header">
-<h1 style="float:right;"><?php echo $demo_link; ?></h1>
-<h1><?php echo $html->link(__('Cakewell Demo: home', true), '/'); ?></h1>
+<?php if ( isset($source_links) ) print $source_links; ?>
+<h1><?php echo $html->link(__('cakewell home', true), '/'); ?></h1>
+<h1><?php echo $demo_link; ?></h1>
+<div style="clear:both;"></div>
 </div>
 
 
