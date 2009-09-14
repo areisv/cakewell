@@ -1,7 +1,7 @@
 <?php
 
 /*
-    A Sample Plugin Controller
+    Authwell Plugin Controller
 
     Summary of controller here.
 
@@ -9,16 +9,15 @@
         http://book.cakephp.org/view/116/Plugin-Controllers
 */
 
-class TPluginController extends AppController
+class AuthwellController extends AppController
 {
-    var $name = 'TPlugin';
-    var $uses = array('TPlugin.TPlugin');   // or: null;
-    #var $uses = null;
+    var $name = 'Authwell';
+    #var $uses = array('Authwell.AuthwellUser');   // or: null;
+    var $uses = null;
     var $components = array('RequestHandler');
 
     function index()
     {
-        $this->redirect('/t_plugin/smoke_test');
     }
 
     function smoke_test()
