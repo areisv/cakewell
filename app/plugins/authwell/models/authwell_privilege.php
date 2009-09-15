@@ -9,16 +9,23 @@
         http://book.cakephp.org/view/117/Plugin-Models
 */
 
-class TPlugin extends TPluginAppModel
+class AuthwellPrivilege extends AuthwellAppModel
 {
-    var $name = 'TPlugin';
-    var $useTable = false;
-    var $validate = array();
+    var $name = 'AuthwellPrivilege';
+    var $useTable = 'authwell_privileges';
 
-    function test()
-    {
-        return 'test successful';
-    }
+    var $hasAndBelongsToMany = array(
+        'AuthwellRole' => array(
+            'className'              => 'Authwell.AuthwellRole',
+            'joinTable'              => 'authwell_roles__authwell_privileges',
+            'foreignKey'             => 'authwell_privilege_id',
+            'associationForeignKey'  => 'authwell_role_id',
+            'unique'                 => true,
+            'conditions'             => '',
+        )
+    );
+
+    var $validate = array();
 }
 
 ?>
