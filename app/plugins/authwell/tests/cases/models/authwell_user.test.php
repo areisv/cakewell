@@ -14,13 +14,15 @@ class AuthwellUserTestCase extends CakeTestCase {
     var $fixtures = array(
             'plugin.authwell.authwell_user',
             'plugin.authwell.authwell_role',
-            'plugin.authwell.authwell_user__authwell_role',
+            'plugin.authwell.authwell_privilege',
+            'plugin.authwell.authwell_user_authwell_role',
+            'plugin.authwell.authwell_role_authwell_privilege',
         );
 
     function start()
     {
         parent::start();
-        $this->AuthwellUser = ClassRegistry::init('AuthwellUser');
+        $this->AuthwellUser = ClassRegistry::init('Authwell.AuthwellUser');
     }
 
     function testInstance() {
@@ -41,11 +43,11 @@ class AuthwellUserTestCase extends CakeTestCase {
         #debug($this->AuthwellUser->_schema);
     }
 
-    function testAssociations()
+    function testHabtmAssociation()
     {
-        debug($this->AuthwellUser);
-        #$this->assertTrue(isset($this->AuthwellUser->AuthwellRole));
-        #$this->assertTrue($this->AuthwellUser->AuthwellRole instanceof AppModel);
+        $this->assertTrue(isset($this->AuthwellUser->AuthwellRole));
+        $this->assertTrue($this->AuthwellUser->AuthwellRole instanceof AuthwellRole);
+        #debug($this->AuthwellUser);
     }
 }
 ?>

@@ -9,14 +9,14 @@
         http://book.cakephp.org/view/117/Plugin-Models
 */
 
-class AuthwellUser extends AuthwellUserAppModel
+class AuthwellUser extends AuthwellAppModel
 {
     var $name = 'AuthwellUser';
     var $useTable = 'authwell_users';
 
     var $hasAndBelongsToMany = array(
         'AuthwellRole' => array(
-            'className'              => 'AuthwellRole',
+            'className'              => 'Authwell.AuthwellRole',
             'joinTable'              => 'authwell_users__authwell_roles',
             'foreignKey'             => 'authwell_user_id',
             'associationForeignKey'  => 'authwell_role_id',
