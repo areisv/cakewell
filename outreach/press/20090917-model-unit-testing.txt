@@ -1,0 +1,95 @@
+# Advance Model Testing in CakePhp
+
+One of the most challenging issues I've found in developing with CakePhp is unit testing.  Testing models, with its dependence on fixtures, is especially touchy.  The documentation, while constantly improving, still seems at crucial points incomplete or inconsistent.  In this post, I'd like to draw attention to a few pitfalls that I burned a few brain cycles in overcoming and offer some tips for unit testing models with fixtures.
+
+- Cake Core Bugs
+There are a couple documented bugs that still outstanding as of release 1.2.4.8284.  If you are doing anything more than basic testing, one of these could bite you eventually:
+
+https://trac.cakephp.org/ticket/6205
+https://trac.cakephp.org/ticket/6468
+
+Here is a patch file that fixes them:
+
+%%
+# Fix issues with CakePhp model unit tests
+# Tom at klenwell@gmail.com
+# CakePhp Version: 1.2.4.8284
+
+diff -r ead5d3b62da7 -r df04a99fec1b cake/libs/model/datasources/dbo_source.php
+--- a/cake/libs/model/datasources/dbo_source.php	Mon Aug 10 21:16:09 2009 -0700
++++ b/cake/libs/model/datasources/dbo_source.php	Mon Sep 14 21:08:12 2009 -0700
+@@ -2355,6 +2355,15 @@ class DboSource extends DataSource {
+ 			$column['default'] = null;
+ 		}
+
++                // solves fixture problem
++                // see https://trac.cakephp.org/ticket/6205
++                if (($column['type'] == 'datetime' || $column['type'] == 'timestamp' ) && isset($column['default']) && $column['default'] === '') {
++                    $column['default'] = null;
++                }
++                if ( $column['type'] == 'timestamp' && $column['default'] === 'CURRENT_TIMESTAMP' )
++                    #pr($column);
++                    $column['default'] = null;
++
+ 		if (isset($column['key']) && $column['key'] == 'primary' && $type == 'integer') {
+ 			$out .= ' ' . $this->columns['primary_key']['name'];
+ 		} elseif (isset($column['key']) && $column['key'] == 'primary') {
+@@ -2455,4 +2464,4 @@ class DboSource extends DataSource {
+ 		return 'string';
+ 	}
+ }
+-?>
+\ No newline at end of file
++?>
+diff -r ead5d3b62da7 -r df04a99fec1b cake/tests/lib/cake_test_fixture.php
+--- a/cake/tests/lib/cake_test_fixture.php	Mon Aug 10 21:16:09 2009 -0700
++++ b/cake/tests/lib/cake_test_fixture.php	Mon Sep 14 21:08:12 2009 -0700
+@@ -114,7 +114,12 @@ class CakeTestFixture extends Object {
+ 			}
+ 		}
+
+-		if (!isset($this->table)) {
++                // solves HABTM problem
++                // see https://trac.cakephp.org/ticket/6468
++                if (isset($model->table)) {
++                        $this->table = $model->table;
++                }
++                elseif (!isset($this->table)) {
+ 			$this->table = Inflector::underscore(Inflector::pluralize($this->name));
+ 		}
+
+@@ -190,4 +195,4 @@ class CakeTestFixture extends Object {
+ 		return $return;
+ 	}
+ }
+-?>
+\ No newline at end of file
++?>
+%%
+
+- Fixtures
+The design and usage of fixtures still seems fickle.  For instance, the CakePhp docs and packaged test examples promote the explicit declaration of fields in fixtures.  I find this tedious.  Happily, it is also unnecessary, thanks to the import property.
+
+To aovid this nuisance, use the import 'model' or 'table' setting to automatically load the table schema from the existing database.  See the example here:
+
+*Link
+
+A couple other tips for using fixutres:
+1. Import all fixtures associated with a model in the unit test for that model
+2. If unit testing a plugin, the value in the fixtures property takes this format: "plugin.$plugin_name.$model_name"
+3. Don't forget to set up an empty database and include a test_suite setting in your database configuration file.
+
+See these links for additional insight
+*[[http://code.google.com/p/cakewell/source/browse/app/config/database.php.default Cakewell config/database.php.default]]
+*[[https://trac.cakephp.org/browser/trunk/cake/1.2.x.x/cake/tests/lib/cake_test_fixture.php CakePhp cake_test_fixture.php]]
+
+- HABTM Relationships
+To test models that have HABTM relationships with other models, it is necessary to create fixtures for both models having the HABTM relationship <i>and</i> a fixture to build the join table.  See these files from the Cakewell project for examples:
+
+*HABTM Fixture
+*HABTM Fixture
+
+The Cakewell Authwell plugin include a good example of a complex model unit test that is successfully configured.  It includes tests within the plugin directory that autoload a clean test database and successfully test model with HABTM associations.  The source can be found here:
+
+*link
+
