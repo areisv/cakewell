@@ -8,7 +8,7 @@
     http://book.cakephp.org/view/485/Testing-plugins
 */
 
-class AuthwellRoleTestCase extends CakeTestCase {
+class AuthwellPrivilegeTestCase extends CakeTestCase {
 
     var $AuthwellRole = null;
     var $fixtures = array(
