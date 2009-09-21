@@ -446,6 +446,61 @@ XHTML;
         $this->set('data', $REPORT);
         $this->render('report');
     }
+
+    function test_set_diff()
+    {
+        $set = 'a.b.c';
+        $DiffList = array(
+            'a' => 0,
+            'a.b' => 0,
+            'a.b.c' => 1,
+            'a.b.c.x' => 1,
+            'a.b.x' => 0,
+            'a.x' => 0,
+            'x' => 0,
+            'b' => 0,
+            'b.c' => 0,
+            '*' => 1,
+            '*.b.c' => 1,
+            '*.x' => 0
+        );
+        $REPORT['results'] = '';
+
+        foreach ( $DiffList as $diff_set => $expect )
+        {
+            $SetArray = explode('.', $set);
+            $DiffArray = explode('.', $diff_set);
+            $depth_delta = count($SetArray) - count($DiffArray);
+
+            if ( $depth_delta > 0 )
+                foreach( range(1,$depth_delta) as $n )
+                    $DiffArray[] = ( $DiffArray[count($DiffArray)-1] == '*' ) ? '*' : '!';
+
+            $SetDiff = Set::diff($SetArray, $DiffArray);
+            $mismatch = 0;
+            if ( $SetDiff )
+                foreach ( $SetArray as $n => $x )
+                    if ( isset($SetDiff[$n]) && $DiffArray[$n] != '*' )
+                        $mismatch = "$n => $x";
+
+            $REPORT[$diff_set] = array(
+                'pass' => (int)(!(bool)$mismatch == $expect),
+                'expect' => $expect,
+                'mismatch' => $mismatch,
+                "$set diff $diff_set" => $SetDiff,
+                "($set diff $diff_set) diff $set" => Set::diff($SetDiff, $SetArray),
+                "$set diff ($set diff $diff_set)" => Set::diff($SetArray, $SetDiff),
+                "$set pushDiff $diff_set" => Set::pushDiff($SetArray, $DiffArray),
+                "$diff_set diff $set" => Set::diff($DiffArray, $SetArray),
+                "$diff_set pushDiff $set" => Set::pushDiff($DiffArray, $SetArray)
+            );
+        }
+        $REPORT['results'] = Set::extract('{s}.pass', $REPORT);
+
+        $this->set('header', 'Sandbox');
+        $this->set('data', $REPORT);
+        $this->render('report');
+    }
 }
 
 ?>

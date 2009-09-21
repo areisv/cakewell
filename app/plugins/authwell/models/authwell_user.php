@@ -56,6 +56,38 @@ class AuthwellUser extends AuthwellAppModel
         return 1;
     }
 
+    function get_privilege_list($user_id)
+    {
+        /*
+            Returns list of privilege notations associated with this user.
+        */
+        $PrivilegeList =array();
+
+        $RoleList = $this->get_role_list($user_id);
+
+        foreach ( $RoleList as $role_id )
+            $PrivilegeList = array_merge($PrivilegeList, $this->Role->get_privilege_list($role_id));
+
+        return $PrivilegeList;
+    }
+
+    function get_role_list($user_id)
+    {
+        /*
+            Return list of role names associated with this user
+        */
+        $RoleList = array();
+
+        $Result = $this->Role->find( 'all', array(
+            'conditions' => array( 'user_id' => $user_id )
+        ));
+
+        if ( $Result )
+            $RoleList = Set::extract($Result, '{n}.Role.id');
+
+        return $RoleList;
+    }
+
     function match_emails($data)
     {
         return ( $this->data[$this->name]['email'] == $data['email_confirm'] );
