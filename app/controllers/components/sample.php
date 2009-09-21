@@ -23,14 +23,14 @@ class SampleComponent extends Object
     public $Ctrl = null;
 
     // called before Controller:beforeFilter()
-    function initialize()
+    function initialize(&$controller)
     {
+        $this->Ctrl = $controller;
     }
 
     // called after Controller::beforeFilter()
     function startup(&$controller)
     {
-        $this->Ctrl = $controller;
     }
 
     function test()

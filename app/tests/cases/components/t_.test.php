@@ -14,7 +14,7 @@ class SampleComponentTest extends CakeTestCase {
     {
         $this->SampleComponent = new SampleComponent();
         $controller = new MockController();
-        $this->SampleComponent->startup(&$controller);
+        $this->SampleComponent->initialize($controller);
     }
 
     function teardown()
@@ -25,7 +25,6 @@ class SampleComponentTest extends CakeTestCase {
     function testInstance() {
         $this->assertTrue(is_a($this->SampleComponent, 'SampleComponent'));
         $this->assertTrue(is_a($this->SampleComponent->Ctrl, 'MockController'));
-        $this->assertTrue(isset($this->SampleComponent->Ctrl));
     }
 }
 
