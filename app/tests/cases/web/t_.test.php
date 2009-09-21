@@ -21,7 +21,7 @@ class SampleWebTest extends WebTestCase {
     function testGetPage()
     {
         $this->assertTrue($this->get($this->demo_index_url));
-        $this->assertText('Index of DemoController');
+        $this->assertText('Welcome to the Cakewell CakePhp Demo');
     }
 
     function get_content()
