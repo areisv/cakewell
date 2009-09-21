@@ -483,19 +483,18 @@ XHTML;
                     if ( isset($SetDiff[$n]) && $DiffArray[$n] != '*' )
                         $mismatch = "$n => $x";
 
+            $has_privilege = (int)!(bool)$mismatch;
+
             $REPORT[$diff_set] = array(
-                'pass' => (int)(!(bool)$mismatch == $expect),
+                'pass' => (int)($has_privilege == $expect),
                 'expect' => $expect,
+                'result' => $has_privilege,
                 'mismatch' => $mismatch,
                 "$set diff $diff_set" => $SetDiff,
-                "($set diff $diff_set) diff $set" => Set::diff($SetDiff, $SetArray),
-                "$set diff ($set diff $diff_set)" => Set::diff($SetArray, $SetDiff),
-                "$set pushDiff $diff_set" => Set::pushDiff($SetArray, $DiffArray),
-                "$diff_set diff $set" => Set::diff($DiffArray, $SetArray),
-                "$diff_set pushDiff $set" => Set::pushDiff($DiffArray, $SetArray)
             );
         }
         $REPORT['results'] = Set::extract('{s}.pass', $REPORT);
+        unset($REPORT['results'][0]);
 
         $this->set('header', 'Sandbox');
         $this->set('data', $REPORT);
