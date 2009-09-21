@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `authwell_roles__authwell_privileges` (
 -- DROP TABLE IF EXISTS `authwell_privileges`;
 CREATE TABLE IF NOT EXISTS `authwell_privileges` (
     `id` int(11) NOT NULL auto_increment,
-    `notation` varchar(140) NOT NULL default '',
+    `dotpath` varchar(140) NOT NULL default '',
     `description` varchar(255) NOT NULL default '',
     updated DATETIME,
     created DATETIME,
