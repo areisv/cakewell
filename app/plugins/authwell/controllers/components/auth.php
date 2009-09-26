@@ -71,9 +71,29 @@ class AuthComponent extends Object
         trigger_error('in dev', E_USER_ERROR);
     }
 
-    function _user_has_privilege_by_dotpath($dotpath)
+    function _privilege_has_access($key_dotpath, $lock_dotpath)
     {
-        trigger_error('in dev', E_USER_ERROR);
+        return !(int)(bool)$this->_diff_dotpaths($key_dotpath, $lock_dotpath);
+    }
+
+    function _diff_dotpaths($key_dotpath, $lock_dotpath)
+    {
+        $DiffSet = array();
+        $KeySet = explode('.', $key_dotpath);
+        $LockSet = explode('.', $lock_dotpath);
+        $depth_delta = count($KeySet) - count($LockSet);
+
+        if ( $depth_delta > 0 )
+            foreach( range(1,$depth_delta) as $n )
+                $LockSet[] = ( $LockSet[count($LockSet)-1] == '*' ) ? '*' : '!';
+
+        $SetDiff = Set::diff($KeySet, $LockSet);
+        if ( $SetDiff )
+            foreach ( $KeySet as $n => $x )
+                if ( isset($SetDiff[$n]) && $LockSet[$n] != '*' )
+                    $DiffSet[$n] = $x;
+
+        return $DiffSet;
     }
 
     function show_login()
