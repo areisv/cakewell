@@ -35,6 +35,31 @@ class AuthComponentTest extends CakeTestCase {
         $this->assertTrue(is_a($this->AuthComponent, 'AuthComponent'));
         $this->assertTrue(is_a($this->AuthComponent->Ctrl, 'AuthwellCtrl'));
     }
+
+    function testDiffDotpaths() {
+        $keypath = 'a.b.c';
+        $LockList = array(
+            'a' => array(1=>'b',2=>'c'),    # 0
+            'a.b' => array(2=>'c'),         # 0
+            'a.b.c' => array(),             # 1
+            'a.b.c.x' => array(),           # 1
+            'a.b.x' => array(2=>'c'),       # 0
+            'a.x' => array(1=>'b',2=>'c'),  # 0
+            'x' => array('a','b','c'),      # 0
+            'b' => array('a','b','c'),      # 0
+            'b.c' =>array('a','b','c'),     # 0
+            '*' => array(),                 # 1
+            '*.b.c' => array(),             # 1
+            '*.x' => array(1=>'b',2=>'c'),  # 0
+        );
+
+        foreach ( $LockList as $lockpath => $ExpectSet )
+        {
+            $DiffSet = $this->AuthComponent->_diff_dotpaths($keypath, $lockpath);
+            #debug($DiffSet);
+            $this->assertEqual($DiffSet, $ExpectSet);
+        }
+    }
 }
 
 ?>
