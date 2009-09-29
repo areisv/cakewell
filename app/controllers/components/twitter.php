@@ -19,12 +19,6 @@
 
 App::import('Core', array('Xml', 'HttpSocket'));
 
-function fix_twitter_tag($MatchList) {
-    $MatchList[2] = str_replace(':', '_', $MatchList[2]);
-    return implode('', array_slice($MatchList,1));
-}
-
-
 class TwitterComponent extends Object
 {
     var $base_url = 'http://twitter.com/';
@@ -157,15 +151,9 @@ class TwitterComponent extends Object
     function __parse_atom($response)
     {
         $AtomDict = array();
-
-        // transform tags (SimpleXML ignores tags with names like 'twitter:lang')
-        $re_s = '%(</?)([^>]+)(>)%U';
-        $callback = 'fix_twitter_tag';
-        $response = preg_replace_callback($re_s, $callback, $response);
-
-        // parse
-        $Xml = new SimpleXMLElement($response);
         $EntryList = array();
+
+        $Xml = new SimpleXMLElement($response);
 
         foreach ( $Xml->children() as $Node )
         {
@@ -205,6 +193,8 @@ class TwitterComponent extends Object
 
     function __process($response)
     {
+        /* Note: this will fail to properly distinguish among link tags -- see
+           __parse_atom above for a better alternative */
         $xml = new XML($response);
         $array = $xml->toArray();
 

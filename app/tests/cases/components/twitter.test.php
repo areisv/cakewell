@@ -83,29 +83,34 @@ XATOM;
         $this->assertTrue(is_a($this->TwitterComponent->Ctrl, 'MockController'));
     }
 
-    function xtestPublicTimeline() {
+    function testPublicTimeline() {
         $RecentTweets = $this->TwitterComponent->status_public_timeline();
         $TweetList = $RecentTweets['Statuses']['Status'];
         $this->assertEqual($RecentTweets['Statuses']['type'], 'array');
         $this->assertEqual(count($TweetList), 20);
-        debug($TweetList[0]);
+        $this->assertTrue($TweetList[0]['User']);
+        #debug($TweetList[0]);
     }
 
-    function xtestSearch() {
-        $TweetFeed = $this->TwitterComponent->search('disneyland', 'en', 5);
+    function testSearch() {
+        $TweetFeed = $this->TwitterComponent->search('twitter', 'en', 5);
         $TweetList = $TweetFeed['Feed']['Entry'];
         $this->assertEqual($TweetFeed['Feed']['id'],
-                           'tag:search.twitter.com,2005:search/disneyland');
+                           'tag:search.twitter.com,2005:search/twitter');
         $this->assertEqual(count($TweetList), 5);
-        debug($TweetList[0]);
+        $this->assertTrue($TweetList[0]['Link']['rel'] == 'image');
+        #debug($TweetList[0]);
     }
 
-    function xtestSearchJson() {
-        $TweetFeed = $this->TwitterComponent->search_json('disneyland', 'en', 5);
-        debug($TweetFeed);
+    function testSearchJson() {
+        $TweetFeed = $this->TwitterComponent->search_json('twitter', 'en', 5);
+        $this->assertEqual(count($TweetFeed->results), 5);
+        #debug($TweetFeed);
     }
 
     function testPregReplaceTags() {
+        /* Note: this introduces more problems than it solves and hence has
+           been abandoned */
         $s = '<twitter:lang type="hello">en</twitter:lang>';
 
         $re_s = '%(</?)([^>]+)(>)%U';
@@ -116,9 +121,15 @@ XATOM;
 
     function testAtomParse() {
         $FeedDict = $this->TwitterComponent->__parse_atom($this->search_atom);
-        #$this->assertEqual(count($TweetList), 5);
-        debug($FeedDict);
+        $this->assertEqual($FeedDict['Entry'][0]['image'],
+                           'http://a1.twimg.com/profile_images/389431702/autumn_normal.jpg');
+        #debug($FeedDict);
     }
+}
+
+function fix_twitter_tag($MatchList) {
+    $MatchList[2] = str_replace(':', '_', $MatchList[2]);
+    return implode('', array_slice($MatchList,1));
 }
 
 ?>
