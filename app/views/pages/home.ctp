@@ -6,10 +6,10 @@
 ?>
 
 <div id="core_panel">
-<h1>cakewell.klenwell.com</h1>
+<h1><?php echo Configure::Read('App.domain'); ?></h1>
 
 <div id="blurb">
-a working cakephp prototype
+<?php echo Configure::Read('App.motto'); ?>
 </div>
 
 <div class="navbar">

@@ -12,5 +12,6 @@
     Configure::write('App.mode_config_file', __FILE__);     // for demo
     Configure::write('debug', 0);
     Configure::write('Cache.disable', false);
+    Configure::write('App.motto', 'a working cakephp prototype'); 
 
 ?>
