@@ -92,6 +92,13 @@ class TwitterComponent extends Object
         return $this->__process($this->Http->get($url));
     }
 
+    function search_atom($keyword, $lang='en', $rpp='25'){
+        /* ref: http://apiwiki.twitter.com/Twitter-Search-API-Method%3A-search */
+        $urlt_ = 'http://search.twitter.com/search.atom?q=%s&lang=%s&rpp=%s';
+        $url = sprintf($urlt_, $keyword, $lang, $rpp);
+        return $this->__parse_atom($this->Http->get($url));
+    }
+
     function search_json($keyword, $lang='en', $rpp='25') {
         /* ref: http://apiwiki.twitter.com/Twitter-Search-API-Method%3A-search */
         $urlt_ = 'http://search.twitter.com/search.json?q=%s&lang=%s&rpp=%s';
@@ -178,7 +185,7 @@ class TwitterComponent extends Object
         $Dict = array();
         foreach ( $NodeObj->children() as $Node )
         {
-            $node_name = str_replace(':', '_', $Node->getName());
+            $node_name = $Node->getName();
             if ( $node_name == 'link' )
                 $Dict[(string) $Node['rel']] = (string) $Node['href'];
             elseif ( $node_name == 'author' ) {

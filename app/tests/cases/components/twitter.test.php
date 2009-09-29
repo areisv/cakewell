@@ -98,8 +98,19 @@ XATOM;
         $this->assertEqual($TweetFeed['Feed']['id'],
                            'tag:search.twitter.com,2005:search/twitter');
         $this->assertEqual(count($TweetList), 5);
-        $this->assertTrue($TweetList[0]['Link']['rel'] == 'image');
+        $this->assertEqual($TweetList[0]['Link']['rel'], 'image');
         #debug($TweetList[0]);
+    }
+
+    function testSearchAtom() {
+        $term = 'twitter';
+        $TweetFeed = $this->TwitterComponent->search_atom($term, 'en', 5);
+        $TweetList = $TweetFeed['Entry'];
+        $TextList = Set::extract('{n}.content', $TweetList);
+        $this->assertEqual($TweetFeed['id'],
+                           sprintf('tag:search.twitter.com,2005:search/%s', $term));
+        $this->assertEqual(count($TweetList), 5);
+        debug($TextList);
     }
 
     function testSearchJson() {
@@ -123,6 +134,7 @@ XATOM;
         $FeedDict = $this->TwitterComponent->__parse_atom($this->search_atom);
         $this->assertEqual($FeedDict['Entry'][0]['image'],
                            'http://a1.twimg.com/profile_images/389431702/autumn_normal.jpg');
+        $this->assertTrue(isset($FeedDict['Entry'][0]['alternate']));
         #debug($FeedDict);
     }
 }
