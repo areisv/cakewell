@@ -19,6 +19,11 @@
 
 App::import('Core', array('Xml', 'HttpSocket'));
 
+function fix_twitter_tag($MatchList) {
+    $MatchList[2] = str_replace(':', '_', $MatchList[2]);
+    return implode('', array_slice($MatchList,1));
+}
+
 
 class TwitterComponent extends Object
 {
@@ -29,17 +34,16 @@ class TwitterComponent extends Object
     var $Http = null;
 
     // called before Controller:beforeFilter()
-    function initialize()
+    function initialize(&$controller)
     {
+        $this->Ctrl = $controller;
+        $this->Http =& new HttpSocket();
+        if ( !$this->_load_credentials() ) return 0;
     }
 
     // called after Controller::beforeFilter()
     function startup(&$controller)
     {
-        $this->Ctrl = $controller;
-        $this->Http =& new HttpSocket();
-        if ( !$this->_load_credentials() )
-            return 0;
     }
 
     function tweet($message)
@@ -79,6 +83,26 @@ class TwitterComponent extends Object
             $params,
             $this->__getAuthHeader()
         ));
+    }
+
+    function status_public_timeline($params=array()) {
+        /* ref: http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-public_timeline */
+        $url = 'http://twitter.com/statuses/public_timeline.xml';
+        return $this->__process($this->Http->get($url, $params));
+    }
+
+    function search($keyword, $lang='en', $rpp='25'){
+        /* ref: http://apiwiki.twitter.com/Twitter-Search-API-Method%3A-search */
+        $urlt_ = 'http://search.twitter.com/search.atom?q=%s&lang=%s&rpp=%s';
+        $url = sprintf($urlt_, $keyword, $lang, $rpp);
+        return $this->__process($this->Http->get($url));
+    }
+
+    function search_json($keyword, $lang='en', $rpp='25') {
+        /* ref: http://apiwiki.twitter.com/Twitter-Search-API-Method%3A-search */
+        $urlt_ = 'http://search.twitter.com/search.json?q=%s&lang=%s&rpp=%s';
+        $url = sprintf($urlt_, $keyword, $lang, $rpp);
+        return json_decode($this->Http->get($url));
     }
 
     function help_test()
@@ -128,6 +152,55 @@ class TwitterComponent extends Object
             'user' => TWITTER_USER,
             'pass' => TWITTER_PASS )
         );
+    }
+
+    function __parse_atom($response)
+    {
+        $AtomDict = array();
+
+        // transform tags (SimpleXML ignores tags with names like 'twitter:lang')
+        $re_s = '%(</?)([^>]+)(>)%U';
+        $callback = 'fix_twitter_tag';
+        $response = preg_replace_callback($re_s, $callback, $response);
+
+        // parse
+        $Xml = new SimpleXMLElement($response);
+        $EntryList = array();
+
+        foreach ( $Xml->children() as $Node )
+        {
+            $node_name = $Node->getName();
+            if ( $node_name == 'entry' )
+                $EntryList[] = $this->__parse_atom_entry($Node);
+            elseif ( $node_name == 'link' )
+                $AtomDict[(string) $Node['rel']] = (string) $Node['href'];
+            else
+                $AtomDict[$node_name] = (string) $Node;
+        }
+        $AtomDict['Entry'] = $EntryList;
+
+        $Xml = null;
+        unset($Xml);
+
+        return $AtomDict;
+    }
+
+    function __parse_atom_entry($NodeObj)
+    {
+        $Dict = array();
+        foreach ( $NodeObj->children() as $Node )
+        {
+            $node_name = str_replace(':', '_', $Node->getName());
+            if ( $node_name == 'link' )
+                $Dict[(string) $Node['rel']] = (string) $Node['href'];
+            elseif ( $node_name == 'author' ) {
+                $Dict['author_name'] = (string) $Node->name;
+                $Dict['author_url'] = (string) $Node->uri;
+            }
+            else
+                $Dict[$node_name] = (string) $Node;
+        }
+        return $Dict;
     }
 
     function __process($response)

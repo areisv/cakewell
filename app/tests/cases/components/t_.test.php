@@ -5,16 +5,25 @@
     Last Update: $Date$
 */
 App::import('Component', 'T_');
+App::import('Controller', 'T_');
+App::import('Component', 'Session');
 
-class MockController {}
+class MockController extends AppController {
+    var $name = 'SampleCtrl';
+    var $Session = null;
+
+    function __construct() {
+        $this->Session = new SessionComponent();
+    }
+}
 
 class SampleComponentTest extends CakeTestCase {
 
     function setUp()
     {
         $this->SampleComponent = new SampleComponent();
-        $controller = new MockController();
-        $this->SampleComponent->initialize($controller);
+        $Ctrl = new MockController();
+        $this->SampleComponent->initialize($Ctrl);
     }
 
     function teardown()

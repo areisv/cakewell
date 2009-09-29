@@ -10,5 +10,6 @@
 
     // Example
     Configure::write('App.domain_file', __FILE__);
+    Configure::write('App.motto', 'development mode'); 
 
 ?>
