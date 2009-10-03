@@ -69,6 +69,15 @@ XHTML;
             'in' => $in,
             'out' => $out
         );
+
+        $Data = array(
+            array('id'=>1, 'dotpath'=>'a'),
+            array('id'=>2, 'dotpath'=>'a.b'),
+            array('id'=>3, 'dotpath'=>'a.b.c'),
+            array('id'=>4, 'dotpath'=>'a'),
+        );
+        $REPORT['dotpath'] = array_unique(Set::extract('/dotpath', $Data));
+
         $this->set('header', 'Sandbox');
         $this->set('data', $REPORT);
         $this->set('menu', $this->Gatekeeper->get_controller_menu($this));
