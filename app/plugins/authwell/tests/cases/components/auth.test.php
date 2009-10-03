@@ -60,6 +60,22 @@ class AuthComponentTest extends CakeTestCase {
             $this->assertEqual($DiffSet, $ExpectSet);
         }
     }
+
+    function testPrivilegeHasAccess() {
+        $TestArray = array(
+            #array(keypath, lockpath, expect)
+            array('a.b.c', 'a.b.c', 1),
+            array('a', 'a.b.c', 1),
+            array('a.b.c', 'a', 0),
+            array('', '*', 1),
+            array('a.b', 'b.*', 0)
+        );
+
+        foreach ( $TestArray as $T_ )
+            $this->assertEqual(
+                $this->AuthComponent->_privilege_has_access($T_[0], $T_[1]),
+                $T_[2] );
+    }
 }
 
 ?>

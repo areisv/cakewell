@@ -28,16 +28,21 @@
     echo $commentForm->get_js_globals($form_key, $dom_id, $ajax_url, $callback);
     echo $commentForm->get_submit_comment_js();
     echo $commentForm->get_reset_comment_js();
+
+    #debug((int) $form->isFieldError("Comment.$fuid.author_email"));
+    #debug((int) $form->isFieldError("Comment.author_email"));
+    #debug($form->error("Comment.$fuid.author_email"));
+    #debug($form->error("Comment.author_email"));
 ?>
 
 
 <div class="ajax_comment_form">
 <h2>Leave a Comment</h2>
 <h5>e-mail address required, but will not be published</h5>
-    <?php echo $form->create('Comment', array('url' => '/comment/form', 'id'=> $fuid ));?>
+    <?php echo $form->create("Comment", array('url' => '/comment/form', 'id'=> $fuid ));?>
 
         <fieldset>
-        <?php echo $form->input("Comment.$fuid.text", array('label' => 'comment' .  $taglist_,
+        <?php echo $form->input("Comment.text", array('label' => 'comment' .  $taglist_,
                                               'value' => $comment_text,
                                               'error' => false,     # use custom
                                               'rows'  => '10', 'cols' => '30' ));?>
@@ -45,11 +50,11 @@
         </fieldset>
 
         <fieldset>
-        <?php echo $form->input("Comment.$fuid.author", array('label' => 'your name', 'value'=>$author) );?>
-        <?php echo $form->input("Comment.$fuid.author_email", array('label' => 'your email address*', 'value'=>$author_email) );?>
-        <?php echo $form->input("Comment.$fuid.author_url", array('label' => 'your web address', 'value'=>$author_url) );?>
+        <?php echo $form->input("Comment.author", array('label' => 'your name', 'value'=>$author) );?>
+        <?php echo $form->input("Comment.author_email", array('label' => 'your email address*', 'value'=>$author_email) );?>
+        <?php echo $form->input("Comment.author_url", array('label' => 'your web address', 'value'=>$author_url) );?>
         <div class="honey">
-            <?php echo $form->input("Comment.$fuid.$honeypot_field", array('id'=>$honeypot_field, 'label'=>'required') );?>
+            <?php echo $form->input("Comment.$honeypot_field", array('id'=>$honeypot_field, 'label'=>'required') );?>
         </div>
         </fieldset>
 

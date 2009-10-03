@@ -71,6 +71,12 @@ class AuthComponent extends Object
         trigger_error('in dev', E_USER_ERROR);
     }
 
+    function show_login()
+    {
+        $this->Session->save('Authwell.login_redirect', $this->here);
+        $this->redirect('/authwell/login');
+    }
+
     function _privilege_has_access($key_dotpath, $lock_dotpath)
     {
         return !(int)(bool)$this->_diff_dotpaths($key_dotpath, $lock_dotpath);
@@ -96,11 +102,6 @@ class AuthComponent extends Object
         return $DiffSet;
     }
 
-    function show_login()
-    {
-        $this->Session->save('Authwell.login_redirect', $this->here);
-        $this->redirect('/authwell/login');
-    }
 
     function _load_user()
     {
