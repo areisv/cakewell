@@ -103,7 +103,6 @@ class CommentController extends AppController
         $stage = $this->_get_stage($RequestDict['fuid']);
 
         // subaction tree
-        // reset
         if ( $RequestDict['subaction'] == 'reset' )
             $stage = $this->_reset_form($RequestDict['fuid']);
 
@@ -299,7 +298,7 @@ class CommentController extends AppController
 
     function _get_form_data($fuid)
     {
-        #pr($this->_unpickle($form_key)); pr($this->data);
+        #debug($this->_unpickle($fuid)); debug($this->data);
         return Set::merge($this->_unpickle($fuid), $this->data['Comment']);
     }
 
