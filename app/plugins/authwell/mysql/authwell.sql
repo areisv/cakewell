@@ -21,11 +21,11 @@ CREATE TABLE IF NOT EXISTS `authwell_users` (
 -- DROP TABLE IF EXISTS `authwell_users__authwell_roles`;
 CREATE TABLE IF NOT EXISTS `authwell_users__authwell_roles` (
     `id` int(11) NOT NULL auto_increment,
-    `authwell_users_id` int(11) NOT NULL,
-    `authwell_roles_id` int(11) NOT NULL,
+    `authwell_user_id` int(11) NOT NULL,
+    `authwell_role_id` int(11) NOT NULL,
     created DATETIME,
     PRIMARY KEY  (`id`),
-    UNIQUE KEY `u_lookup` (`authwell_users_id`, `authwell_roles_id`)
+    UNIQUE KEY `u_lookup` (`authwell_user_id`, `authwell_role_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- DROP TABLE IF EXISTS `authwell_roles`;
@@ -41,11 +41,11 @@ CREATE TABLE IF NOT EXISTS `authwell_roles` (
 -- DROP TABLE IF EXISTS `authwell_roles__authwell_privileges`;
 CREATE TABLE IF NOT EXISTS `authwell_roles__authwell_privileges` (
     `id` int(11) NOT NULL auto_increment,
-    `authwell_roles_id` int(11) NOT NULL,
-    `authwell_privileges_id` int(11) NOT NULL,
+    `authwell_role_id` int(11) NOT NULL,
+    `authwell_privilege_id` int(11) NOT NULL,
     created DATETIME,
     PRIMARY KEY  (`id`),
-    UNIQUE KEY `u_lookup` (`authwell_roles_id`, `authwell_privileges_id`)
+    UNIQUE KEY `u_lookup` (`authwell_role_id`, `authwell_privilege_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- DROP TABLE IF EXISTS `authwell_privileges`;
@@ -56,5 +56,5 @@ CREATE TABLE IF NOT EXISTS `authwell_privileges` (
     updated DATETIME,
     created DATETIME,
     PRIMARY KEY  (`id`),
-    UNIQUE KEY `u_notation` (`notation`)
+    UNIQUE KEY `u_dotpath` (`dotpath`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
