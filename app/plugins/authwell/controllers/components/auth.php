@@ -16,7 +16,7 @@
         Controllers should be name _controller (e.g. posts_controller)
 */
 
-
+App::import('Sanitize');
 
 class AuthComponent extends Object
 {
@@ -32,7 +32,7 @@ class AuthComponent extends Object
     function initialize(&$controller)
     {
         $this->Ctrl = $controller;
-        $this->User = $this->_load_user();
+        #$this->User = $this->_load_user();
     }
 
     // called after Controller::beforeFilter()
@@ -200,11 +200,13 @@ class AuthComponent extends Object
         return array_unique(Set::extract('/dotpath.', $RoleList));
     }
 
-    function _login_user_to_session()
+    function _login_user_to_session($UserDb)
     {
         $this->Ctrl->Session->write('Authwell.user_id', $UserDb['AuthwellUser']['id']);
         $this->Ctrl->Session->write('Authwell.User', $UserDb['AuthwellUser']);
         $this->Ctrl->Session->write('Authwell.UserRoles', $UserDb['AuthwellRole']);
+        #$this->Ctrl->Session->write('Authwell.UserPrivileges',
+        #    $this->_extract_privileges_from_role_list($UserDb['AuthwellRole']));
         $this->Ctrl->Session->write('Authwell.login_attempt', 0);
         return 1;
     }
