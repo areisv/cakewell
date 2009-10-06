@@ -23,6 +23,7 @@ class AuthwellUserTestCase extends CakeTestCase {
     {
         parent::start();
         $this->AuthwellUser = ClassRegistry::init('Authwell.AuthwellUser');
+        $this->RecordObj = new AuthwellUserRecord($this->AuthwellUser);
     }
 
     function testInstance() {
@@ -40,7 +41,7 @@ class AuthwellUserTestCase extends CakeTestCase {
     {
         $Cols = array_keys($this->AuthwellUser->_schema);
         $this->assertEqual(6, count($Cols));
-        #debug($this->AuthwellUser->_schema);
+        #debug(implode(' ', $Cols));
     }
 
     function testHabtmAssociation()
@@ -48,6 +49,32 @@ class AuthwellUserTestCase extends CakeTestCase {
         $this->assertTrue(isset($this->AuthwellUser->AuthwellRole));
         $this->assertTrue($this->AuthwellUser->AuthwellRole instanceof AuthwellRole);
         #debug($this->AuthwellUser);
+    }
+
+    function testRecord()
+    {
+        $name = 'ichibod';
+        $Record = $this->RecordObj->create(array('name'=>$name));
+        $this->assertEqual($Record['name'], $name);
+    }
+
+    function testInsertDeleteRecords()
+    {
+        $Data = $this->AuthwellUser->save($this->RecordObj->create());
+        $this->assertTrue($this->AuthwellUser->id);
+        $this->AuthwellUser->delete($this->AuthwellUser->id, 0);
+    }
+
+    function testFindByEmail()
+    {
+        $email = 'test@cakewell.com';
+        $Record = $this->RecordObj->create(array('email'=>$email));
+        $this->AuthwellUser->save($Record);
+        $SavedRecord = $this->AuthwellUser->findByEmail($email);
+        $NotFound = $this->AuthwellUser->findByEmail('not@cakewell.com');
+
+        $this->assertEqual($SavedRecord['AuthwellUser']['email'], $email);
+        $this->assertEqual($NotFound, false);
     }
 }
 ?>

@@ -56,6 +56,14 @@ class AuthwellUser extends AuthwellAppModel
         return 1;
     }
 
+    function find_user_by_email()
+    {
+        if ( !$Data = $this->findByEmail($email) )
+            return null;
+
+        return $Data;
+    }
+
     function get_privilege_list($user_id)
     {
         /*
