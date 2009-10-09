@@ -32,6 +32,7 @@ class AuthComponent extends Object
     function initialize(&$controller)
     {
         $this->Ctrl = $controller;
+        $this->Session = $controller->Session;
         #$this->User = $this->_load_user();
     }
 
@@ -43,7 +44,7 @@ class AuthComponent extends Object
     // Authwell Auth API (still in development)
     function user_is_logged_in()
     {
-        return $this->Ctrl->Session->check('Authwell.user_id');
+        return $this->Session->check('Authwell.user_id');
     }
 
     function user_has_privilege($PrivilegeList, $conjunction='or')
@@ -104,7 +105,8 @@ class AuthComponent extends Object
             $this->Ctrl->Session->read('Authwell.User') : array();
         $UserData['Roles'] = ( $this->Ctrl->Session->check('Authwell.UserRoles') ) ?
             $this->Ctrl->Session->read('Authwell.UserRoles') : array();
-        $UserData['Privileges'] = $this->_extract_privileges_from_role_list($UserData['Roles']);
+        $UserData['Privileges'] = ( $this->Ctrl->Session->check('Authwell.UserPrivileges') ) ?
+            $this->Ctrl->Session->read('Authwell.UserPrivileges') : array();
 
         $this->UserData = $UserData;
         return $UserData;
@@ -202,22 +204,32 @@ class AuthComponent extends Object
 
     function _login_user_to_session($UserDb)
     {
-        $this->Ctrl->Session->write('Authwell.user_id', $UserDb['AuthwellUser']['id']);
-        $this->Ctrl->Session->write('Authwell.User', $UserDb['AuthwellUser']);
-        $this->Ctrl->Session->write('Authwell.UserRoles', $UserDb['AuthwellRole']);
-        #$this->Ctrl->Session->write('Authwell.UserPrivileges',
-        #    $this->_extract_privileges_from_role_list($UserDb['AuthwellRole']));
-        $this->Ctrl->Session->write('Authwell.login_attempt', 0);
+        $this->Session->write('Authwell.user_id', $UserDb['AuthwellUser']['id']);
+        $this->Session->write('Authwell.User', $UserDb['AuthwellUser']);
+        $this->Session->write('Authwell.UserRoles', $UserDb['AuthwellRole']);
+        $this->Session->write('Authwell.UserPrivileges',
+            $this->_extract_privileges_from_role_list($UserDb['AuthwellRole']));
+        $this->Session->write('Authwell.login_attempt', 0);
+        return 1;
+    }
+
+    function _clear_user_session()
+    {
+        $this->Session->write('Authwell.user_id', 0);
+        $this->Session->write('Authwell.User', array());
+        $this->Session->write('Authwell.UserRoles', array());
+        $this->Session->write('Authwell.UserPrivileges', array());
+        $this->Session->write('Authwell.login_attempt', 0);
         return 1;
     }
 
     function _is_login_attack()
     {
-        $attempt_ = ( ! $this->Ctrl->Session->check('Authwell.login_attempt') ) ? 0
-            : $this->Ctrl->Session->read('Authwell.login_attempt');
+        $attempt_ = ( ! $this->Session->check('Authwell.login_attempt') ) ? 0
+            : $this->Session->read('Authwell.login_attempt');
         if ( $attempt_ > $this->max_attempts )
             return 1;
-        $this->Ctrl->Session->write('Authwell.login_attempt', $attempt_++);
+        $this->Session->write('Authwell.login_attempt', $attempt_++);
         return 0;
     }
 
