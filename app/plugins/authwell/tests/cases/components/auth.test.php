@@ -8,15 +8,6 @@ App::import('Component', 'authwell.Auth');
 App::import('Controller', 'authwell.Authwell');
 App::import('Component', 'Session');
 
-class AuthwellCtrl {
-    var $name = 'AuthwellCtrl';
-    var $Session = null;
-
-    function __construct() {
-        $this->Session = new SessionComponent();
-    }
-}
-
 class AuthComponentTest extends CakeTestCase {
 
     var $fixtures = array(
@@ -33,7 +24,24 @@ class AuthComponentTest extends CakeTestCase {
         $Ctrl = new AuthwellController();
         # This does not work as it seems the fixture db has not yet been created
         #$Ctrl->constructClasses();
+        # But we need a Session component to initialize the AuthComponent
+        $Ctrl->Session = new SessionComponent();
         $this->AuthComponent->initialize($Ctrl);
+
+        $this->UserDb = array(
+            'AuthwellUser' => array(
+                'id'        => 1,
+                'email'     => 'cakewell@klenwell.com',
+                'password'  => 'secret',
+            ),
+            'AuthwellRole' => array(
+            ),
+        );
+    }
+
+    function _setUpCtrl()
+    {
+        $this->AuthComponent->Ctrl->constructClasses();
     }
 
     function teardown()
@@ -109,12 +117,47 @@ class AuthComponentTest extends CakeTestCase {
         /* To use the controller Session component, we must construct its
            helper classes.  However, we can't do it in the setup (see note
            above, so we do it here */
-        $this->AuthComponent->Ctrl->constructClasses();
+        $this->_setUpCtrl();
         $is_logged_in = $this->AuthComponent->login_request($FormData);
         $SessionUser = $this->AuthComponent->Ctrl->Session->read('Authwell.User');
 
         $this->assertTrue($is_logged_in);
         $this->assertEqual($SessionUser['email'],$email);
+    }
+
+    function testGetUserData()
+    {
+        $this->AuthComponent->_login_user_to_session($this->UserDb);
+        $UserData = $this->AuthComponent->get_user_data();
+        $this->assertEqual( $UserData['id'],
+                            $this->UserDb['AuthwellUser']['id'] );
+        $this->assertEqual( $UserData['User'],
+                            $this->UserDb['AuthwellUser'] );
+    }
+
+    function testLoginUserToSession()
+    {
+        $this->AuthComponent->_login_user_to_session($this->UserDb);
+
+        $this->assertEqual( $this->AuthComponent->Ctrl->Session->read('Authwell.user_id'),
+                            $this->UserDb['AuthwellUser']['id'] );
+        $this->assertEqual( $this->AuthComponent->Ctrl->Session->read('Authwell.User'),
+                            $this->UserDb['AuthwellUser'] );
+        $this->assertEqual( $this->AuthComponent->Ctrl->Session->read('Authwell.login_attempt'),
+                            0 );
+    }
+
+    function testClearUserSession()
+    {
+        $this->AuthComponent->_login_user_to_session($this->UserDb);
+        $this->AuthComponent->_clear_user_session();
+
+        $this->assertEqual( $this->AuthComponent->Ctrl->Session->read('Authwell.user_id'),
+                            0 );
+        $this->assertEqual( $this->AuthComponent->Ctrl->Session->read('Authwell.User'),
+                            array() );
+        $this->assertEqual( $this->AuthComponent->Ctrl->Session->read('Authwell.login_attempt'),
+                            0 );
     }
 }
 
