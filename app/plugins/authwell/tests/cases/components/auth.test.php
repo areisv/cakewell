@@ -44,6 +44,44 @@ class AuthComponentTest extends CakeTestCase {
         $this->AuthComponent->Ctrl->constructClasses();
     }
 
+    function _setUpDatabase()
+    {
+        $this->_setUpCtrl();
+        $Ctrl = $this->AuthComponent->Ctrl;
+        $UserModel = $Ctrl->AuthwellUser;
+        $RoleModel = $UserModel->AuthwellRole;
+        $PrivModel = $RoleModel->AuthwellPrivilege;
+        $UserGen = new AuthwellUserRecord($UserModel);
+        $RoleGen = new AuthwellRoleRecord($RoleModel);
+        $PrivGen = new AuthwellPrivilegeRecord($PrivModel);
+
+        $User1 = $UserGen->create(array('name'=>'user1', 'email'=>'user1@klenwell.com', 'password'=>'user1'));
+        $User2 = $UserGen->create(array('name'=>'user2', 'email'=>'user2@klenwell.com', 'password'=>'user2'));
+        $Role1 = $RoleGen->create(array('name'=>'role1'));
+        $Role2 = $RoleGen->create(array('name'=>'role2'));
+        $Priv1 = $PrivGen->create(array('dotpath'=>'priv.one'));
+        $Priv2 = $PrivGen->create(array('dotpath'=>'priv.two'));
+
+        $PrivModel->save($Priv1);
+        $PrivIds[] = $PrivModel->id;
+        $PrivModel->save($Priv2);
+        $PrivIds[] = $PrivModel->id;
+
+        $RoleModel->save( array('AuthwellRole'=>$Role1,
+                            'AuthwellPrivilege'=>array('id'=>$PrivIds[0])) );
+        $RoleIds[] = $RoleModel->id;
+        $RoleModel->save( array('AuthwellRole'=>$Role2,
+                            'AuthwellPrivilege'=>array(1=>$PrivIds[0],2=>$PrivIds[1])) );
+        $RoleIds[] = $RoleModel->id;
+
+        $UserModel->save( array('AuthwellUser'=>$User1,
+                            'AuthwellRole'=>array('id'=>$RoleIds[0])) );
+        $UserModel->save( array('AuthwellUser'=>$User2,
+                            'AuthwellRole'=>array(1=>$RoleIds[0],2=>$RoleIds[1])) );
+
+        return;
+    }
+
     function teardown()
     {
         unset($this->AuthComponent);
@@ -103,7 +141,7 @@ class AuthComponentTest extends CakeTestCase {
         $Model = ClassRegistry::init('Authwell.AuthwellUser');
         $RecordObj = new AuthwellUserRecord($Model);
         $Record = $RecordObj->create(array('email'=>$email,
-            'password'=>$Model->password($pw)));
+            'password'=>$pw));
         $this->assertTrue($Model->save($Record));
 
         // then call
@@ -158,6 +196,30 @@ class AuthComponentTest extends CakeTestCase {
                             array() );
         $this->assertEqual( $this->AuthComponent->Ctrl->Session->read('Authwell.login_attempt'),
                             0 );
+    }
+
+    function testDatabaseSetup()
+    {
+        $FormData = array(
+            'AuthwellUser' => array(
+                'email' => 'user1@klenwell.com',
+                'password' => 'user1'
+            )
+        );
+
+        $this->_setUpDatabase();
+        $is_logged_in = $this->AuthComponent->login_request($FormData);
+        $UserData = $this->AuthComponent->get_user_data();
+
+        $this->assertTrue($is_logged_in);
+        $this->assertEqual($UserData['User']['name'],'user1');
+
+        debug($UserData);
+    }
+
+    function testUserHasRole()
+    {
+        $this->_setUpDatabase();
     }
 }
 

@@ -23,6 +23,7 @@ class AuthwellRoleTestCase extends CakeTestCase {
     {
         parent::start();
         $this->AuthwellRole = ClassRegistry::init('AuthwellRole');
+        $this->RecordObj = new AuthwellRoleRecord($this->AuthwellRole);
     }
 
     function testInstance() {
@@ -41,6 +42,13 @@ class AuthwellRoleTestCase extends CakeTestCase {
         $Cols = array_keys($this->AuthwellRole->_schema);
         $this->assertEqual(5, count($Cols));
         #debug($this->AuthwellUser->_schema);
+    }
+
+    function testRecord()
+    {
+        $name = 'test_role';
+        $Record = $this->RecordObj->create(array('name'=>$name));
+        $this->assertEqual($Record['name'], $name);
     }
 }
 ?>

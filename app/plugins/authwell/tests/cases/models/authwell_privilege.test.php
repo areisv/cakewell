@@ -22,25 +22,33 @@ class AuthwellPrivilegeTestCase extends CakeTestCase {
     function start()
     {
         parent::start();
-        $this->AuthwellRole = ClassRegistry::init('AuthwellRole');
+        $this->AuthwellPrivilege = ClassRegistry::init('AuthwellPrivilege');
+        $this->RecordObj = new AuthwellPrivilegeRecord($this->AuthwellPrivilege);
     }
 
     function testInstance() {
-        $this->assertTrue($this->AuthwellRole instanceof AppModel);
+        $this->assertTrue($this->AuthwellPrivilege instanceof AppModel);
         #debug($this->AuthwellRole);
     }
 
     function testProperties()
     {
-        $this->assertEqual($this->AuthwellRole->useTable, 'authwell_roles');
-        $this->assertEqual($this->AuthwellRole->name, 'AuthwellRole');
+        $this->assertEqual($this->AuthwellPrivilege->useTable, 'authwell_privileges');
+        $this->assertEqual($this->AuthwellPrivilege->name, 'AuthwellPrivilege');
     }
 
     function testSchema()
     {
-        $Cols = array_keys($this->AuthwellRole->_schema);
+        $Cols = array_keys($this->AuthwellPrivilege->_schema);
         $this->assertEqual(5, count($Cols));
         #debug($this->AuthwellUser->_schema);
+    }
+
+    function testRecord()
+    {
+        $path = 'admin.all';
+        $Record = $this->RecordObj->create(array('dotpath'=>$path));
+        $this->assertEqual($Record['dotpath'], $path);
     }
 }
 ?>
