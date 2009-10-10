@@ -56,6 +56,13 @@ class AuthwellUser extends AuthwellAppModel
         return 1;
     }
 
+    function beforeSave()
+    {
+        $this->data['AuthwellUser']['password'] =
+            $this->password($this->data['AuthwellUser']['password']);
+        return 1;
+    }
+
     function find_user_by_email()
     {
         if ( !$Data = $this->findByEmail($email) )
