@@ -29,12 +29,14 @@ class AuthComponentTest extends CakeTestCase {
         $this->AuthComponent->initialize($Ctrl);
 
         $this->UserDb = array(
-            'AuthwellUser' => array(
+            'User' => array(
                 'id'        => 1,
                 'email'     => 'cakewell@klenwell.com',
                 'password'  => 'secret',
             ),
-            'AuthwellRole' => array(
+            'Roles' => array(
+            ),
+            'Privileges' => array(
             ),
         );
     }
@@ -68,16 +70,16 @@ class AuthComponentTest extends CakeTestCase {
         $PrivIds[] = $PrivModel->id;
 
         $RoleModel->save( array('AuthwellRole'=>$Role1,
-                            'AuthwellPrivilege'=>array('id'=>$PrivIds[0])) );
+                            'AuthwellPrivilege'=>array(1=>$PrivIds[0],2=>$PrivIds[1])) );
         $RoleIds[] = $RoleModel->id;
         $RoleModel->save( array('AuthwellRole'=>$Role2,
-                            'AuthwellPrivilege'=>array(1=>$PrivIds[0],2=>$PrivIds[1])) );
+                            'AuthwellPrivilege'=>array(1=>$PrivIds[0])) );
         $RoleIds[] = $RoleModel->id;
 
         $UserModel->save( array('AuthwellUser'=>$User1,
-                            'AuthwellRole'=>array('id'=>$RoleIds[0])) );
-        $UserModel->save( array('AuthwellUser'=>$User2,
                             'AuthwellRole'=>array(1=>$RoleIds[0],2=>$RoleIds[1])) );
+        $UserModel->save( array('AuthwellUser'=>$User2,
+                            'AuthwellRole'=>array(1=>$RoleIds[0])) );
 
         return;
     }
@@ -168,9 +170,9 @@ class AuthComponentTest extends CakeTestCase {
         $this->AuthComponent->_login_user_to_session($this->UserDb);
         $UserData = $this->AuthComponent->get_user_data();
         $this->assertEqual( $UserData['id'],
-                            $this->UserDb['AuthwellUser']['id'] );
+                            $this->UserDb['User']['id'] );
         $this->assertEqual( $UserData['User'],
-                            $this->UserDb['AuthwellUser'] );
+                            $this->UserDb['User'] );
     }
 
     function testLoginUserToSession()
@@ -178,9 +180,9 @@ class AuthComponentTest extends CakeTestCase {
         $this->AuthComponent->_login_user_to_session($this->UserDb);
 
         $this->assertEqual( $this->AuthComponent->Ctrl->Session->read('Authwell.user_id'),
-                            $this->UserDb['AuthwellUser']['id'] );
+                            $this->UserDb['User']['id'] );
         $this->assertEqual( $this->AuthComponent->Ctrl->Session->read('Authwell.User'),
-                            $this->UserDb['AuthwellUser'] );
+                            $this->UserDb['User'] );
         $this->assertEqual( $this->AuthComponent->Ctrl->Session->read('Authwell.login_attempt'),
                             0 );
     }
@@ -214,7 +216,28 @@ class AuthComponentTest extends CakeTestCase {
         $this->assertTrue($is_logged_in);
         $this->assertEqual($UserData['User']['name'],'user1');
 
-        debug($UserData);
+        #debug($UserData);
+    }
+
+    function testAuthComplete()
+    {
+        $FormData = array(
+            'AuthwellUser' => array(
+                'email' => 'user1@klenwell.com',
+                'password' => 'user1'
+            )
+        );
+
+        $this->_setUpDatabase();
+        $is_logged_in = $this->AuthComponent->login_request($FormData);
+        $UserData = $this->AuthComponent->get_user_data();
+
+        $this->assertTrue($this->AuthComponent->user_has_role('role1'));
+        $this->assertFalse($this->AuthComponent->user_has_role('null'));
+        $this->assertTrue($this->AuthComponent->user_has_privilege('priv.one'));
+        $this->assertFalse($this->AuthComponent->user_has_privilege('priv'));
+        $this->assertFalse($this->AuthComponent->user_has_privilege('priv.null'));
+        $this->assertTrue($this->AuthComponent->user_has_privilege('priv.one.null'));
     }
 
     function testUserHasRole()

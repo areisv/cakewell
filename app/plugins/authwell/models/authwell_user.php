@@ -63,12 +63,41 @@ class AuthwellUser extends AuthwellAppModel
         return 1;
     }
 
-    function find_user_by_email()
+    function find_user_by_email($email)
     {
-        if ( !$Data = $this->findByEmail($email) )
+        /*
+            Finds user data by email address.  The first query is equivalent to
+            findByEmail.  Then, this method finds the privilege list based on
+            role list.
+        */
+        if ( !$UserData = $this->find('first', array(
+                'conditions' => array( 'email' => $email )
+           )) )
             return null;
 
-        return $Data;
+        $RoleList = Set::extract($UserData, 'AuthwellRole.{n}.id');
+        $PrivilegeList = $this->find_privilege_list_from_user_list($RoleList);
+
+        $UserData = array(
+            'User'      => $UserData['AuthwellUser'],
+            'Roles'      => $UserData['AuthwellRole'],
+            'Privileges' => $PrivilegeList,
+        );
+
+        return $UserData;
+    }
+
+    function find_privilege_list_from_user_list($RoleList)
+    {
+        $PrivilegeList = array();
+
+        foreach ( $RoleList as $role_id ) {
+            $RolePrivilegeList = $this->AuthwellRole->get_privilege_list($role_id);
+            foreach ( $RolePrivilegeList as $Rec )
+                $PrivilegeList[$Rec['id']] = $Rec;
+        }
+
+        return $PrivilegeList;
     }
 
     function get_privilege_list($user_id)
@@ -80,10 +109,7 @@ class AuthwellUser extends AuthwellAppModel
 
         $RoleList = $this->get_role_list($user_id);
 
-        foreach ( $RoleList as $role_id )
-            $PrivilegeList = array_merge($PrivilegeList, $this->Role->get_privilege_list($role_id));
-
-        return $PrivilegeList;
+        return $this->extract_privilege_list_from_user_list($RoleList);
     }
 
     function get_role_list($user_id)

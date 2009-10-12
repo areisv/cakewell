@@ -34,6 +34,17 @@ class AuthwellRole extends AuthwellAppModel
     );
 
     var $validate = array();
+
+    function get_privilege_list($role_id)
+    {
+        $Record = $this->findById($role_id);
+
+        if ( isset($Record['AuthwellPrivilege']) )
+            return $Record['AuthwellPrivilege'];
+
+        return array();
+    }
+
 }
 
 ?>

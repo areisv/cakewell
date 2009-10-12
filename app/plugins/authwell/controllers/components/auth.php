@@ -55,7 +55,7 @@ class AuthComponent extends Object
             to see if the user possesses.  conjunction argument determines
             and/or logic of the PrivilegeList
         */
-        if ( !$this->is_logged_in() ) return $this->turn_away('please log in');
+        if ( !$this->user_is_logged_in() ) return $this->turn_away('please log in');
 
         if ( !is_array($PrivilegeList) )
             $PrivilegeList = array( $PrivilegeList );
@@ -78,18 +78,18 @@ class AuthComponent extends Object
         trigger_error('in dev', E_USER_ERROR);
     }
 
-    function user_has_role($RoleList, $conjunction='or')
+    function user_has_role($RoleNameList, $conjunction='or')
     {
-        if ( !$this->is_logged_in() ) return $this->turn_away('you must be logged in');
-        if ( !is_array($RoleList) ) $RoleList = array( $RoleList );
+        if ( !$this->user_is_logged_in() ) return $this->turn_away('you must be logged in');
+        if ( !is_array($RoleNameList) ) $RoleNameList = array( $RoleNameList );
 
         if ( $conjunction == 'or' )
-            foreach ( $RoleList as $role )
-                if ( $this->_user_has_this_role($role) ) return 1;
+            foreach ( $RoleNameList as $role )
+                if ( $this->_user_has_this_role_name($role) ) return 1;
 
         else
-            foreach ( $RoleList as $role )
-                if ( !$this->_user_has_this_role($role) ) return 0;
+            foreach ( $RoleNameList as $role )
+                if ( !$this->_user_has_this_role_name($role) ) return 0;
 
         trigger_error('logic error', E_USER_ERROR);
     }
@@ -127,10 +127,12 @@ class AuthComponent extends Object
         if ( empty($pass_) ) return $this->invalidate_login('AuthwellUser.password', 'please fill in both fields');
 
         // check db
-        $UserDb = $this->Ctrl->AuthwellUser->findByEmail($email_);
+        #$UserDb = $this->Ctrl->AuthwellUser->findByEmail($email_);
+        $UserDb = $this->Ctrl->AuthwellUser->find_user_by_email($email_);
+
         if ( empty($UserDb) )
             return $this->invalidate_login('AuthwellUser.email', 'user not found');
-        if ( $UserDb['AuthwellUser']['password'] != $this->Ctrl->AuthwellUser->password($pass_) )
+        if ( $UserDb['User']['password'] != $this->Ctrl->AuthwellUser->password($pass_) )
             return $this->invalidate_login('AuthwellUser.password', 'incorrect password');
 
         // still here: login
@@ -157,18 +159,21 @@ class AuthComponent extends Object
 
 
     /* Private Methods */
-    function _user_has_this_role($role)
+    function _user_has_this_role_name($role_name)
     {
-        $User = $this->get_user_data();
-        return in_array($role, $User['Roles']);
+        $UserData = $this->get_user_data();
+        $UserRoleNames = Set::extract($UserData['Roles'], '{n}.name');
+        return in_array($role_name, $UserRoleNames);
     }
 
     function _user_has_privilege_by_dotpath($lock_dotpath)
     {
         $User = $this->get_user_data();
-        foreach ( $User['Privileges'] as $key_dotpath )
+        foreach ( $User['Privileges'] as $Record ) {
+            $key_dotpath = $Record['dotpath'];
             if ( $this->_privilege_has_access($key_dotpath, $lock_dotpath))
                 return 1;
+        }
         return 0;
     }
 
@@ -204,11 +209,10 @@ class AuthComponent extends Object
 
     function _login_user_to_session($UserDb)
     {
-        $this->Session->write('Authwell.user_id', $UserDb['AuthwellUser']['id']);
-        $this->Session->write('Authwell.User', $UserDb['AuthwellUser']);
-        $this->Session->write('Authwell.UserRoles', $UserDb['AuthwellRole']);
-        $this->Session->write('Authwell.UserPrivileges',
-            $this->_extract_privileges_from_role_list($UserDb['AuthwellRole']));
+        $this->Session->write('Authwell.user_id', $UserDb['User']['id']);
+        $this->Session->write('Authwell.User', $UserDb['User']);
+        $this->Session->write('Authwell.UserRoles', $UserDb['Roles']);
+        $this->Session->write('Authwell.UserPrivileges', $UserDb['Privileges']);
         $this->Session->write('Authwell.login_attempt', 0);
         return 1;
     }
