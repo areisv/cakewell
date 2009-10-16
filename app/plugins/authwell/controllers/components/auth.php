@@ -116,8 +116,7 @@ class AuthComponent extends Object
     // login methods
     function login_request($FormData)
     {
-        // try to limit attacks
-        if ( $this->_is_login_attack() ) $this->turn_away('you are being redirected');
+
 
         // validate form
         $CharWhiteList = str_split('.@_ ');
@@ -227,7 +226,7 @@ class AuthComponent extends Object
         return 1;
     }
 
-    function _is_login_attack()
+    function is_login_attack()
     {
         $attempt_ = ( ! $this->Session->check('Authwell.login_attempt') ) ? 0
             : $this->Session->read('Authwell.login_attempt');

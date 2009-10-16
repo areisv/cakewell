@@ -1,0 +1,44 @@
+
+/**
+    Cakewell Auth Stylesheet
+
+    Last Update: $date$
+    Author: Tom at klenwell@gmail.com
+
+*/
+
+/* General */
+.nodisplay, .honey { display:none; }
+
+form div.submit {
+    margin:10px 0 0;
+    font-size:100%;
+}
+
+
+/* Login Form */
+div.authwell-form {
+    width:600px;
+    margin:1em auto;
+    padding:0 2px;
+    background-color:white;
+}
+fieldset {
+    width:80%;
+    margin:0 auto;
+    padding:1em;
+}
+
+h5.form_error {
+ margin-top:0;
+ color:#990000;
+}
+label {
+ display:block;
+ font-size:13px;
+ font-weight:bold;
+}
+.input {
+ margin:0 0 1em;
+ width:18em;
+}
