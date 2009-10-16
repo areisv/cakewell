@@ -89,15 +89,16 @@
      */
     Configure::write('debug', 0);
     Configure::write('App.encoding', 'UTF-8');
-    Configure::write('Cache.disable', true);
     define('LOG_ERROR', 2);
-    Configure::write('Session.cookie', 'CAKEPHP');
-    Configure::write('Session.timeout', '120');
-    Configure::write('Acl.classname', 'DbAcl');
-    Configure::write('Acl.database', 'default');
+
+    // Caching
+    Configure::write('Cache.disable', true);
+    Configure::write('Cache.check', false);
     Cache::config('default', array('engine' => 'File'));
 
     // Session Options* (*make sure you refer to documentation)
+    Configure::write('Session.cookie', 'CAKEPHP');
+    Configure::write('Session.timeout', '120');
     Configure::write('Session.save', 'php');
     Configure::write('Session.start', true);
     Configure::write('Session.checkAgent', true);
@@ -105,6 +106,10 @@
     Configure::write('Security.salt', 'your-secret-app-salt-here');
     //Configure::write('Session.table', 'cake_sessions');
     //Configure::write('Session.database', 'default');
+
+    // ACL
+    Configure::write('Acl.classname', 'DbAcl');
+    Configure::write('Acl.database', 'default');
 
     // Admin Routes*
     //Configure::write('Routing.admin', 'admin');

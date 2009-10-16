@@ -53,11 +53,21 @@ class AuthwellController extends AppController
 
     function login()
     {
-        trigger_error('in dev', E_USER_ERROR);
+        #debug($this->data);
 
-        # login request
-        # if POST:
-            # $this->Auth->
+        if ( $this->data )
+        {
+            // try to limit attacks
+            if ( $this->Auth->is_login_attack() )
+                $this->Auth->turn_away('you are being redirected');
+
+            if ( $this->AuthwellUser->is_valid_login_request($this->data) )
+            {
+                debug('valid login request - redirect to previous page');
+            }
+
+            $this->set('FormErrors', $this->AuthwellUser->loginFormErrors);
+        }
     }
 
     function logout()
