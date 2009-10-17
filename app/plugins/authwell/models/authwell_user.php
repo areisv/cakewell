@@ -14,6 +14,7 @@ class AuthwellUser extends AuthwellAppModel
     var $name = 'AuthwellUser';
     var $useTable = 'authwell_users';
     var $loginFormErrors = array();
+    var $UserDataCache = array();           # a per-request cache of user data
 
     var $hasAndBelongsToMany = array(
         'AuthwellRole' => array(
@@ -47,7 +48,7 @@ class AuthwellUser extends AuthwellAppModel
         ),
         'honey_login' => array(
             'required' => array(
-                'rule' => array('honeypot', 'honey_login'),
+                'rule' => array('is_honeypot', 'honey_login'),
                 'message' => 'no bots please (this field should be invisible and empty)'
             ),
         ),
@@ -98,6 +99,11 @@ class AuthwellUser extends AuthwellAppModel
 
     function is_valid_login_request($FormData)
     {
+        /*
+           Validates Form Data and verifies that user attempting to login is
+           in the database and active.
+        */
+
         # set
         $this->set($FormData);
 
@@ -106,18 +112,18 @@ class AuthwellUser extends AuthwellAppModel
             return 0;
 
         # lookup user
-        $UserDb = $this->find_user_by_email($FormData['AuthwellUser']['email']);
+        $UserDb = $this->find_user_by_email($FormData['AuthwellUser']['email_login']);
 
         # invalidate: user not found
         if ( empty($UserDb) )
             return $this->invalidate_login();
 
         # invalidate: user is not active (TODO)
-        #if ( ! $UserDb['User']['active'] )
-        #    return $this->invalidate_login('Your account is inactive.');
+        if ( ! $UserDb['User']['active'] )
+            return $this->invalidate_login('Your account is inactive.');
 
         # invalidate: password not found
-        if ( $UserDb['User']['password'] != $this->password($FormData['AuthwellUser']['password']) )
+        if ( $UserDb['User']['password'] != $this->password($FormData['AuthwellUser']['password_login']) )
             return $this->invalidate_login();
 
         // still here: valid
@@ -134,13 +140,20 @@ class AuthwellUser extends AuthwellAppModel
         return 0;
     }
 
-    function find_user_by_email($email)
+    function find_user_by_email($email, $reload=0)
     {
         /*
             Finds user data by email address.  The first query is equivalent to
             findByEmail.  Then, this method finds the privilege list based on
             role list.
+
+            As a side-effect, it also sets the UserDataCache property, which
+            serves as an in-request cache.
         */
+        # check cache
+        if ( !empty($this->UserDataCache) && !$reload )
+            return $this->UserDataCache;
+
         if ( !$UserData = $this->find('first', array(
                 'conditions' => array( 'email' => $email )
            )) )
@@ -155,6 +168,7 @@ class AuthwellUser extends AuthwellAppModel
             'Privileges' => $PrivilegeList,
         );
 
+        $this->UserDataCache = $UserData;
         return $UserData;
     }
 
@@ -205,7 +219,7 @@ class AuthwellUser extends AuthwellAppModel
         return ( $this->data[$this->name]['email'] == $data['email_confirm'] );
     }
 
-    function honeypot($data, $field)
+    function is_honeypot($data, $field)
     {
         return empty($this->data[$this->name][$field]);
     }
@@ -213,6 +227,18 @@ class AuthwellUser extends AuthwellAppModel
     function password($plaintext)
     {
         return md5($plaintext . Configure::read('Security.salt'));
+    }
+
+    function as_binary($plaintext)
+    {
+        $select = 'SELECT HEX("%s") as hex';
+        $Result = $this->query(sprintf($select, $plaintext));
+        return '0x' . $Result[0][0]['hex'];
+    }
+
+    function _0x_password($plaintext)
+    {
+        return $this->as_binary( $this->password($plaintext) );
     }
 }
 

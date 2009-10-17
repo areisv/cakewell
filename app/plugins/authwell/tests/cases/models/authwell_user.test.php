@@ -40,7 +40,8 @@ class AuthwellUserTestCase extends CakeTestCase {
     function testSchema()
     {
         $Cols = array_keys($this->AuthwellUser->_schema);
-        $this->assertEqual(6, count($Cols));
+        $this->assertEqual(7, count($Cols));
+        #debug($this->AuthwellUser->_schema);
         #debug(implode(' ', $Cols));
     }
 
@@ -75,6 +76,75 @@ class AuthwellUserTestCase extends CakeTestCase {
 
         $this->assertEqual($SavedRecord['AuthwellUser']['email'], $email);
         $this->assertEqual($NotFound, false);
+    }
+
+    function testFindUserByEmail()
+    {
+        $Record = $this->RecordObj->create();
+        $this->AuthwellUser->save($Record);
+        $SavedRecord = $this->AuthwellUser->find_user_by_email($Record['email'], 1);
+        $NotFound = $this->AuthwellUser->find_user_by_email('not@cakewell.com', 1);
+
+        $this->assertEqual($SavedRecord['User']['email'], $Record['email']);
+        $this->assertEqual($NotFound, false);
+    }
+
+    function testInvalidateLogin()
+    {
+        $message = 'unit test';
+        $is_valid = $this->AuthwellUser->invalidate_login($message);
+        $this->assertFalse($is_valid);
+        $this->assertTrue(in_array($message, $this->AuthwellUser->loginFormErrors));
+    }
+
+    function testHoneypot()
+    {
+        $field = 'honeypot_unit_test';
+        $tval = null;
+        $fval = 'honey';
+        $data = null;
+
+        $this->AuthwellUser->data[$this->AuthwellUser->name][$field] = $tval;
+        $true = $this->AuthwellUser->is_honeypot($data, $field);
+        $this->assertTrue($true);
+
+        $this->AuthwellUser->data[$this->AuthwellUser->name][$field] = $fval;
+        $false = $this->AuthwellUser->is_honeypot($data, $field);
+        $this->assertFalse($false);
+    }
+
+    function testPassword()
+    {
+        $plain = 'cakewell';
+        $_0x_password = $this->AuthwellUser->_0x_password($plain);
+
+        $this->assertEqual( $_0x_password,
+            $this->AuthwellUser->as_binary($this->AuthwellUser->password($plain)) );
+
+        #debug($_0x_password);
+    }
+
+    function testLoginRequest() {
+
+        // first save a random user
+        $Record = $this->RecordObj->create(array('active'=>1));
+        $this->AuthwellUser->create();
+        $this->assertTrue($this->AuthwellUser->save($Record));
+        #debug($this->AuthwellUser->invalidFields());
+
+        // then call
+        $FormData = array(
+            'AuthwellUser' => array(
+                'email_login' => $Record['email'],
+                'password_login' => $Record['password']
+            )
+        );
+
+        $is_logged_in = $this->AuthwellUser->is_valid_login_request($FormData);
+        $Cache = $this->AuthwellUser->UserDataCache;
+
+        $this->assertTrue($is_logged_in);
+        $this->assertEqual($Cache['User']['email'], $Record['email']);
     }
 }
 ?>

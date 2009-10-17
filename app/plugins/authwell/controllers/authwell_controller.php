@@ -42,6 +42,7 @@ class AuthwellController extends AppController
                       'Authwell.AuthwellRole',
                       'Authwell.AuthwellPrivilege');   // or: null;
     var $components = array('RequestHandler', 'Gatekeeper', 'Authwell.Auth');
+    var $helpers = array('Session');
 
     var $login_url      = '/authwell/login';
     var $lockout_url    = '/authwell/locked';
@@ -63,6 +64,9 @@ class AuthwellController extends AppController
 
             if ( $this->AuthwellUser->is_valid_login_request($this->data) )
             {
+                $this->Auth->login_user_to_session(
+                    $this->AuthwellUser->UserDataCache );
+
                 debug('valid login request - redirect to previous page');
             }
 
@@ -72,9 +76,10 @@ class AuthwellController extends AppController
 
     function logout()
     {
-        # logout
-
-        # redirect to login page
+        if ( $this->Auth->user_is_logged_in() )
+            $this->Auth->flash('You have been logged out.');
+        $this->Auth->logout();
+        $this->render('login');
     }
 
     function locked()

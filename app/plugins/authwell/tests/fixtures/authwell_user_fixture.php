@@ -38,7 +38,7 @@
                 elseif ( isset($this->RandomColumn[$col]) )
                     $Record[$col] = $this->RandomColumn[$col];
                 else
-                    $Record[$col] = null;
+                    $Record[$col] = $this->Schema[$col]['default'];
             }
             return $Record;
         }
@@ -59,7 +59,7 @@
         }
 
         function random_string($len=9) {
-            return substr(md5(mt_rand(1,1000000)), -9);
+            return 's' . substr(md5(mt_rand(1,1000000)), 1-$len);
         }
     }
 
