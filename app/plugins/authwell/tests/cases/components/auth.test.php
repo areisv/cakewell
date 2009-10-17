@@ -157,9 +157,9 @@ class AuthComponentTest extends CakeTestCase {
                             0 );
     }
 
-    function _testClearUserSession()
+    function testClearUserSession()
     {
-        $this->AuthComponent->_login_user_to_session($this->UserDb);
+        $this->AuthComponent->login_user_to_session($this->UserDb);
         $this->AuthComponent->_clear_user_session();
 
         $this->assertEqual( $this->AuthComponent->Ctrl->Session->read('Authwell.user_id'),
@@ -170,36 +170,20 @@ class AuthComponentTest extends CakeTestCase {
                             0 );
     }
 
-    function _testDatabaseSetup()
+
+    function testAuthComplete()
     {
         $FormData = array(
             'AuthwellUser' => array(
-                'email' => 'user1@klenwell.com',
-                'password' => 'user1'
+                'email_login' => 'user1@klenwell.com',
+                'password_login' => 'user1'
             )
         );
 
         $this->_setUpDatabase();
-        $is_logged_in = $this->AuthComponent->login_request($FormData);
-        $UserData = $this->AuthComponent->get_user_data();
-
-        $this->assertTrue($is_logged_in);
-        $this->assertEqual($UserData['User']['name'],'user1');
-
-        #debug($UserData);
-    }
-
-    function _testAuthComplete()
-    {
-        $FormData = array(
-            'AuthwellUser' => array(
-                'email' => 'user1@klenwell.com',
-                'password' => 'user1'
-            )
-        );
-
-        $this->_setUpDatabase();
-        $is_logged_in = $this->AuthComponent->login_request($FormData);
+        $is_logged_in = $this->AuthComponent->Ctrl->AuthwellUser->is_valid_login_request($FormData);
+        $this->AuthComponent->login_user_to_session(
+            $this->AuthComponent->Ctrl->AuthwellUser->UserDataCache );
         $UserData = $this->AuthComponent->get_user_data();
 
         $this->assertTrue($this->AuthComponent->user_has_role('role1'));
@@ -210,10 +194,6 @@ class AuthComponentTest extends CakeTestCase {
         $this->assertTrue($this->AuthComponent->user_has_privilege('priv.one.null'));
     }
 
-    function _testUserHasRole()
-    {
-        $this->_setUpDatabase();
-    }
 }
 
 ?>
