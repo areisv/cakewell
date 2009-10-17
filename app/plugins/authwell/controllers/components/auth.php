@@ -44,7 +44,7 @@ class AuthComponent extends Object
     // Authwell Auth API (still in development)
     function user_is_logged_in()
     {
-        return $this->Session->check('Authwell.user_id');
+        return (bool) $this->Session->read('Authwell.user_id');
     }
 
     function user_has_privilege($PrivilegeList, $conjunction='or')
@@ -75,7 +75,7 @@ class AuthComponent extends Object
             return 1;
         }
 
-        trigger_error('in dev', E_USER_ERROR);
+        trigger_error('logic error', E_USER_ERROR);
     }
 
     function user_has_role($RoleNameList, $conjunction='or')
@@ -114,28 +114,9 @@ class AuthComponent extends Object
 
 
     // login methods
-    function login_request($FormData)
+    function logout()
     {
-
-
-        // validate form
-        $CharWhiteList = str_split('.@_ ');
-        $email_ = Sanitize::paranoid($FormData['AuthwellUser']['email'], $CharWhiteList);
-        $pass_ = $FormData['AuthwellUser']['password'];
-        if ( empty($email_) ) return $this->invalidate_login('AuthwellUser.email', 'please fill in both fields');
-        if ( empty($pass_) ) return $this->invalidate_login('AuthwellUser.password', 'please fill in both fields');
-
-        // check db
-        #$UserDb = $this->Ctrl->AuthwellUser->findByEmail($email_);
-        $UserDb = $this->Ctrl->AuthwellUser->find_user_by_email($email_);
-
-        if ( empty($UserDb) )
-            return $this->invalidate_login('AuthwellUser.email', 'user not found');
-        if ( $UserDb['User']['password'] != $this->Ctrl->AuthwellUser->password($pass_) )
-            return $this->invalidate_login('AuthwellUser.password', 'incorrect password');
-
-        // still here: login
-        return $this->_login_user_to_session($UserDb);
+        $this->_clear_user_session();
     }
 
     function show_login()
@@ -150,10 +131,9 @@ class AuthComponent extends Object
         return $this->Ctrl->flash($this->Ctrl->lockout_url, $message);
     }
 
-    function invalidate_login($key, $message)
+    function flash($message)
     {
-        $this->invalidLoginFields[$key] = $message;
-        return 0;
+        $this->Session->write('Authwell.flash', $message);
     }
 
 
@@ -206,7 +186,7 @@ class AuthComponent extends Object
         return array_unique(Set::extract('/dotpath.', $RoleList));
     }
 
-    function _login_user_to_session($UserDb)
+    function login_user_to_session($UserDb)
     {
         $this->Session->write('Authwell.user_id', $UserDb['User']['id']);
         $this->Session->write('Authwell.User', $UserDb['User']);

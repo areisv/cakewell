@@ -14,12 +14,22 @@ if ( !empty($FormErrors) )
 
     <h2>Authwell Login</h2>
 
-    <?php echo $form_error; ?>
-
-    <?php echo $form->create("AuthwellUser",
-            array('url' => '/authwell/login'));?>
+    <?php
+        if ( $session->check('Authwell.flash') ) {
+            printf( '<div id="authwell-flash">%s</div>',
+                    $session->read('Authwell.flash') );
+            $session->del('Authwell.flash');
+            debug($session->read('Authwell'));
+        }
+    ?>
 
     <fieldset>
+
+        <?php echo $form_error; ?>
+
+        <?php echo $form->create("AuthwellUser",
+            array('url' => '/authwell/login'));?>
+
         <?php echo $form->input( "AuthwellUser.email_login",
                 array('label' => 'Email') );?>
 
