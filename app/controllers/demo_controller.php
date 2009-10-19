@@ -5,7 +5,7 @@ class DemoController extends AppController
     var $name = 'Demo';
     var $uses = array('Mock', 'SimpleRecord');
     var $components = array('RequestHandler', 'Twitter', 'Sample', 'Gatekeeper',
-            'SourceView');
+            'SourceView', 'Authwell.Auth');
 
     var $build_source_view = 1;
 
@@ -62,21 +62,12 @@ XHTML;
         */
         $this->SourceView->introspect();
 
-        $re = '%[^0-9]%';
-        $in = 'a9b9c9-9d9e9-9f9g9!9';
-        $out = preg_replace($re, '', $in);
-        $REPORT = array(
-            'in' => $in,
-            'out' => $out
-        );
-
-        $Data = array(
-            array('id'=>1, 'dotpath'=>'a'),
-            array('id'=>2, 'dotpath'=>'a.b'),
-            array('id'=>3, 'dotpath'=>'a.b.c'),
-            array('id'=>4, 'dotpath'=>'a'),
-        );
-        $REPORT['dotpath'] = array_unique(Set::extract('/dotpath', $Data));
+        $a = 'a';
+        $b = 'b';
+        $c = 'c';
+        $Arr = array( 'a' => 'not a', 'c' => 'not c' );
+        extract($Arr, EXTR_OVERWRITE);
+        $REPORT = array($a,$b,$c);
 
         $this->set('header', 'Sandbox');
         $this->set('data', $REPORT);

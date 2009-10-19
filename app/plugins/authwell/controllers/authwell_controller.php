@@ -35,7 +35,7 @@
         http://book.cakephp.org/view/116/Plugin-Controllers
 */
 
-class AuthwellController extends AppController
+class AuthwellController extends AuthwellPluginAppController
 {
     var $name = 'Authwell';
     var $uses = array('Authwell.AuthwellUser',
@@ -67,6 +67,8 @@ class AuthwellController extends AppController
                 $this->Auth->login_user_to_session(
                     $this->AuthwellUser->UserDataCache );
 
+                $this->Auth->redirect_login_callback();
+
                 debug('valid login request - redirect to previous page');
             }
 
@@ -82,9 +84,26 @@ class AuthwellController extends AppController
         $this->render('login');
     }
 
-    function locked()
+    function unavailable()
     {
+        debug('you are not authorized to view this page');
+    }
 
+    /* Demo Methods */
+    function demo($case=null)
+    {
+        if ( $case == 'read' )
+        {
+
+        }
+        else
+        {
+            $PrivList[] = 'demo.read';
+        }
+
+        $this->Auth->require_privilege($PrivList);
+
+        debug("you're in!");
     }
 
     /* Private Methods */
@@ -143,6 +162,16 @@ class AuthwellController extends AppController
 XHTML;
         $this->set('content_for_layout', sprintf($content_t, __CLASS__, print_r($this,1)));
         $this->render('/layouts/blank', 'default');
+    }
+
+    function error()
+    {
+        $ParamList = array(
+            'code' => '403',
+            'header' => 'Forbidden',
+            'message' => 'This is a test of Authwell error handling'
+        );
+        $this->Auth->cake_error($ParamList);
     }
 }
 
