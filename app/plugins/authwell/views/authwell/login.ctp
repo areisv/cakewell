@@ -19,7 +19,7 @@ if ( !empty($FormErrors) )
             printf( '<div id="authwell-flash">%s</div>',
                     $session->read('Authwell.flash') );
             $session->del('Authwell.flash');
-            debug($session->read('Authwell'));
+            #debug($session->read('Authwell'));
         }
     ?>
 

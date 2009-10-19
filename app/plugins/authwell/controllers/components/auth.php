@@ -23,10 +23,15 @@ class AuthComponent extends Object
     public $name = 'Auth';
     public $Ctrl = null;
 
-    public $UserData = array();
-    public $checkout_max = 3600;
-    public $invalidLoginFields = array();
-    public $max_attempts = 8;
+    public $UserData            = array();
+    public $checkout_max        = 3600;
+    public $invalidLoginFields  = array();
+    public $max_attempts        = 8;
+
+    # message
+    public $msg_login           = 'please login';
+
+    private $beforeRender_block = 0;
 
     // called before Controller:beforeFilter()
     function initialize(&$controller)
@@ -41,7 +46,29 @@ class AuthComponent extends Object
     {
     }
 
+
     // Authwell Auth API (still in development)
+    function require_privilege($PrivilegeList, $conjunction='or')
+    {
+        if ( !$this->user_is_logged_in() ) {
+            $this->require_login($this->msg_login);
+        }
+
+        if ( !$this->user_has_privilege($PrivilegeList, $conjunction) ) {
+            $this->_block_user();
+        }
+
+        return;
+    }
+
+    function require_login($flash='')
+    {
+        if ( $flash ) $this->flash($flash);
+        $this->set_login_callback_url($this->Ctrl->here);
+        $this->Ctrl->redirect('/authwell/login');
+        die();
+    }
+
     function user_is_logged_in()
     {
         return (bool) $this->Session->read('Authwell.user_id');
@@ -55,8 +82,6 @@ class AuthComponent extends Object
             to see if the user possesses.  conjunction argument determines
             and/or logic of the PrivilegeList
         */
-        if ( !$this->user_is_logged_in() ) return $this->turn_away('please log in');
-
         if ( !is_array($PrivilegeList) )
             $PrivilegeList = array( $PrivilegeList );
 
@@ -112,6 +137,25 @@ class AuthComponent extends Object
         return $UserData;
     }
 
+    function redirect_login_callback()
+    {
+        $this->Ctrl->redirect($this->get_login_callback_url());
+        die();
+    }
+
+    function set_login_callback_url($url=null)
+    {
+        if ( empty($url) ) $url = $this->Ctrl->here;
+        $this->Session->write('Authwell.login_callback_url', $url);
+    }
+
+    function get_login_callback_url()
+    {
+        $url = $this->Session->read('Authwell.login_callback_url');
+        $this->Session->delete('Authwell.login_callback_url');
+        return $url;
+    }
+
 
     // login methods
     function logout()
@@ -122,13 +166,21 @@ class AuthComponent extends Object
     function show_login()
     {
         $this->Session->save('Authwell.login_redirect', $this->here);
-        $this->redirect($this->Ctrl->login_url);
+        $this->Ctrl->redirect($this->Ctrl->login_url);
+        die();
     }
 
     function turn_away($message=null)
     {
         if ( is_null($message) ) $message = 'page is not currently available';
         return $this->Ctrl->flash($this->Ctrl->lockout_url, $message);
+    }
+
+    function lockout($message=null)
+    {
+        if ( !empty($message) ) $this->flash($message);
+        $this->Ctrl->redirect('/authwell/unavailable');
+        die();
     }
 
     function flash($message)
@@ -214,6 +266,69 @@ class AuthComponent extends Object
             return 1;
         $this->Session->write('Authwell.login_attempt', $attempt_++);
         return 0;
+    }
+
+    function _catch_blocked_user()
+    {
+        if ( !$this->_user_is_blocked() ) {
+            debug('not blocked');
+            return;
+        }
+    }
+
+    function cake_error($ParamList=array())
+    {
+        $view_dir = dirname(dirname(dirname(__FILE__))) . DS . 'views' . DS;
+        $render_file = '/authwell/error';
+
+        # defaults
+        $header = 'Page Unavailable';
+        $message = 'You are not authorized to view this page.';
+        $code = 200;
+        extract($ParamList, EXTR_OVERWRITE);
+
+        # header (does this work?)
+        $this->Ctrl->header($code);
+
+        # set message and $header
+        $this->Ctrl->set('header', $header);
+        $this->Ctrl->set('message', $message);
+
+        # must hack the view path here to add plugin view dir because I can't
+        # find any other way to set an absolute path for the view path
+        $ViewPathList = Configure::read('viewPaths') + array( $view_dir );
+        Configure::write('viewPaths', $ViewPathList);
+
+        # mimics error output to shortcut view output by the controller action
+        $this->Ctrl->render(null, null, $render_file);
+	$this->Ctrl->afterFilter();
+	echo $this->Ctrl->output;
+        $this->Ctrl->_stop();
+    }
+
+
+    function _block_user()
+    {
+        $ParamList = array(
+            'code'      => 403,
+            'header'    => 'Page Unavailable',
+            'message'   => 'You are not authorized to view this page',
+        );
+        $this->cake_error($ParamList);
+    }
+
+    function _user_is_blocked()
+    {
+        debug('is blocked?');
+        debug($this->Session->read('Authwell'));
+
+        if ( !$this->Session->check('Authwell.block_user') )
+            $this->Session->write('Authwell.block_user', 0);
+
+        $is_blocked = $this->Session->read('Authwell.block_user');
+        $this->Session->write('Authwell.block_user', 0);
+
+        return $is_blocked;
     }
 
 

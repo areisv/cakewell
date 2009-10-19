@@ -8,6 +8,8 @@
  * will inherit them.
  *
  */
-class TPluginAppController extends AppController {}
+class AuthwellPluginAppController extends AppController {
+
+}
 
 ?>
