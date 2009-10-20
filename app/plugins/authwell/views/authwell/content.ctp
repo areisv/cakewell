@@ -1,8 +1,8 @@
 <?php
 
-if ( empty($content) ) $content = 'no content';
+if ( empty($content) ) $content = '';
 
 ?>
 
-<h2>Cakewell Sample Plugin</h2>
+<h2>Cakewell Authwell Module</h2>
 <h4><?php echo $content; ?></h4>

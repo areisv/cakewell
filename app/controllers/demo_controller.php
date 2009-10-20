@@ -171,6 +171,34 @@ XHTML;
         $this->render('blank', 'default');
     }
 
+    function auth_demo()
+    {
+        $html = <<<XHTML
+<p>You have logged in as <strong>%s</strong></p>
+<a href="/authwell/logout/">logout</a>
+XHTML;
+
+        $this->Auth->flash_login('please login');
+        $this->Auth->require_privilege('demo.demo');
+        $this->set('header', 'Welcome to the Cakewell CakePhp Demo');
+        $this->set('content', sprintf($html, $this->Auth->get_user_name()));
+        $this->render('index');
+    }
+
+    function auth_forbidden()
+    {
+        $html = <<<XHTML
+<p>Oops.  You shouldn't see this.</p>
+<a href="/authwell/logout/">logout</a>
+XHTML;
+
+        $this->Auth->flash_login('please login');
+        $this->Auth->require_privilege('forbidden.null');
+        $this->set('header', 'Welcome to the Cakewell CakePhp Demo');
+        $this->set('content', sprintf($html));
+        $this->render('index');
+    }
+
     function test_simple_record_model()
     {
         $Records = $this->SimpleRecord->find('all', array('limit' => 3));

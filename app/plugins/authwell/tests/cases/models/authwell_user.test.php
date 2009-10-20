@@ -24,6 +24,9 @@ class AuthwellUserTestCase extends CakeTestCase {
         parent::start();
         $this->AuthwellUser = ClassRegistry::init('Authwell.AuthwellUser');
         $this->RecordObj = new AuthwellUserRecord($this->AuthwellUser);
+        $this->RoleRecordObj = new AuthwellRoleRecord($this->AuthwellUser->AuthwellRole);
+        $this->PrivRecordObj = new AuthwellPrivilegeRecord(
+            $this->AuthwellUser->AuthwellRole->AuthwellPrivilege);
     }
 
     function testInstance() {
@@ -124,7 +127,7 @@ class AuthwellUserTestCase extends CakeTestCase {
         #debug($_0x_password);
     }
 
-    function testLoginRequest() {
+    function testSimpleLoginRequest() {
 
         // first save a random user
         $Record = $this->RecordObj->create(array('active'=>1));
@@ -145,6 +148,47 @@ class AuthwellUserTestCase extends CakeTestCase {
 
         $this->assertTrue($is_logged_in);
         $this->assertEqual($Cache['User']['email'], $Record['email']);
+    }
+
+    function testFindUserByEmailWithRolesAndPrivileges()
+    {
+        # create user record
+        $UserRecord = $this->RecordObj->create();
+        $user_name = $UserRecord['name'];
+
+        # create role and privilege records
+        $RoleRecord = $this->RoleRecordObj->create(
+            array( 'name'=>sprintf('priv1_for_%s',$user_name) ) );
+        $PrivRecord1 = $this->PrivRecordObj->create(
+            array( 'dotpath'=>sprintf('%s.priv1',$user_name) ) );
+        $PrivRecord2 = $this->PrivRecordObj->create(
+            array( 'dotpath'=>sprintf('%s.priv2',$user_name) ) );
+        #debug(array($UserRecord, $RoleRecord, $PrivRecord1, $PrivRecord2));
+
+        # save records
+        $this->AuthwellUser->AuthwellRole->AuthwellPrivilege->save($PrivRecord1);
+        $PrivIds[] = $this->AuthwellUser->AuthwellRole->AuthwellPrivilege->id;
+        $this->AuthwellUser->AuthwellRole->AuthwellPrivilege->save($PrivRecord2);
+        $PrivIds[] = $this->AuthwellUser->AuthwellRole->AuthwellPrivilege->id;
+
+        $this->AuthwellUser->AuthwellRole->save( array(
+            'AuthwellRole'=>$RoleRecord,
+            'AuthwellPrivilege'=>$PrivIds ) );
+        $role_id = $this->AuthwellUser->AuthwellRole->id;
+
+        $this->AuthwellUser->save( array(
+            'AuthwellUser'=>$UserRecord,
+            'AuthwellRole'=>array($role_id) ) );
+
+        $UserDbRecord = $this->AuthwellUser->find_user_by_email($UserRecord['email'], 1);
+
+        $this->assertEqual($UserDbRecord['User']['email'], $UserRecord['email']);
+        $this->assertEqual($UserDbRecord['Roles'][0]['description'],
+                           $RoleRecord['description']);
+        $this->assertTrue( in_array( $PrivRecord1['dotpath'],
+                                     $UserDbRecord['User']['dotpaths'] ));
+
+        #debug($UserDbRecord);
     }
 }
 ?>
