@@ -48,22 +48,23 @@ class AuthComponent extends Object
 
 
     // Authwell Auth API (still in development)
-    function require_privilege($PrivilegeList, $conjunction='or')
+    function require_privilege($DotpathLockList, $conjunction='or')
     {
         if ( !$this->user_is_logged_in() ) {
-            $this->require_login($this->msg_login);
+            $this->require_login();
         }
 
-        if ( !$this->user_has_privilege($PrivilegeList, $conjunction) ) {
+        if ( !$this->user_has_privilege($DotpathLockList, $conjunction) ) {
             $this->_block_user();
         }
+
+        $this->Session->del('Authwell.flash');
 
         return;
     }
 
-    function require_login($flash='')
+    function require_login()
     {
-        if ( $flash ) $this->flash($flash);
         $this->set_login_callback_url($this->Ctrl->here);
         $this->Ctrl->redirect('/authwell/login');
         die();
@@ -74,7 +75,7 @@ class AuthComponent extends Object
         return (bool) $this->Session->read('Authwell.user_id');
     }
 
-    function user_has_privilege($PrivilegeList, $conjunction='or')
+    function user_has_privilege($DotpathLockList, $conjunction='or')
     {
         /*
             Privilege List is a list of privilege notation strings (e.g.
@@ -82,19 +83,19 @@ class AuthComponent extends Object
             to see if the user possesses.  conjunction argument determines
             and/or logic of the PrivilegeList
         */
-        if ( !is_array($PrivilegeList) )
-            $PrivilegeList = array( $PrivilegeList );
+        if ( !is_array($DotpathLockList) )
+            $DotpathLockList = array( $DotpathLockList );
 
         if ( $conjunction == 'or' )
         {
-            foreach ( $PrivilegeList as $dotpath )
+            foreach ( $DotpathLockList as $dotpath )
                 if ( $this->_user_has_privilege_by_dotpath($dotpath) )
                     return 1;
             return 0;
         }
         else # ( $conjunction == 'and' )
         {
-            foreach ( $PrivilegeList as $dotpath )
+            foreach ( $DotpathList as $dotpath )
                 if ( !$this->_user_has_privilege_by_dotpath($dotpath) )
                     return 0;
             return 1;
@@ -137,6 +138,12 @@ class AuthComponent extends Object
         return $UserData;
     }
 
+    function get_user_name()
+    {
+        if ( !$UserData = $this->get_user_data() ) return null;
+        return $UserData['User']['name'];
+    }
+
     function redirect_login_callback()
     {
         $this->Ctrl->redirect($this->get_login_callback_url());
@@ -151,9 +158,14 @@ class AuthComponent extends Object
 
     function get_login_callback_url()
     {
-        $url = $this->Session->read('Authwell.login_callback_url');
-        $this->Session->delete('Authwell.login_callback_url');
-        return $url;
+        if ( $this->Session->check('Authwell.login_callback_url') ) {
+            $url = $this->Session->read('Authwell.login_callback_url');
+            $this->Session->delete('Authwell.login_callback_url');
+            return $url;
+        }
+
+        $this->flash_login('You are logged in');
+        return '/authwell/success';
     }
 
 
@@ -173,7 +185,10 @@ class AuthComponent extends Object
     function turn_away($message=null)
     {
         if ( is_null($message) ) $message = 'page is not currently available';
-        return $this->Ctrl->flash($this->Ctrl->lockout_url, $message);
+        $this->flash_login($message);
+        $this->set_login_callback_url($this->Ctrl->here);
+        $this->Ctrl->redirect('/authwell/login');
+        #$this->Ctrl->flash($message, '/authwell/login');
     }
 
     function lockout($message=null)
@@ -185,7 +200,17 @@ class AuthComponent extends Object
 
     function flash($message)
     {
-        $this->Session->write('Authwell.flash', $message);
+        $this->Session->write('Authwell.flash.message', $message);
+    }
+
+    function flash_login($message)
+    {
+        $this->Session->write('Authwell.flash.login', $message);
+    }
+
+    function flash_logout($message)
+    {
+        $this->Session->write('Authwell.flash.logout', $message);
     }
 
 
@@ -200,6 +225,8 @@ class AuthComponent extends Object
     function _user_has_privilege_by_dotpath($lock_dotpath)
     {
         $User = $this->get_user_data();
+
+        # could also use $User['User']['dotpaths'], but this is more proper
         foreach ( $User['Privileges'] as $Record ) {
             $key_dotpath = $Record['dotpath'];
             if ( $this->_privilege_has_access($key_dotpath, $lock_dotpath))
@@ -296,7 +323,7 @@ class AuthComponent extends Object
 
         # must hack the view path here to add plugin view dir because I can't
         # find any other way to set an absolute path for the view path
-        $ViewPathList = Configure::read('viewPaths') + array( $view_dir );
+        $ViewPathList = array_merge(Configure::read('viewPaths'), array( $view_dir ));
         Configure::write('viewPaths', $ViewPathList);
 
         # mimics error output to shortcut view output by the controller action

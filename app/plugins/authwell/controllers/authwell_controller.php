@@ -49,7 +49,7 @@ class AuthwellController extends AuthwellPluginAppController
 
     function index()
     {
-        $this->redirect('authwell/login');
+        $this->redirect('/authwell/login');
     }
 
     function login()
@@ -84,26 +84,49 @@ class AuthwellController extends AuthwellPluginAppController
         $this->render('login');
     }
 
-    function unavailable()
+    function success()
     {
-        debug('you are not authorized to view this page');
+        if ( ! $this->Auth->user_is_logged_in() )
+            $this->Auth->turn_away('Please login');
+
+        $html = <<<XHTML
+<div class="successful-login">
+<p>Welcome, %s</p>
+<p>You have been logged in.</p>
+<a class="logout" href="/authwell/logout">logout</a>
+</div>
+XHTML;
+        $User = $this->Auth->get_user_data();
+        $this->set('content', sprintf($html,$User['User']['name']));
+        $this->render('content');
     }
+
 
     /* Demo Methods */
     function demo($case=null)
     {
-        if ( $case == 'read' )
-        {
-
+        # generally not a fan of switch, but for demo purpose
+        switch ( $case ) {
+            case 'system':
+                $DotPathLockList = 'system.easter';
+                break;
+            case 'demo':
+                $DotPathLockList = array('demo', 'demo.read');
+                break;
+            case 'lock':
+            case 'block':
+            default:
+               $DotPathLockList = 'no_admission';
         }
-        else
-        {
-            $PrivList[] = 'demo.read';
-        }
 
-        $this->Auth->require_privilege($PrivList);
+        $this->Auth->flash_login(
+            'You can set a login message here with $this->Auth->flash_login' );
 
-        debug("you're in!");
+        $this->Auth->require_privilege($DotPathLockList);
+
+        $this->Auth->flash_logout('<a href="/authwell/demo/demo">authwell demo</a>');
+        $this->set('content', 'You are in!<p><a href="/authwell/logout">logout</a></p>');
+        $this->render('content');
     }
 
     /* Private Methods */

@@ -15,12 +15,21 @@ if ( !empty($FormErrors) )
     <h2>Authwell Login</h2>
 
     <?php
-        if ( $session->check('Authwell.flash') ) {
+        /* Authwell Flash Messages */
+        if ( $session->check('Authwell.flash.message') ) {
             printf( '<div id="authwell-flash">%s</div>',
-                    $session->read('Authwell.flash') );
-            $session->del('Authwell.flash');
-            #debug($session->read('Authwell'));
+                    $session->read('Authwell.flash.message') );
         }
+        if ( $session->check('Authwell.flash.logout') ) {
+            printf( '<div id="authwell-flash-logout">%s</div>',
+                    $session->read('Authwell.flash.logout') );
+        }
+        if ( $session->check('Authwell.flash.login') ) {
+            printf( '<div id="authwell-flash-login">%s</div>',
+                    $session->read('Authwell.flash.login') );
+        }
+        #debug($session->read('Authwell'));
+        $session->del('Authwell.flash');
     ?>
 
     <fieldset>

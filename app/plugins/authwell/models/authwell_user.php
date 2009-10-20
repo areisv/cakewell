@@ -155,12 +155,19 @@ class AuthwellUser extends AuthwellAppModel
             return $this->UserDataCache;
 
         if ( !$UserData = $this->find('first', array(
-                'conditions' => array( 'email' => $email )
+                'conditions' => array( 'email' => $email ),
+                'recursive' => 2
            )) )
             return null;
 
+        #debug($UserData);
+
         $RoleList = Set::extract($UserData, 'AuthwellRole.{n}.id');
-        $PrivilegeList = $this->find_privilege_list_from_user_list($RoleList);
+        $PrivilegeList = $this->extract_privileges_from_user_data($UserData);
+        $UserData['AuthwellUser']['rolenames'] = Set::extract(
+            $UserData['AuthwellRole'], '{n}.name');
+        $UserData['AuthwellUser']['dotpaths'] = Set::extract(
+            $PrivilegeList, '{n}.dotpath');
 
         $UserData = array(
             'User'      => $UserData['AuthwellUser'],
@@ -168,33 +175,27 @@ class AuthwellUser extends AuthwellAppModel
             'Privileges' => $PrivilegeList,
         );
 
+        #debug($UserData);
+
         $this->UserDataCache = $UserData;
         return $UserData;
     }
 
-    function find_privilege_list_from_user_list($RoleList)
+    function extract_privileges_from_user_data($UserData)
     {
         $PrivilegeList = array();
 
-        foreach ( $RoleList as $role_id ) {
-            $RolePrivilegeList = $this->AuthwellRole->get_privilege_list($role_id);
-            foreach ( $RolePrivilegeList as $Rec )
-                $PrivilegeList[$Rec['id']] = $Rec;
+        if ( !isset($UserData['AuthwellRole']) || empty($UserData['AuthwellRole']) )
+            return $PrivilegeList;
+
+        foreach ( $UserData['AuthwellRole'] as $RoleData )
+        {
+            if ( !isset($RoleData['AuthwellPrivilege']) ) continue;
+            foreach ( $RoleData['AuthwellPrivilege'] as $PrivRec )
+                $PrivilegeList[$PrivRec['id']] = $PrivRec;
         }
 
         return $PrivilegeList;
-    }
-
-    function get_privilege_list($user_id)
-    {
-        /*
-            Returns list of privilege notations associated with this user.
-        */
-        $PrivilegeList =array();
-
-        $RoleList = $this->get_role_list($user_id);
-
-        return $this->extract_privilege_list_from_user_list($RoleList);
     }
 
     function get_role_list($user_id)
