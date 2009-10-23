@@ -1,0 +1,18 @@
+
+/**
+    Cakewell Authwell Stylesheet
+
+    Last Update: $date$
+    Author: Tom at klenwell@gmail.com
+
+    NOTES
+    Stylesheet for the Cakewell Authwell demo views
+**/
+
+div.cakewell-authwell {
+    max-width:780px;
+    font-family:Arial, Helvetica, sans-serif;
+}
+div.cakewell-authwell p {
+    line-height:1.4em;
+}

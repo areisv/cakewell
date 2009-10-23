@@ -49,7 +49,7 @@ class AuthwellController extends AuthwellPluginAppController
 
     function index()
     {
-        $this->redirect('/authwell/login');
+        // intro to plugin
     }
 
     function login()
@@ -110,18 +110,21 @@ XHTML;
             case 'system':
                 $DotPathLockList = 'system.easter';
                 break;
-            case 'demo':
-                $DotPathLockList = array('demo', 'demo.read');
-                break;
             case 'lock':
             case 'block':
+                $DotPathLockList = 'no_admission';
+                break;
+            case 'demo':
             default:
-               $DotPathLockList = 'no_admission';
+                $DotPathLockList = array('demo', 'demo.read');
         }
 
-        $this->Auth->flash_login(
-            'You can set a login message here with $this->Auth->flash_login' );
+        $login_message = <<<XHTML
+Demo login is <b>demo@klenwell.com</b> / <b>cakewell</b><br />
+You can set the login message with <tt>\$this->Auth->flash_login(\$message)</tt>
+XHTML;
 
+        $this->Auth->flash_login($login_message);
         $this->Auth->require_privilege($DotPathLockList);
 
         $this->Auth->flash_logout('<a href="/authwell/demo/demo">authwell demo</a>');
