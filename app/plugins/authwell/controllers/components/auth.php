@@ -58,8 +58,6 @@ class AuthComponent extends Object
             $this->_block_user();
         }
 
-        $this->Session->del('Authwell.flash');
-
         return;
     }
 
