@@ -48,6 +48,19 @@ class DemoController extends AppController
     incorporates the reCAPTCHA widget.</p>
 </div>
 
+<div class="section">
+    <h4><a href="/authwell">Authwell Plugin</a></h4>
+    <p>The Authwell plugin is an authorization component.  At this point, it
+    is intended mainly as a learning tool and illustration of a robust
+    CakePhp plugin. It can be tested, however, with the auth_demo and
+    auth_forbidden links at right.</p>
+    <p>The login is 'demo@klenwell.com', password 'cakewell'.  Click the link
+    above for more examples.  Source code for the plugin can be found at the
+    <a href="http://code.google.com/p/cakewell/source/browse/#hg/app/plugins/authwell"
+    onclick="window.open(this.href,'_blank');return false;">Cakewell Google
+    Code site</a>.</p>
+</div>
+
 XHTML;
 
         $this->set('header', 'Welcome to the Cakewell CakePhp Demo');
