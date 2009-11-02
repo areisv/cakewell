@@ -1,18 +1,13 @@
 <?php
 /* SVN FILE: $Id: index.php 7296 2008-06-27 09:09:03Z gwoo $ */
 
-/*  Cakewell Cron Dispatcher
-
+/*
     A dispatch handler for cron jobs
     See http://bakery.cakephp.org/articles/view/calling-controller-actions-from-cron-and-the-command-line
 
-    If possible, use with
-
     USAGE:
-    php /BASE_PATH/webroot/cron.php /controller/action
+    php path/to/cron.php /controller/action mode
 
-    Example using cron controller:
-    php /BASE_PATH/webroot/cron.php /cron/test
 */
 
 /**
@@ -31,7 +26,7 @@
 */
 $CakePhpAppDirParent = dirname(dirname(__FILE__));
 $CakePhpAppDirName = 'app';
-$CakePhpCoreDir = '/home/klenwell/root/qed/cake_core';
+$CakePhpCoreDir = dirname($CakePhpAppDirParent) . '/cake_core';
 
 
 /**
@@ -90,16 +85,14 @@ $CakePhpCoreDir = '/home/klenwell/root/qed/cake_core';
 	}
 
         // Dispatch the controller action given to it
-        // CLI exception
-        if ( !isset($argc) || $argc != 2 ) {
-            $exception_controller = '/cron/exception';
-            $Dispatcher= new Dispatcher();
-            $Dispatcher->dispatch($exception_controller);
-        }
-        // everything checks out
-        {
-            define('CAKEWELL_CRON', true);
+        define('CRON_OK', true);
+        if (isset($argc) && $argc > 1) {
             $Dispatcher= new Dispatcher();
             $Dispatcher->dispatch($argv[1]);
+        }
+
+        // argc missing means not a command line call: handle as desired below
+        else {
+            die('cron available only from command line');
         }
 ?>
