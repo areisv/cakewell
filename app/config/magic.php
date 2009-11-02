@@ -12,15 +12,20 @@
 
     /*
         $_SERVER['SERVER_NAME'] not set in some contexts (e.g. cron jobs)
-        In this case, we look to see if command line parameter gives
-        us the value, following the example here:
+        In this case, we manually set server value.  This is inspired by:
         http://bakery.cakephp.org/articles/view/one-core-one-app-multiple-domains
     */
     if ( empty($_SERVER['SERVER_NAME']) )
     {
-        // look at last cli value
-        if ( count($_SERVER['argv']) )
-            $_SERVER['SERVER_NAME'] = $_SERVER['argv'][count($_SERVER['argv'])-1];
+        // look at last cli value, set server name to value if in Domain Map config
+        if ( count($_SERVER['argv'])  ) {
+            $cli_arg = $_SERVER['argv'][count($_SERVER['argv'])-1];
+            if ( in_array($cli_arg, array_keys($ConfigDomainMap)) )
+                $_SERVER['SERVER_NAME'] = $cli_arg;
+        }
+        // else set to cron, which can be added as key to $ConfigDomainMap
+        else
+            $_SERVER['SERVER_NAME'] = 'cron';
     }
 
     // Set App.Mode Value
