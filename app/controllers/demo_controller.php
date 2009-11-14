@@ -420,6 +420,25 @@ XHTML;
         $this->render('report');
     }
 
+    function test_404_view()
+    {
+        $text = 'This is a custom 404 template.  It is found in /views/errors/error404.ctp';
+        $this->set('name', 'Cakewell 404 Error Template');
+        $this->set('message', 'missing path here');
+        $this->set('text', $text);
+        $this->set('link', '/demo');
+        $this->set('label', 'return to demo index');
+        $this->render('/errors/error404');
+    }
+
+    function test_404_error()
+    {
+        $message = sprintf('%s [testing]', $this->here);
+        $this->set('link', '/demo');
+        $this->set('label', 'return to demo index');
+        $this->cakeError('error404', array('url' => $message));
+    }
+
     function test_flash()
     {
         $this->flash('you are being redirected to the index', '/'.$this->viewPath);
