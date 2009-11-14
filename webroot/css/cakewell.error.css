@@ -1,0 +1,47 @@
+
+/** Cakewell Home Stylesheet
+
+    Last Update: $date$
+    Author: Tom at klenwell@gmail.com
+
+    NOTES
+    A basic stylesheet for the cakephp demo app.
+*/
+
+h1, h2, h3, h4, h5, h6 { margin-bottom:0.5em; }
+hr { margin:1em 0; color:#CC6666; }
+li { margin:0.5em 0; }
+form div, form, table { clear:none; }
+
+/* BASIC LAYOUT */
+html, body, table#shell { height:100%; }
+body
+{
+ margin:0; padding:0;
+ font-family:Arial, Helvetica, sans-serif;
+ background:#fff;
+ color:#300;
+ _text-align:center;
+}
+
+a { color:#900; text-decoration:none; }
+a:hover { color:#f00; }
+
+/* Layout */
+div#layout-error {
+    width:720px;
+    margin:0 auto;
+}
+
+
+/* Footer */
+#footer_panel {
+ width:auto; clear:both;
+ margin-top:4px; padding:4px;
+ text-align:center;
+ font-size:12px;
+ line-height:1.4em;
+}
+#footer_panel span.version { color:#900; }
+#footer_left { float:left; }
+#footer_right { float:right; }
