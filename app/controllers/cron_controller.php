@@ -32,7 +32,7 @@ class CronController extends AppController
     function beforeFilter()
     {
         // check CAKEWELL_CRON constant, set in webroot/cron.php
-        if ( !defined('CAKEWELL_CRON') )
+        if ( !defined('CRON_OK') )
             die('cron exception: cron flag not set by dispatcher');
     }
 
