@@ -70,7 +70,7 @@ XHTML;
     function sandbox()
     {
         /*
-          This is an open action for quick-testing new shit and things I'm
+          This is an open action for quick-testing new stuff and things I'm
           not sure about.
         */
         $this->SourceView->introspect();
@@ -182,6 +182,18 @@ XHTML;
         $phpinfo = ob_get_clean();
         $this->set('content_for_view', $phpinfo);
         $this->render('blank', 'default');
+    }
+
+    function referrer_check()
+    {
+        $Data = array(
+            'referer' => $this->referer(),
+            'SERVER[\'HTTP_REFERER\']' => isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'NULL',
+            'Configure::read(\'Security.level\')' => Configure::read('Security.level'),
+        );
+        $this->set('header', 'Checking Referrer');
+        $this->set('data', $Data);
+        $this->render('report');
     }
 
     function auth_demo()
