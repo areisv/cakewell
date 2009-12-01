@@ -24,8 +24,9 @@
         function create_random_records($num)
         {
             $RecordList = array();
-            foreach ( range(1,$n) as $n )
+            foreach ( range(1,$num) as $n )
                 $RecordList[] = $this->create();
+            return $RecordList;
         }
 
         function create($Data=array())
@@ -35,8 +36,12 @@
             {
                 if ( isset($Data[$col]) )
                     $Record[$col] = $Data[$col];
+
+                # note: this doesn't randomize multiple records in the way I want
+                # but works for current tests
                 elseif ( isset($this->RandomColumn[$col]) )
                     $Record[$col] = $this->RandomColumn[$col];
+
                 else
                     $Record[$col] = $this->Schema[$col]['default'];
             }
