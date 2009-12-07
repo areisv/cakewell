@@ -116,6 +116,43 @@ XHTML;
         $this->render('report');
     }
 
+    function custom_error()
+    {
+        $this->cakeError('cakewellTestError', array('message'=>'a test error'));
+        $REPORT = array(
+            'you should be redirected to the error page'
+        );
+
+        $this->set('header', 'Test Error');
+        $this->set('data', $REPORT);
+        $this->render('report');
+    }
+
+    function custom_404()
+    {
+        $a_ = '<a href="%s">%s</a>';
+        $REPORT = array(
+            '404 page' => sprintf($a_, '/notfound', '404 page'),
+            'more info' => sprintf($a_,
+                '',
+                'planetcakephp.org')
+        );
+        $content = <<<XHTML
+<h4><a href="/notfound">click here for 404 page</a></h4>
+for more info, see:
+<h5>
+    <a href="http://planetcakephp.org/aggregator/items/2177-custom-404-error-page-with-cakephp"
+       onclick="window.open(this.href,'_blank');return false;">
+        http://planetcakephp.org/aggregator/items/2177-custom-404-error-page-with-cakephp
+    </a>
+</h5>
+XHTML;
+
+        $this->set('header', 'Welcome to the Cakewell CakePhp Demo');
+        $this->set('content', $content);
+        $this->render('index');
+    }
+
     function cake_constants()
     {
         $REPORT = array(

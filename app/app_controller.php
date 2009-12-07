@@ -1,7 +1,7 @@
 <?php
 
 /*
-    The CakePhp App Controller
+    The Cakewell App Controller
 
     "Controller attributes and methods created in your AppController will be
     available to all of your application's controllers. It is the ideal place
