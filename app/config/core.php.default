@@ -66,6 +66,8 @@
 
     // Google Service Settings
     define('GA_CODE', 'UA-CODE-HERE');
+    define('GMAIL_USER', 'GMAIL_ADDRESS');
+    define('GMAIL_PASS', 'GMAIL_PASSWORD');
 
     // ReCaptcha Keys (http://recaptcha.net/)
     define('RECAPTCHA_DOMAIN', 'YOUR_KEY_DOMAIN');
