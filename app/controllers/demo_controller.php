@@ -4,8 +4,14 @@ class DemoController extends AppController
 {
     var $name = 'Demo';
     var $uses = array('Mock', 'SimpleRecord');
-    var $components = array('RequestHandler', 'Twitter', 'Sample', 'Gatekeeper',
-            'SourceView', 'Authwell.Auth');
+    var $components = array(
+            'RequestHandler',
+            'Twitter',
+            'Sample',
+            'Gatekeeper',
+            'SourceView',
+            'Authwell.Auth',
+            'Email' );
 
     var $build_source_view = 1;
 
@@ -114,6 +120,127 @@ XHTML;
         $this->set('header', 'Cakewell Context-Specific App Values');
         $this->set('data', $REPORT);
         $this->render('report');
+    }
+
+    function email_test()
+    {
+        App::import('Vendor', 'recaptcha/recaptchalib');
+        $RecaptchaResponse = null;
+        $RecaptchaError = null;
+        $display_recaptcha = FALSE;
+        $FormErrors = array();
+
+        $email_subject = 'Cakewell Test Email';
+        $email_body = <<<HERETEXT
+This message was sent from cakewell.klenwell.com/demo/email_test
+as a demonstration of the email function in the CakePhp framework.
+The user was required to complete a ReCaptcha challenge to
+send this message.
+
+If you did not request this message, we apologize for any
+inconvenience. If you believe our service is being abused,
+please feel free to contact Tom at klenwell@gmail.com.
+HERETEXT;
+        $email_body = sprintf($email_body, GMAIL_USER);
+
+        # subcontroller
+        $subaction = ( isset($this->params['form']['subaction']) ) ?
+            $this->params['form']['subaction'] : null;
+
+        if ( $subaction == 'send test email' ) {
+            #debug($this->params);
+
+            $RecaptchaResponse = recaptcha_check_answer(
+                RECAPTCHA_PRIVATE_KEY,
+                $_SERVER["REMOTE_ADDR"],
+                $_POST["recaptcha_challenge_field"],
+                $_POST["recaptcha_response_field"] );
+
+            if ( ! Validation::email($this->data['email_to']) ) {
+                $FormErrors[] = 'email_to';
+                $this->set('status', 'invalid email address');
+                $display_recaptcha = TRUE;
+            }
+
+            if ( ! $RecaptchaResponse->is_valid ) {
+                $FormErrors[] = 'recaptcha';
+                $this->set('status', 'ReCaptcha failed');
+                $RecaptchaError = $RecaptchaResponse->error;
+                $display_recaptcha = TRUE;
+            }
+
+            if ( empty($FormErrors) ) {
+                list($success, $status) =
+                    $this->_send_email($this->data['email_to'],
+                                       $email_subject,
+                                       $email_body);
+                $this->set('status', $status);
+                if ( ! $success ) {
+                    $display_recaptcha = TRUE;
+                }
+            }
+        }
+        else {
+            $display_recaptcha = TRUE;
+        }
+
+        if ( $display_recaptcha ) {
+            $recaptcha_html = recaptcha_get_html( RECAPTCHA_PUBLIC_KEY,
+                                                  $RecaptchaError );
+            $this->set('recaptcha_html', $recaptcha_html);
+            $this->set('email_subject', $email_subject);
+            $this->set('email_body', $email_body);
+        }
+
+        $this->render('email');
+    }
+
+    function _send_email($to_address, $subject, $body)
+    {
+        $email_f = '%s <%s>';
+        $from_name = 'Cakewell Demo';
+        $from_address = GMAIL_USER;
+
+        $this->Email->smtpOptions = array(
+            'port'      => '465',
+            'timeout'   => '30',
+            'host'      => 'ssl://smtp.gmail.com',
+            'username'  => GMAIL_USER,
+            'password'  => GMAIL_PASS,
+        );
+
+        $this->Email->delivery = 'smtp';
+        $this->Email->to = sprintf($email_f, $to_address, $to_address);
+        $this->Email->replyTo = $from_address;
+        $this->Email->from = sprintf($email_f, $from_name, $from_address);
+        $this->Email->subject = $subject;
+        $this->Email->send($body);
+
+        if ( !empty($this->Email->smtpError) ) {
+            debug($this->Email->smtpError);
+            $Response = array( 0,
+                sprintf('<b>unable to send message</b>: %s', $this->Email->smtpError)
+            );
+            return $Response;
+        }
+        else {
+            $Response = array( 1,
+                sprintf('<b>message successfully sent to</b>: %s', $to_address)
+            );
+
+        }
+
+        # notify me, too
+        $body = <<<EMAILX
+Requested for: %s
+status: %s
+EMAILX;
+        $this->Email->to = sprintf($email_f, GMAIL_USER, GMAIL_USER);
+        $this->Email->subject = sprintf('cakewell demo email sent at %s',
+            date('g:ia'));
+        $this->Email->send(sprintf($body, $to_address, $Response[1]));
+
+        return $Response;
     }
 
     function custom_error()
