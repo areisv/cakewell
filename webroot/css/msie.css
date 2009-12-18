@@ -1,0 +1,18 @@
+
+/*
+    MSIE-specific stylesheet
+
+    To use, add to HEAD section:
+
+        <!--[if IE]>
+            <?php echo $html->css('msie') . "\n"; ?>
+        <![endif]-->
+
+        <!--[if gte IE 5]>
+            <?php echo $html->css('msie') . "\n"; ?>
+        <![endif]-->
+
+    Ref: http://www.javascriptkit.com/howto/cc2.shtml
+*/
+
+

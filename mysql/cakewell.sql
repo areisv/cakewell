@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
 CREATE TABLE IF NOT EXISTS `simple_logs` (
     id int(11) NOT NULL auto_increment,
     type_id int(11) default NULL,
-    keyword varchar(16) NOT NULL,
+    keyword varchar(16) default NULL,
     message varchar(255) NOT NULL,
     created DATETIME,
     PRIMARY KEY  (`id`),
