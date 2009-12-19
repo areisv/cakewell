@@ -478,9 +478,9 @@ EOMENU;
 <p>You have logged in as <strong>%s</strong></p>
 <a href="/authwell/logout/">logout</a>
 XHTML;
-
         $this->Auth->flash_login('please login');
         $this->Auth->require_privilege('demo.demo');
+        die('dead');
         $this->set('header', 'Welcome to the Cakewell CakePhp Demo');
         $this->set('content', sprintf($html, $this->Auth->get_user_name()));
         $this->render('index');
@@ -523,15 +523,32 @@ XHTML;
         $this->cakeError('error404', array('url' => $message));
     }
 
-    function flash()
+    function redirection($type='index')
     {
-        $this->flash('you are being redirected to the index', '/'.$this->viewPath);
-    }
-
-    function redirect()
-    {
-        $this->redirect("/{$this->viewPath}/index");
-        die();
+        if ( $type == 'redirect' ) {
+            $this->redirect("/{$this->viewPath}/index");
+            die('unexpected error');
+        }
+        elseif ( $type == 'session_flash') {
+            $this->Session->setFlash('sessionFlash set');
+            $this->redirect("/{$this->viewPath}/index");
+            die('unexpected error');
+        }
+        elseif ( $type == 'flash' ) {
+            $this->flash('you are being redirected to the index',
+                         '/'.$this->viewPath);
+        }
+        else {
+            $content = <<<EOMENU
+<h3>redirect options</h3>
+<a href="/demo/redirection/redirect/">redirect</a><br />
+<a href="/demo/redirection/session_flash/">redirect with Session->setFlash</a><br />
+<a href="/demo/redirection/flash/">flash</a><br />
+EOMENU;
+            $this->set('header', 'Redirection Examples');
+            $this->set('content', $content);
+            $this->render('index');
+        }
     }
 
     function set_utility($method='options') {
