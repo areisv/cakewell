@@ -6,22 +6,37 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 -- --------------------------------------------------------
 
--- DROP TABLE IF EXISTS `simple_records`;
-CREATE TABLE IF NOT EXISTS `simple_records` (
+-- DROP TABLE IF EXISTS `simple_logs`;
+CREATE TABLE IF NOT EXISTS `simple_logs` (
     id int(11) NOT NULL auto_increment,
-    value varchar(80) NOT NULL,
+    type_id int(11) default NULL,
+    keyword varchar(16) default NULL,
+    message varchar(255) NOT NULL,
+    created DATETIME,
+    PRIMARY KEY  (`id`),
+    KEY `k_type_id` (`type_id`),
+    KEY `k_keyword` (`keyword`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+INSERT INTO `simple_logs` (`id`, `type_id`, `keyword`, `message`, `created`) VALUES
+(1, 1, 'database', 'creating simple_records and simple_log_types databases', NOW());
+
+-- DROP TABLE IF EXISTS `simple_log_types`;
+CREATE TABLE IF NOT EXISTS `simple_log_types` (
+    id int(11) NOT NULL auto_increment,
+    type varchar(16) NOT NULL,
     updated DATETIME,
     created DATETIME,
-
-    PRIMARY KEY  (`id`)
+    PRIMARY KEY  (`id`),
+    KEY `k_type` (`type`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+INSERT INTO `simple_log_types` (`id`, `type`, `created`) VALUES
+(1, 'system', NOW()),
+(2, 'error', NOW()),
+(3, 'warning', NOW()),
+(4, 'info', NOW()),
+(5, 'debug', NOW());
 
--- Insert 2 Default Records
-INSERT INTO `simple_records` (`id`, `value`, `updated`, `created`) VALUES
-(1, 'cakewell db: first post', '2008-01-01 00:00:00', '2008-01-01 12:00:00'),
-(2, 'a default record', '2008-01-01 00:00:00', '2008-01-01 12:00:00');
-
-
+-- DROP TABLE IF EXISTS `comments`;
 CREATE TABLE IF NOT EXISTS `comments` (
   `id` bigint(20) unsigned NOT NULL auto_increment,
   `meta_id` bigint(20) NOT NULL default '0',
@@ -56,35 +71,8 @@ CREATE TABLE IF NOT EXISTS `comments` (
 --
 
 -- SPRINT v1s7
--- adding simple_logs and simple_log_types tables
--- development: 2009.12.17
+-- removing deprecated tables
+-- development: 2009.12.19
 -- production: TBA
--- DROP TABLE IF EXISTS `simple_logs`;
-CREATE TABLE IF NOT EXISTS `simple_logs` (
-    id int(11) NOT NULL auto_increment,
-    type_id int(11) default NULL,
-    keyword varchar(16) default NULL,
-    message varchar(255) NOT NULL,
-    created DATETIME,
-    PRIMARY KEY  (`id`),
-    KEY `k_type_id` (`type_id`),
-    KEY `k_keyword` (`keyword`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-INSERT INTO `simple_logs` (`id`, `type_id`, `keyword`, `message`, `created`) VALUES
-(1, 1, 'database', 'creating simple_records and simple_log_types databases', NOW());
-
--- DROP TABLE IF EXISTS `simple_log_types`;
-CREATE TABLE IF NOT EXISTS `simple_log_types` (
-    id int(11) NOT NULL auto_increment,
-    type varchar(16) NOT NULL,
-    updated DATETIME,
-    created DATETIME,
-    PRIMARY KEY  (`id`),
-    KEY `k_type` (`type`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-INSERT INTO `simple_log_types` (`id`, `type`, `created`) VALUES
-(1, 'system', NOW()),
-(2, 'error', NOW()),
-(3, 'warning', NOW()),
-(4, 'info', NOW()),
-(5, 'debug', NOW());
+DROP TABLE IF EXISTS `simple_records`;
+DROP TABLE IF EXISTS `simple_users`;
