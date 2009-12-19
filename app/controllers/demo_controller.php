@@ -343,31 +343,6 @@ EMAILX;
         $this->render('report');
     }
 
-    function custom_404()
-    {
-        $a_ = '<a href="%s">%s</a>';
-        $REPORT = array(
-            '404 page' => sprintf($a_, '/notfound', '404 page'),
-            'more info' => sprintf($a_,
-                '',
-                'planetcakephp.org')
-        );
-        $content = <<<XHTML
-<h4><a href="/notfound">click here for 404 page</a></h4>
-for more info, see:
-<h5>
-    <a href="http://planetcakephp.org/aggregator/items/2177-custom-404-error-page-with-cakephp"
-       onclick="window.open(this.href,'_blank');return false;">
-        http://planetcakephp.org/aggregator/items/2177-custom-404-error-page-with-cakephp
-    </a>
-</h5>
-XHTML;
-
-        $this->set('header', 'Welcome to the Cakewell CakePhp Demo');
-        $this->set('content', $content);
-        $this->render('index');
-    }
-
     function referrer_check()
     {
         $Data = array(
@@ -406,56 +381,6 @@ XHTML;
         $this->set('header', 'Welcome to the Cakewell CakePhp Demo');
         $this->set('content', sprintf($html));
         $this->render('index');
-    }
-
-    function test_simple_record_model()
-    {
-        $Records = $this->SimpleRecord->find('all', array('limit' => 3));
-
-        $REPORT = array(
-            '$this->SimpleRecord->find(\'all\', array(\'limit\' => 3))' => $Records,
-            '$this->SimpleRecord' => $this->SimpleRecord,
-        );
-
-        $this->set('header', 'Simple Record Model');
-        $this->set('data', $REPORT);
-        $this->render('report');
-    }
-
-    function test_simple_record_save()
-    {
-        $this->Gatekeeper->restrict_from_app_modes( array('production'),
-            '/demo/',
-            'this action is blocked in production mode');
-        $Record = array(
-            'SimpleRecord' => array(
-                'value' => 'test: ' . md5(time()),
-            )
-        );
-
-        $this->SimpleRecord->create($Record);
-        $result = $this->SimpleRecord->save();
-
-        $REPORT = array(
-            '$this->SimpleRecord->save()' => $result,
-            '$this->SimpleRecord->id' => $this->SimpleRecord->id,
-        );
-
-        $this->set('header', 'Simple Record Save Example');
-        $this->set('data', $REPORT);
-        $this->render('report');
-    }
-
-    function test_behavior()
-    {
-        $this->SimpleRecord->test_normalizer();
-        $REPORT = array(
-            '$this->SimpleRecord->test_normalizer()' => $this->SimpleRecord->test_normalizer(),
-        );
-
-        $this->set('header', 'Normalizer Behavior Test');
-        $this->set('data', $REPORT);
-        $this->render('report');
     }
 
     function model() {
