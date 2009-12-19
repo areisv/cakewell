@@ -104,32 +104,110 @@ XHTML;
         $this->render('report');
     }
 
-    function controller_dump()
+    function dump($object='options')
     {
-        $REPORT = array($this->name => $this);
-        $this->set('header', 'Dumping the Controller Object');
-        $this->set('data', $REPORT);
-        $this->render('report');
+        if ( $object == 'view' ) {
+            $this->set('header', 'Dumping a View Object');
+            $this->render('view_dump');
+        }
+        elseif ( $object == 'controller' ) {
+            $REPORT = array($this->name => $this);
+            $this->set('header', 'Dumping the Controller Object');
+            $this->set('data', $REPORT);
+            $this->render('report');
+        }
+        elseif ( $object == 'config' ) {
+            $REPORT = array(
+                'App.mode' => Configure::Read('App.mode'),
+                'App.domain' => Configure::Read('App.domain'),
+                'debug' => Configure::read('debug'),
+                'Configure::Read(\'App\')' => Configure::Read('App')
+            );
+            $this->set('header', 'Cakewell Context-Specific App Values');
+            $this->set('data', $REPORT);
+            $this->render('report');
+        }
+        elseif ( $object == 'phpinfo' ) {
+            $this->Gatekeeper->restrict_from_app_modes( array('production'),
+                '/demo/',
+                'this action is blocked in production mode');
+            ob_start();
+            phpinfo();
+            $phpinfo = ob_get_clean();
+            $this->set('content_for_view', $phpinfo);
+            $this->render('blank', 'default');
+        }
+        elseif ( $object == 'constants' ) {
+            $this->set('header', 'Some CakePHP Constants and Globals (<a href="http://book.cakephp.org/view/122/Core-Definition-Constants">docs</a>)');
+            $this->set('data', $this->_cake_constants());
+            $this->render('report');
+        }
+        else {
+            $content = <<<EOMENU
+<h3>choose an object to dump</h3>
+<a href="/demo/dump/controller/">controller object</a><br />
+<a href="/demo/dump/view/">view object</a><br />
+<a href="/demo/dump/config/">configuration app values</a><br />
+<a href="/demo/dump/phpinfo/">phpinfo</a><br />
+<a href="/demo/dump/constants/">CakePhp constants</a>
+EOMENU;
+            $this->set('header', 'Object Dumper');
+            $this->set('content', $content);
+            $this->render('index');
+        }
     }
 
-    function view_dump()
+    function _cake_constants()
     {
-        $this->set('header', 'Dumping a View Object');
-        $this->render('view_dump');
-    }
-
-    function config_test()
-    {
-        $REPORT = array(
-            'App.mode' => Configure::Read('App.mode'),
-            'App.domain' => Configure::Read('App.domain'),
-            'debug' => Configure::read('debug'),
-            'Configure::Read(\'App\')' => Configure::Read('App')
+        $Constants = array(
+            'Cake Constants' => array(
+                'APP' => APP,
+                'APP_DIR' => APP_DIR,
+                'APP_PATH' => APP_PATH,
+                'CACHE' => CACHE,
+                'CAKE' => CAKE,
+                'CAKE_CORE_INCLUDE_PATH' => CAKE_CORE_INCLUDE_PATH,
+                'COMPONENTS' => COMPONENTS,
+                'CONFIGS' => CONFIGS,
+                'CONTROLLER_TESTS' => CONTROLLER_TESTS,
+                'CONTROLLERS' => CONTROLLERS,
+                'CORE_PATH' => CORE_PATH,
+                'CSS' => CSS,
+                'DEBUG (use Configure::read("debug"))' => DEBUG,
+                'ELEMENTS' => ELEMENTS,
+                'FULL_BASE_URL' => FULL_BASE_URL,
+                'FULL_BASE_URL . Router::url(\'\', false)' => FULL_BASE_URL . Router::url('', false),
+                'HELPER_TESTS' => HELPER_TESTS,
+                'HELPERS' => HELPERS,
+                'INFLECTIONS' => INFLECTIONS,
+                'JS' => JS,
+                'LAYOUTS' => LAYOUTS,
+                'LIB_TESTS' => LIB_TESTS,
+                'LIBS' => LIBS,
+                'LOGS' => LOGS,
+                'MODEL_TESTS' => MODEL_TESTS,
+                'MODELS' => MODELS,
+                'PROJECT_ROOT (Cakewell only)' => PROJECT_ROOT,
+                'TESTS' => TESTS,
+                'TMP' => TMP,
+                'ROOT' => ROOT,
+                'VENDORS' => VENDORS,
+                'VIEWS' => VIEWS,
+                'WEBROOT_DIR' => WEBROOT_DIR,
+                'WWW_ROOT' => WWW_ROOT,
+            ),
+            'Controller Properties' => array(
+                '$this->action' => $this->action,
+                '$this->here' => $this->here,
+                '$this->name' => $this->name,
+                '$this->params[\'url\']' => $this->params['url'],
+            ),
+            'Other' => array(
+                'ConnectionManager::sourceList' => ConnectionManager::sourceList(),
+                'Configure Class Settings' => 'see config_test'
+            )
         );
-
-        $this->set('header', 'Cakewell Context-Specific App Values');
-        $this->set('data', $REPORT);
-        $this->render('report');
+        return $Constants;
     }
 
     function email_test()
@@ -290,74 +368,6 @@ XHTML;
         $this->render('index');
     }
 
-    function cake_constants()
-    {
-        $REPORT = array(
-            'Cake Constants' => array(
-                'APP' => APP,
-                'APP_DIR' => APP_DIR,
-                'APP_PATH' => APP_PATH,
-                'CACHE' => CACHE,
-                'CAKE' => CAKE,
-                'CAKE_CORE_INCLUDE_PATH' => CAKE_CORE_INCLUDE_PATH,
-                'COMPONENTS' => COMPONENTS,
-                'CONFIGS' => CONFIGS,
-                'CONTROLLER_TESTS' => CONTROLLER_TESTS,
-                'CONTROLLERS' => CONTROLLERS,
-                'CORE_PATH' => CORE_PATH,
-                'CSS' => CSS,
-                'DEBUG (use Configure::read("debug"))' => DEBUG,
-                'ELEMENTS' => ELEMENTS,
-                'FULL_BASE_URL' => FULL_BASE_URL,
-                'FULL_BASE_URL . Router::url(\'\', false)' => FULL_BASE_URL . Router::url('', false),
-                'HELPER_TESTS' => HELPER_TESTS,
-                'HELPERS' => HELPERS,
-                'INFLECTIONS' => INFLECTIONS,
-                'JS' => JS,
-                'LAYOUTS' => LAYOUTS,
-                'LIB_TESTS' => LIB_TESTS,
-                'LIBS' => LIBS,
-                'LOGS' => LOGS,
-                'MODEL_TESTS' => MODEL_TESTS,
-                'MODELS' => MODELS,
-                'PROJECT_ROOT (Cakewell only)' => PROJECT_ROOT,
-                'TESTS' => TESTS,
-                'TMP' => TMP,
-                'ROOT' => ROOT,
-                'VENDORS' => VENDORS,
-                'VIEWS' => VIEWS,
-                'WEBROOT_DIR' => WEBROOT_DIR,
-                'WWW_ROOT' => WWW_ROOT,
-            ),
-            'Controller Properties' => array(
-                '$this->action' => $this->action,
-                '$this->here' => $this->here,
-                '$this->name' => $this->name,
-                '$this->params[\'url\']' => $this->params['url'],
-            ),
-            'Other' => array(
-                'ConnectionManager::sourceList' => ConnectionManager::sourceList(),
-                'Configure Class Settings' => 'see config_test'
-            )
-        );
-
-        $this->set('header', 'Some CakePHP Constants and Globals (<a href="http://book.cakephp.org/view/122/Core-Definition-Constants">docs</a>)');
-        $this->set('data', $REPORT);
-        $this->render('report');
-    }
-
-    function phpinfo()
-    {
-        $this->Gatekeeper->restrict_from_app_modes( array('production'),
-            '/demo/',
-            'this action is blocked in production mode');
-        ob_start();
-        phpinfo();
-        $phpinfo = ob_get_clean();
-        $this->set('content_for_view', $phpinfo);
-        $this->render('blank', 'default');
-    }
-
     function referrer_check()
     {
         $Data = array(
@@ -489,23 +499,7 @@ XHTML;
         $this->render('simplelog');
     }
 
-    function test_mock_model()
-    {
-        // import does not seem to work when $uses set to null
-        #App::import('Mock');
-        $Mock = new Mock();
-
-        $REPORT = array(
-            '$Mock->find()' => $Mock->find(),
-            'Mock Model Object' => $Mock,
-        );
-
-        $this->set('header', 'A Mock Model');
-        $this->set('data', $REPORT);
-        $this->render('report');
-    }
-
-    function test_component()
+    function component()
     {
         $result = $this->Sample->test();
         $this->set('header', 'Component Test');
@@ -513,7 +507,7 @@ XHTML;
         $this->render('report');
     }
 
-    function test_request_handler()
+    function request_handler()
     {
         $Report = array(
             '$this->Session->id()' => $this->Session->id(),
@@ -537,7 +531,7 @@ XHTML;
         return $this->redirect('/demo/model');
     }
 
-    function test_twitter_component()
+    function twitter_component()
     {
         $TweetData = $this->Twitter->get_tweets();
 
@@ -547,7 +541,7 @@ XHTML;
         $this->render('report');
     }
 
-    function test_gatekeeper_component($restrict=null, $redirect=null, $message=null)
+    function gatekeeper_component($restrict=null, $redirect=null, $message=null)
     {
         $restrict = ( $restrict == 'restrict' ) ? 1 : 0;
         $redirect = ( $redirect == 'redirect' ) ? 1 : 0;
@@ -562,52 +556,71 @@ XHTML;
             $this->Gatekeeper->restrict_to_domains(array(), $redirect, $message);
         }
 
-        $Menu = array(
-            'click one of the links below to test',
-            '<a href="/demo/test_gatekeeper_component/restrict/redirect/message">block: redirect with message</a>',
-            '<a href="/demo/test_gatekeeper_component/restrict/redirect/nomessage">block: redirect with no message</a>',
-            '<a href="/demo/test_gatekeeper_component/restrict/noredirect/message">block: redirect to home with message</a>',
-            '<a href="/demo/test_gatekeeper_component/restrict/noredirect/nomessage">block: redirect to home</a>',
-            '<a href="/demo/test_gatekeeper_component/norestrict/">no block: reload this page</a>',
-        );
+        $content = <<<EOMENU
+<div>click one of the links below to test</div>
+<a href="/demo/gatekeeper_component/restrict/redirect/message">block: redirect with message</a>
+<a href="/demo/gatekeeper_component/restrict/redirect/nomessage">block: redirect with no message</a>
+<a href="/demo/gatekeeper_component/restrict/noredirect/message">block: redirect to home with message</a>
+<a href="/demo/gatekeeper_component/restrict/noredirect/nomessage">block: redirect to home</a>
+<a href="/demo/gatekeeper_component/norestrict/">no block: reload this page</a>
+EOMENU;
+        #$Menu = pr(explode("\n", $menu_),1);
 
         $this->set('header', 'Gatekeeper Component');
-        $this->set('content', sprintf('<pre>%s</pre>', print_r($Menu,1)));
+        $this->set('content', $content);
         $this->render('index');
     }
 
-    function test_gatekeeper_block_production()
+    function gatekeeper($subaction='explain', $object=null)
     {
-        $this->Gatekeeper->restrict_from_app_modes( array('production'),
-            '/demo/',
-            'this action is blocked in production mode');
+        $content = '';
+
+        if ( $subaction == 'block' ) {
+            if ( $object == 'production' ) {
+                $content = 'this message should not be visible in production mode';
+                $this->Gatekeeper->restrict_from_app_modes( array('production'),
+                    '/demo/gatekeeper/blocked',
+                    'this option is blocked in production mode');
+            }
+            elseif ( $object == 'test' ) {
+                $content = 'this message should not be visible in test mode';
+                $this->Gatekeeper->restrict_from_app_modes( array('test'),
+                    '/demo/gatekeeper/blocked',
+                    'this option is blocked in test mode');
+            }
+            else {
+                $this->Gatekeeper->restrict_to_domains( array(),
+                    '/demo/gatekeeper/blocked',
+                    'this option is always blocked');
+            }
+        }
+        elseif ( $subaction == 'blocked' ) {
+            $content = '( blocked )';
+        }
+        elseif ( $subaction == 'api' ) {
+            $MethodList = $this->Gatekeeper->get_controller_methods( $this );
+            $content = sprintf('<h3>method list</h3><pre>%s</pre>',
+                               pr($MethodList,1));
+        }
+        else {
+        }
+
+        if ( $subaction != 'blocked' ) {
+            $content .= <<<EOMENU
+<h3>options</h3>
+<a href="/demo/gatekeeper/block/production">block in production</a><br />
+<a href="/demo/gatekeeper/block/test">block in test</a><br />
+<a href="/demo/gatekeeper/block/all">block all</a>
+<a href="/demo/gatekeeper/api">list gatekeeper methods</a>
+EOMENU;
+}
 
         $this->set('header', 'Gatekeeper Test');
-        $this->set('content', 'this message should not be visible in production mode');
+        $this->set('content', $content);
         $this->render('index');
     }
 
-    function test_gatekeeper_block_test()
-    {
-        $this->Gatekeeper->restrict_from_app_modes( array('test'),
-            '/demo/',
-            'this action is blocked in test mode');
-
-        $this->set('header', 'Gatekeeper Test');
-        $this->set('content', 'this message should not be visible in test mode');
-        $this->render('index');
-    }
-
-    function test_gatekeeper_method_list()
-    {
-        $MethodList = $this->Gatekeeper->get_controller_methods( $this );
-
-        $this->set('header', 'Gatekeeper Method List');
-        $this->set('data', $MethodList);
-        $this->render('report');
-    }
-
-    function test_404_view()
+    function custom_404_view()
     {
         $text = 'This is a custom 404 template.  It is found in /views/errors/error404.ctp';
         $this->set('name', 'Cakewell 404 Error Template');
@@ -618,7 +631,7 @@ XHTML;
         $this->render('/errors/error404');
     }
 
-    function test_404_error()
+    function cakeError_404()
     {
         $message = sprintf('%s [testing]', $this->here);
         $this->set('link', '/demo');
