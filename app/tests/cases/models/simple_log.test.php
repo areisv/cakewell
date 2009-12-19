@@ -53,4 +53,25 @@ class SimpleLogTestCase extends CakeTestCase {
         $this->assertEqual($NewRecord['keyword'], 'keyword');
         debug($NewRecord);
     }
+
+    function testGetLogTypes() {
+        $LogTypes = $this->SimpleLog->get_log_types();
+        $this->assertEqual($LogTypes['system'], 1);
+        #debug($LogTypes);
+    }
+
+    function testLogMethod() {
+        $result = $this->SimpleLog->log('system', 'test', 'unit test');
+        $this->assertTrue($result);
+        if ( ! $result ) {
+            $this->debug_validation();
+        }
+    }
+
+    function debug_validation() {
+        debug( array(
+            'invalid fields' => $this->SimpleLog->invalidFields(),
+            'data' => $this->SimpleLog->data
+        ));
+    }
 }

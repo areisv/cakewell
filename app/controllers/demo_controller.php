@@ -3,7 +3,7 @@
 class DemoController extends AppController
 {
     var $name = 'Demo';
-    var $uses = array('Mock', 'SimpleRecord');
+    var $uses = array('SimpleLog', 'Mock', 'SimpleRecord');
     var $components = array(
             'RequestHandler',
             'Twitter',
@@ -12,6 +12,15 @@ class DemoController extends AppController
             'SourceView',
             'Authwell.Auth',
             'Email' );
+
+    var $paginate = array(
+        'SimpleLog' => array(
+            'limit' => 10,
+            'order' => array(
+                'SimpleLog.created' => 'desc'
+            )
+        )
+    );
 
     var $build_source_view = 1;
 
@@ -90,6 +99,7 @@ XHTML;
 
         $this->set('header', 'Sandbox');
         $this->set('data', $REPORT);
+
         $this->set('menu', $this->Gatekeeper->get_controller_menu($this));
         $this->render('report');
     }
@@ -438,6 +448,47 @@ XHTML;
         $this->render('report');
     }
 
+    function model() {
+        #debug($this->params);
+        App::import('Vendor', 'recaptcha/recaptchalib');
+        $is_logged = 0;
+
+        # Recaptcha form processing
+        $RecaptchaResponse = null;
+        $RecaptchaError = null;
+        if ( isset($this->data['Recaptcha']['request']) )
+        {
+            $RecaptchaResponse = recaptcha_check_answer (
+                RECAPTCHA_PRIVATE_KEY,
+                $_SERVER['REMOTE_ADDR'],
+                $this->params['form']['recaptcha_challenge_field'],
+                $this->params['form']['recaptcha_response_field']
+            );
+
+            if ( $RecaptchaResponse->is_valid ) {
+                if ( $this->SimpleLog->log('info', 'recaptcha',
+                    sprintf('recaptcha successful: %s',
+                        $this->params['form']['recaptcha_response_field'])) ) {
+                    $is_logged = 1;
+                }
+                else {
+                    trigger_error(sprintf('failed to save: %s',
+                        pr($this->SimpleLog->invalidFields(),1)));
+                }
+            }
+        }
+
+        $recaptcha_html = recaptcha_get_html( RECAPTCHA_PUBLIC_KEY,
+                                                  $RecaptchaError );
+        $Logs = $this->paginate('SimpleLog');
+
+        $this->set('recaptcha_html', $recaptcha_html);
+        $this->set('RecaptchaResponse', $RecaptchaResponse);
+        $this->set('is_logged', $is_logged);
+        $this->set('Logs', $Logs);
+        $this->render('simplelog');
+    }
+
     function test_mock_model()
     {
         // import does not seem to work when $uses set to null
@@ -481,7 +532,7 @@ XHTML;
         $this->render('report');
     }
 
-    function test_recaptcha()
+    function recaptcha()
     {
         App::import('Vendor', 'recaptcha/recaptchalib');
 
