@@ -1,0 +1,97 @@
+One of the most challenging issues I've found in developing with CakePhp is unit testing.  Testing models, with its dependence on fixtures, is especially touchy.  The documentation, while constantly improving, still seems at crucial points incomplete or inconsistent.  In this post, I'd like to draw attention to a few pitfalls that I burned a few brain cycles in overcoming and offer some tips for unit testing models with fixtures.
+
+<h4>Cake Core Bugs</h4>
+There are a couple documented bugs that still outstanding as of release 1.2.4.8284.  If you are doing anything more than basic testing, one of these could bite you eventually:
+
+<a onclick="window.open(this.href,'_blank');return false;" href="https://trac.cakephp.org/ticket/6205">https://trac.cakephp.org/ticket/6205</a>
+<a onclick="window.open(this.href,'_blank');return false;" href="https://trac.cakephp.org/ticket/6468">https://trac.cakephp.org/ticket/6468</a>
+
+Here is a patch file that fixes them:
+
+[sourcecode]
+# Fix issues with CakePhp model unit tests
+# Tom at klenwell@gmail.com
+# CakePhp Version: 1.2.4.8284
+
+diff -r ead5d3b62da7 -r df04a99fec1b cake/libs/model/datasources/dbo_source.php
+--- a/cake/libs/model/datasources/dbo_source.php	Mon Aug 10 21:16:09 2009 -0700
++++ b/cake/libs/model/datasources/dbo_source.php	Mon Sep 14 21:08:12 2009 -0700
+@@ -2355,6 +2355,15 @@ class DboSource extends DataSource {
+ 			$column['default'] = null;
+ 		}
+
++                // solves fixture problem
++                // see https://trac.cakephp.org/ticket/6205
++                if (($column['type'] == 'datetime' || $column['type'] == 'timestamp' ) &amp;amp;amp;amp;&amp;amp;amp;amp; isset($column['default']) &amp;amp;amp;amp;&amp;amp;amp;amp; $column['default'] === '') {
++                    $column['default'] = null;
++                }
++                if ( $column['type'] == 'timestamp' &amp;amp;amp;amp;&amp;amp;amp;amp; $column['default'] === 'CURRENT_TIMESTAMP' )
++                    #pr($column);
++                    $column['default'] = null;
++
+ 		if (isset($column['key']) &amp;amp;amp;amp;&amp;amp;amp;amp; $column['key'] == 'primary' &amp;amp;amp;amp;&amp;amp;amp;amp; $type == 'integer') {
+ 			$out .= ' ' . $this-&amp;amp;gt;columns['primary_key']['name'];
+ 		} elseif (isset($column['key']) &amp;amp;amp;amp;&amp;amp;amp;amp; $column['key'] == 'primary') {
+@@ -2455,4 +2464,4 @@ class DboSource extends DataSource {
+ 		return 'string';
+ 	}
+ }
+-?&amp;amp;gt;
+\ No newline at end of file
++?&amp;amp;gt;
+[/sourcecode]
+
+[sourcecode]
+diff -r ead5d3b62da7 -r df04a99fec1b cake/tests/lib/cake_test_fixture.php
+--- a/cake/tests/lib/cake_test_fixture.php	Mon Aug 10 21:16:09 2009 -0700
++++ b/cake/tests/lib/cake_test_fixture.php	Mon Sep 14 21:08:12 2009 -0700
+@@ -114,7 +114,12 @@ class CakeTestFixture extends Object {
+ 			}
+ 		}
+
+-		if (!isset($this-&amp;amp;gt;table)) {
++                // solves HABTM problem
++                // see https://trac.cakephp.org/ticket/6468
++                if (isset($model-&amp;amp;gt;table)) {
++                        $this-&amp;amp;gt;table = $model-&amp;amp;gt;table;
++                }
++                elseif (!isset($this-&amp;amp;gt;table)) {
+ 			$this-&amp;amp;gt;table = Inflector::underscore(Inflector::pluralize($this-&amp;amp;gt;name));
+ 		}
+
+@@ -190,4 +195,4 @@ class CakeTestFixture extends Object {
+ 		return $return;
+ 	}
+ }
+-?&amp;amp;gt;
+\ No newline at end of file
++?&amp;amp;gt;
+[/sourcecode]
+
+<h4>Fixtures</h4>
+The design and usage of fixtures still seems fickle.  For instance, the CakePhp docs and packaged test examples promote the explicit declaration of fields in fixtures.  I find this tedious.  Happily, it is also unnecessary, thanks to the import property.
+
+To avoid this nuisance, use the import 'model' or 'table' setting to automatically load the table schema from the existing database.  See the example here:
+
+<a onclick="window.open(this.href,'_blank');return false;" href="http://code.google.com/p/cakewell/source/browse/app/tests/fixtures/simple_record_fixture.php">simple_record_fixture.php</a>
+
+A couple other tips for using fixtures:
+
+1. Import all fixtures associated with a model in the unit test for that model
+2. If unit testing a plugin, the value in the fixtures property takes this format: <tt>plugin.$plugin_name.$model_name</tt>
+3. Don't forget to set up an empty database and include a test_suite setting in your database configuration file.
+
+See these links for additional insight:
+<a onclick="window.open(this.href,'_blank');return false;" href="http://code.google.com/p/cakewell/source/browse/app/config/database.php.default">Cakewell Database Config File</a>
+<a href="http://code.google.com/p/cakewell/source/browse/app/plugins/authwell/tests/cases/models/authwell_user.test.php" onclick="window.open(this.href,'_blank');return false;">Model Test with Fixtures</a>
+<a onclick="window.open(this.href,'_blank');return false;" href="https://trac.cakephp.org/browser/trunk/cake/1.2.x.x/cake/tests/lib/cake_test_fixture.php">CakePhp cake_test_fixture.php</a>
+
+<h4>HABTM Relationships</h4>
+To test models that have HABTM relationships with other models, it is necessary to create fixtures for both models having the HABTM relationship <em>and</em> a fixture to build the join table.  See these files from the Cakewell project for examples:
+
+<a onclick="window.open(this.href,'_blank');return false;" href="http://code.google.com/p/cakewell/source/browse/app/plugins/authwell/tests/fixtures/authwell_user_authwell_role_fixture.php">Authwell User-Role HABTM Fixture</a>
+<a onclick="window.open(this.href,'_blank');return false;" href="http://code.google.com/p/cakewell/source/browse/app/plugins/authwell/tests/fixtures/authwell_role_authwell_privilege_fixture.php">Authwell Role-Privilege HABTM Fixture</a>
+
+The Cakewell Authwell plugin include a good example of a complex model unit test that is successfully configured.  It includes tests within the plugin directory that autoload a clean test database and successfully test models with HABTM associations.  The source can be found here:
+
+<a onclick="window.open(this.href,'_blank');return false;" href="http://code.google.com/p/cakewell/source/browse/#hg/app/plugins/authwell/tests">Authwell Plugin Test Directory</a>
