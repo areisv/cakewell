@@ -14,7 +14,10 @@ ______________________________________________________________________________*/
 h1, h2, h3, h4, h5, h6 { margin-bottom:0.5em; }
 hr { margin:1em 0; color:#CC6666; }
 li { margin:0.5em 0; }
-form div, form, table { clear:none; }
+form div, form, table, input { clear:none; }
+form div.submit { margin:0; clear:none; }
+form div { margin:0; padding:0; }
+
 
 .cakewell-demo a { color:#333; }
 .cakewell-demo a:hover { color:#CC6666; }
@@ -50,3 +53,25 @@ form div, form, table { clear:none; }
 }
 .section h4 a { color:#4c003d; text-decoration:none; }
 .section h4 a:hover { color:#cc3333; }
+
+/* SimpleLog View */
+div#cakewell-demo-simplelog {
+}
+div#cakewell-demo-simplelog h2 { margin-bottom:0; }
+div#cakewell-demo-simplelog h3 { margin-top:1em; }
+
+
+div#cakewell-demo-simplelog table#log_results {
+    font-family:arial,sans-serif;
+    font-size:13px;
+    color:#999;
+    border:4px solid #ccc; border-width:4px 0;
+}
+table#log_results th {
+    padding:4px 8px;
+    border:1px solid #ddd;
+}
+table#log_results td {
+    padding:4px 8px;
+    border:1px solid #eee;
+}
