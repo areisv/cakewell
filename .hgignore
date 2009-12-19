@@ -13,6 +13,7 @@ app/views/sandbox
 app/config/phpmailer.php
 app/plugins/twitter/config/core.php
 Graphics
+outreach
 webroot/index.php
 webroot/test.php
 apache/local.conf
