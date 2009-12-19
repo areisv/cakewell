@@ -137,6 +137,35 @@ XHTML;
             $this->set('content_for_view', $phpinfo);
             $this->render('blank', 'default');
         }
+        elseif ( $object == 'request_handler' ) {
+            $Report = array(
+                '$this->Session->id()' => $this->Session->id(),
+                '$this->Session->id' => $this->Session->id,
+                '$this->RequestHandler->getReferrer()' => $this->RequestHandler->getReferrer(),
+                '$_SERVER[\'HTTP_REFERER\']' => $_SERVER['HTTP_REFERER'],
+                '$_SERVER[\'HTTP_USER_AGENT\']' => $_SERVER['HTTP_USER_AGENT'],
+                'Controller::referer' => Controller::referer(),
+                '$this->RequestHandler->getClientIP()' => $this->RequestHandler->getClientIP(),
+                'FULL_BASE_URL + Router::url(\'\', false)' => FULL_BASE_URL . Router::url('', false),
+                '$this->RequestHandler' => $this->RequestHandler
+            );
+
+            $this->set('header', 'showing RequestHandler info for client at ip ' . $this->RequestHandler->getClientIP());
+            $this->set('data', $Report);
+            $this->render('report');
+        }
+        elseif ( $object == 'referer' ) {
+            $Data = array(
+                'referer' => $this->referer(),
+                'SERVER[\'HTTP_REFERER\']' => isset($_SERVER['HTTP_REFERER'])
+                    ? $_SERVER['HTTP_REFERER']
+                    : 'NULL',
+                'Configure::read(\'Security.level\')' => Configure::read('Security.level'),
+            );
+            $this->set('header', 'Checking Referrer');
+            $this->set('data', $Data);
+            $this->render('report');
+        }
         elseif ( $object == 'constants' ) {
             $this->set('header', 'Some CakePHP Constants and Globals (<a href="http://book.cakephp.org/view/122/Core-Definition-Constants">docs</a>)');
             $this->set('data', $this->_cake_constants());
@@ -148,13 +177,64 @@ XHTML;
 <a href="/demo/dump/controller/">controller object</a><br />
 <a href="/demo/dump/view/">view object</a><br />
 <a href="/demo/dump/config/">configuration app values</a><br />
+<a href="/demo/dump/request_handler/">request handler</a><br />
+<a href="/demo/dump/referer/">referrer</a><br />
+<a href="/demo/dump/constants/">cakephp constants</a><br />
 <a href="/demo/dump/phpinfo/">phpinfo</a><br />
-<a href="/demo/dump/constants/">CakePhp constants</a>
 EOMENU;
             $this->set('header', 'Object Dumper');
             $this->set('content', $content);
             $this->render('index');
         }
+    }
+
+    function model() {
+        #debug($this->params);
+        App::import('Vendor', 'recaptcha/recaptchalib');
+        $is_logged = 0;
+
+        # Recaptcha form processing
+        $RecaptchaResponse = null;
+        $RecaptchaError = null;
+        if ( isset($this->data['Recaptcha']['request']) )
+        {
+            $RecaptchaResponse = recaptcha_check_answer (
+                RECAPTCHA_PRIVATE_KEY,
+                $_SERVER['REMOTE_ADDR'],
+                $this->params['form']['recaptcha_challenge_field'],
+                $this->params['form']['recaptcha_response_field']
+            );
+
+            if ( $RecaptchaResponse->is_valid ) {
+                if ( $this->SimpleLog->log('info', 'recaptcha',
+                    sprintf('recaptcha successful: %s',
+                        $this->params['form']['recaptcha_response_field'])) ) {
+                    $is_logged = 1;
+                }
+                else {
+                    trigger_error(sprintf('failed to save: %s',
+                        pr($this->SimpleLog->invalidFields(),1)));
+                }
+            }
+        }
+
+        $recaptcha_html = recaptcha_get_html( RECAPTCHA_PUBLIC_KEY,
+                                                  $RecaptchaError );
+        $Logs = $this->paginate('SimpleLog');
+
+        $this->set('recaptcha_html', $recaptcha_html);
+        $this->set('RecaptchaResponse', $RecaptchaResponse);
+        $this->set('is_logged', $is_logged);
+        $this->set('Logs', $Logs);
+        $this->render('simplelog');
+    }
+
+    function component()
+    {
+        $result = $this->Sample->test();
+        $this->set('header', 'Component Test');
+        $this->set('data', $result);
+        $this->render('report');
     }
 
     function _cake_constants()
@@ -210,7 +290,7 @@ EOMENU;
         return $Constants;
     }
 
-    function email_test()
+    function email()
     {
         App::import('Vendor', 'recaptcha/recaptchalib');
         $RecaptchaResponse = null;
@@ -343,16 +423,53 @@ EMAILX;
         $this->render('report');
     }
 
-    function referrer_check()
+    function gatekeeper($subaction='explain', $object=null)
     {
-        $Data = array(
-            'referer' => $this->referer(),
-            'SERVER[\'HTTP_REFERER\']' => isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'NULL',
-            'Configure::read(\'Security.level\')' => Configure::read('Security.level'),
-        );
-        $this->set('header', 'Checking Referrer');
-        $this->set('data', $Data);
-        $this->render('report');
+        $content = '';
+
+        if ( $subaction == 'block' ) {
+            if ( $object == 'production' ) {
+                $content = 'this message should not be visible in production mode';
+                $this->Gatekeeper->restrict_from_app_modes( array('production'),
+                    '/demo/gatekeeper/blocked',
+                    'this option is blocked in production mode');
+            }
+            elseif ( $object == 'test' ) {
+                $content = 'this message should not be visible in test mode';
+                $this->Gatekeeper->restrict_from_app_modes( array('test'),
+                    '/demo/gatekeeper/blocked',
+                    'this option is blocked in test mode');
+            }
+            else {
+                $this->Gatekeeper->restrict_to_domains( array(),
+                    '/demo/gatekeeper/blocked',
+                    'this option is always blocked');
+            }
+        }
+        elseif ( $subaction == 'blocked' ) {
+            $content = '( blocked )';
+        }
+        elseif ( $subaction == 'api' ) {
+            $MethodList = $this->Gatekeeper->get_controller_methods( $this->Gatekeeper );
+            $content = sprintf('<h3>method list</h3><pre>%s</pre>',
+                               print_r($MethodList,1));
+        }
+        else {
+        }
+
+        if ( $subaction != 'blocked' ) {
+            $content .= <<<EOMENU
+<h3>options</h3>
+<a href="/demo/gatekeeper/block/production">block in production</a><br />
+<a href="/demo/gatekeeper/block/test">block in test</a><br />
+<a href="/demo/gatekeeper/block/all">block all</a><br />
+<a href="/demo/gatekeeper/api">list gatekeeper methods</a>
+EOMENU;
+}
+
+        $this->set('header', 'Gatekeeper Test');
+        $this->set('content', $content);
+        $this->render('index');
     }
 
     function auth_demo()
@@ -383,74 +500,6 @@ XHTML;
         $this->render('index');
     }
 
-    function model() {
-        #debug($this->params);
-        App::import('Vendor', 'recaptcha/recaptchalib');
-        $is_logged = 0;
-
-        # Recaptcha form processing
-        $RecaptchaResponse = null;
-        $RecaptchaError = null;
-        if ( isset($this->data['Recaptcha']['request']) )
-        {
-            $RecaptchaResponse = recaptcha_check_answer (
-                RECAPTCHA_PRIVATE_KEY,
-                $_SERVER['REMOTE_ADDR'],
-                $this->params['form']['recaptcha_challenge_field'],
-                $this->params['form']['recaptcha_response_field']
-            );
-
-            if ( $RecaptchaResponse->is_valid ) {
-                if ( $this->SimpleLog->log('info', 'recaptcha',
-                    sprintf('recaptcha successful: %s',
-                        $this->params['form']['recaptcha_response_field'])) ) {
-                    $is_logged = 1;
-                }
-                else {
-                    trigger_error(sprintf('failed to save: %s',
-                        pr($this->SimpleLog->invalidFields(),1)));
-                }
-            }
-        }
-
-        $recaptcha_html = recaptcha_get_html( RECAPTCHA_PUBLIC_KEY,
-                                                  $RecaptchaError );
-        $Logs = $this->paginate('SimpleLog');
-
-        $this->set('recaptcha_html', $recaptcha_html);
-        $this->set('RecaptchaResponse', $RecaptchaResponse);
-        $this->set('is_logged', $is_logged);
-        $this->set('Logs', $Logs);
-        $this->render('simplelog');
-    }
-
-    function component()
-    {
-        $result = $this->Sample->test();
-        $this->set('header', 'Component Test');
-        $this->set('data', $result);
-        $this->render('report');
-    }
-
-    function request_handler()
-    {
-        $Report = array(
-            '$this->Session->id()' => $this->Session->id(),
-            '$this->Session->id' => $this->Session->id,
-            '$this->RequestHandler->getReferrer()' => $this->RequestHandler->getReferrer(),
-            '$_SERVER[\'HTTP_REFERER\']' => $_SERVER['HTTP_REFERER'],
-            '$_SERVER[\'HTTP_USER_AGENT\']' => $_SERVER['HTTP_USER_AGENT'],
-            'Controller::referer' => Controller::referer(),
-            '$this->RequestHandler->getClientIP()' => $this->RequestHandler->getClientIP(),
-            'FULL_BASE_URL + Router::url(\'\', false)' => FULL_BASE_URL . Router::url('', false),
-            '$this->RequestHandler' => $this->RequestHandler
-        );
-
-        $this->set('header', 'showing RequestHandler info for client at ip ' . $this->RequestHandler->getClientIP());
-        $this->set('data', $Report);
-        $this->render('report');
-    }
-
     function recaptcha()
     {
         return $this->redirect('/demo/model');
@@ -466,96 +515,6 @@ XHTML;
         $this->render('report');
     }
 
-    function gatekeeper_component($restrict=null, $redirect=null, $message=null)
-    {
-        $restrict = ( $restrict == 'restrict' ) ? 1 : 0;
-        $redirect = ( $redirect == 'redirect' ) ? 1 : 0;
-        $message = ( $message == 'message' ) ? 1 : 0;
-        #debug(sprintf('%s %s %s', $restrict, $redirect, $message));
-        #debug((int) ($redirect || $message));
-
-        if ( $restrict )
-        {
-            if ( $redirect ) $redirect = '/demo/index';
-            if ( $message ) $message = 'the gatekeeper is blocking you';
-            $this->Gatekeeper->restrict_to_domains(array(), $redirect, $message);
-        }
-
-        $content = <<<EOMENU
-<div>click one of the links below to test</div>
-<a href="/demo/gatekeeper_component/restrict/redirect/message">block: redirect with message</a>
-<a href="/demo/gatekeeper_component/restrict/redirect/nomessage">block: redirect with no message</a>
-<a href="/demo/gatekeeper_component/restrict/noredirect/message">block: redirect to home with message</a>
-<a href="/demo/gatekeeper_component/restrict/noredirect/nomessage">block: redirect to home</a>
-<a href="/demo/gatekeeper_component/norestrict/">no block: reload this page</a>
-EOMENU;
-        #$Menu = pr(explode("\n", $menu_),1);
-
-        $this->set('header', 'Gatekeeper Component');
-        $this->set('content', $content);
-        $this->render('index');
-    }
-
-    function gatekeeper($subaction='explain', $object=null)
-    {
-        $content = '';
-
-        if ( $subaction == 'block' ) {
-            if ( $object == 'production' ) {
-                $content = 'this message should not be visible in production mode';
-                $this->Gatekeeper->restrict_from_app_modes( array('production'),
-                    '/demo/gatekeeper/blocked',
-                    'this option is blocked in production mode');
-            }
-            elseif ( $object == 'test' ) {
-                $content = 'this message should not be visible in test mode';
-                $this->Gatekeeper->restrict_from_app_modes( array('test'),
-                    '/demo/gatekeeper/blocked',
-                    'this option is blocked in test mode');
-            }
-            else {
-                $this->Gatekeeper->restrict_to_domains( array(),
-                    '/demo/gatekeeper/blocked',
-                    'this option is always blocked');
-            }
-        }
-        elseif ( $subaction == 'blocked' ) {
-            $content = '( blocked )';
-        }
-        elseif ( $subaction == 'api' ) {
-            $MethodList = $this->Gatekeeper->get_controller_methods( $this );
-            $content = sprintf('<h3>method list</h3><pre>%s</pre>',
-                               pr($MethodList,1));
-        }
-        else {
-        }
-
-        if ( $subaction != 'blocked' ) {
-            $content .= <<<EOMENU
-<h3>options</h3>
-<a href="/demo/gatekeeper/block/production">block in production</a><br />
-<a href="/demo/gatekeeper/block/test">block in test</a><br />
-<a href="/demo/gatekeeper/block/all">block all</a>
-<a href="/demo/gatekeeper/api">list gatekeeper methods</a>
-EOMENU;
-}
-
-        $this->set('header', 'Gatekeeper Test');
-        $this->set('content', $content);
-        $this->render('index');
-    }
-
-    function custom_404_view()
-    {
-        $text = 'This is a custom 404 template.  It is found in /views/errors/error404.ctp';
-        $this->set('name', 'Cakewell 404 Error Template');
-        $this->set('message', 'missing path here');
-        $this->set('text', $text);
-        $this->set('link', '/demo');
-        $this->set('label', 'return to demo index');
-        $this->render('/errors/error404');
-    }
-
     function cakeError_404()
     {
         $message = sprintf('%s [testing]', $this->here);
@@ -564,124 +523,129 @@ EOMENU;
         $this->cakeError('error404', array('url' => $message));
     }
 
-    function test_flash()
+    function flash()
     {
         $this->flash('you are being redirected to the index', '/'.$this->viewPath);
     }
 
-    function test_redirect()
+    function redirect()
     {
         $this->redirect("/{$this->viewPath}/index");
         die();
     }
 
-    function test_set_merge()
-    {
-        $A1 = array(
-            'Model' => array(
-                'f1' => '1',
-                'f2' => '1',
-                'f3' => '1',
-            )
-        );
-        $A2 = array(
-            'Model' => array(
-                'f3' => '2',
-                'f4' => '1',
-                'f5' => '1',
-            )
-        );
+    function set_utility($method='options') {
+        if ( $method == 'merge' ) {
+            $A1 = array(
+                'Model' => array(
+                    'f1' => '1',
+                    'f2' => '1',
+                    'f3' => '1',
+                )
+            );
+            $A2 = array(
+                'Model' => array(
+                    'f3' => '2',
+                    'f4' => '1',
+                    'f5' => '1',
+                )
+            );
 
-        $merged_arrays = array_merge($A1, $A2);
-        $added_arrays = $A1 + $A2;
-        $merged_recursive = array_merge_recursive($A1, $A2);
+            $merged_arrays = array_merge($A1, $A2);
+            $added_arrays = $A1 + $A2;
+            $merged_recursive = array_merge_recursive($A1, $A2);
 
-        function array_update($arr,$ins)
-        {
-            if(is_array($arr) && is_array($ins))
+            function array_update($arr,$ins)
             {
-                foreach($ins as $k=>$v)
+                if(is_array($arr) && is_array($ins))
                 {
-                    if(isset($arr[$k])&&is_array($v)&&is_array($arr[$k]))
-                        $arr[$k] = array_update($arr[$k],$v);
-                    else
-                        $arr[$k] = $v;
+                    foreach($ins as $k=>$v)
+                    {
+                        if(isset($arr[$k])&&is_array($v)&&is_array($arr[$k]))
+                            $arr[$k] = array_update($arr[$k],$v);
+                        else
+                            $arr[$k] = $v;
+                    }
                 }
+                elseif(!is_array($arr)&&(strlen($arr)==0||$arr==0))
+                    $arr=$ins;
+
+                return($arr);
             }
-            elseif(!is_array($arr)&&(strlen($arr)==0||$arr==0))
-                $arr=$ins;
+            $array_update = array_update($A1, $A2);
+            $set_merge = Set::merge($A1, $A2);
 
-            return($arr);
-        }
-        $array_update = array_update($A1, $A2);
-        $set_merge = Set::merge($A1, $A2);
-
-        $REPORT = array(
-            'A1' => $A1,
-            'A2' => $A2,
-            'merged' => $merged_arrays,
-            'added' => $added_arrays,
-            'merged_recursive' => $merged_recursive,
-            'array_update' => $array_update,
-            'Set::merge' => $set_merge,
-            'Set::isEqual($array_update, $set_merge)' => Set::isEqual($array_update, $set_merge),
-        );
-
-        $this->set('header', 'Sandbox');
-        $this->set('data', $REPORT);
-        $this->render('report');
-    }
-
-    function test_set_diff()
-    {
-        $set = 'a.b.c';
-        $DiffList = array(
-            'a' => 0,
-            'a.b' => 0,
-            'a.b.c' => 1,
-            'a.b.c.x' => 1,
-            'a.b.x' => 0,
-            'a.x' => 0,
-            'x' => 0,
-            'b' => 0,
-            'b.c' => 0,
-            '*' => 1,
-            '*.b.c' => 1,
-            '*.x' => 0
-        );
-        $REPORT['results'] = '';
-
-        foreach ( $DiffList as $diff_set => $expect )
-        {
-            $SetArray = explode('.', $set);
-            $DiffArray = explode('.', $diff_set);
-            $depth_delta = count($SetArray) - count($DiffArray);
-
-            if ( $depth_delta > 0 )
-                foreach( range(1,$depth_delta) as $n )
-                    $DiffArray[] = ( $DiffArray[count($DiffArray)-1] == '*' ) ? '*' : '!';
-
-            $SetDiff = Set::diff($SetArray, $DiffArray);
-            $mismatch = 0;
-            if ( $SetDiff )
-                foreach ( $SetArray as $n => $x )
-                    if ( isset($SetDiff[$n]) && $DiffArray[$n] != '*' )
-                        $mismatch = "$n => $x";
-
-            $has_privilege = (int)!(bool)$mismatch;
-
-            $REPORT[$diff_set] = array(
-                'pass' => (int)($has_privilege == $expect),
-                'expect' => $expect,
-                'result' => $has_privilege,
-                'mismatch' => $mismatch,
-                "$set diff $diff_set" => $SetDiff,
+            $REPORT = array(
+                'A1' => $A1,
+                'A2' => $A2,
+                'merged' => $merged_arrays,
+                'added' => $added_arrays,
+                'merged_recursive' => $merged_recursive,
+                'array_update' => $array_update,
+                'Set::merge' => $set_merge,
+                'Set::isEqual($array_update, $set_merge)' => Set::isEqual($array_update, $set_merge),
             );
         }
-        $REPORT['results'] = Set::extract('{s}.pass', $REPORT);
-        unset($REPORT['results'][0]);
+        elseif ( $method == 'diff' ) {
+            $set = 'a.b.c';
+            $DiffList = array(
+                'a' => 0,
+                'a.b' => 0,
+                'a.b.c' => 1,
+                'a.b.c.x' => 1,
+                'a.b.x' => 0,
+                'a.x' => 0,
+                'x' => 0,
+                'b' => 0,
+                'b.c' => 0,
+                '*' => 1,
+                '*.b.c' => 1,
+                '*.x' => 0
+            );
+            $REPORT['results'] = '';
 
-        $this->set('header', 'Sandbox');
+            foreach ( $DiffList as $diff_set => $expect )
+            {
+                $SetArray = explode('.', $set);
+                $DiffArray = explode('.', $diff_set);
+                $depth_delta = count($SetArray) - count($DiffArray);
+
+                if ( $depth_delta > 0 )
+                    foreach( range(1,$depth_delta) as $n )
+                        $DiffArray[] = ( $DiffArray[count($DiffArray)-1] == '*' ) ? '*' : '!';
+
+                $SetDiff = Set::diff($SetArray, $DiffArray);
+                $mismatch = 0;
+                if ( $SetDiff )
+                    foreach ( $SetArray as $n => $x )
+                        if ( isset($SetDiff[$n]) && $DiffArray[$n] != '*' )
+                            $mismatch = "$n => $x";
+
+                $has_privilege = (int)!(bool)$mismatch;
+
+                $REPORT[$diff_set] = array(
+                    'pass' => (int)($has_privilege == $expect),
+                    'expect' => $expect,
+                    'result' => $has_privilege,
+                    'mismatch' => $mismatch,
+                    "$set diff $diff_set" => $SetDiff,
+                );
+            }
+            $REPORT['results'] = Set::extract('{s}.pass', $REPORT);
+            unset($REPORT['results'][0]);
+        }
+        else {
+            $content = <<<EOMENU
+<h3>methods</h3>
+<a href="/demo/set_utility/merge">Set::merge</a><br />
+<a href="/demo/set_utility/diff">Set::diff</a><br />
+EOMENU;
+            $this->set('header', 'Gatekeeper Test');
+            $this->set('content', $content);
+            return $this->render('index');
+        }
+
+        $this->set('header', 'Set Examples');
         $this->set('data', $REPORT);
         $this->render('report');
     }
