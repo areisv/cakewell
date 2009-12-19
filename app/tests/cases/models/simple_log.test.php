@@ -45,7 +45,7 @@ class SimpleLogTestCase extends CakeTestCase {
         $this->assertEqual($this->SimpleLog->useTable, 'simple_logs');
         $this->assertEqual($this->SimpleLog->name, 'SimpleLog');
         $this->assertTrue(in_array('id', array_keys($this->SimpleLog->_schema)));
-        #debug($this->SimpleLog->_schema);
+        debug($this->SimpleLog->_schema);
     }
 
     function testTestRecord() {
