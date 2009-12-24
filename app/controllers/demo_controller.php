@@ -270,6 +270,9 @@ EOMENU;
 
     function cache()
     {
+        /*
+            cakephp docs: http://book.cakephp.org/view/764/Cache
+        */
         $display_t = '<span class="%s">%s</span>: %s';
 
         # cache config settings
@@ -285,7 +288,9 @@ EOMENU;
         }
         $CacheDump = Configure::read('Cache');
 
-        # Check for cache
+        # check for cache
+        # note: if the content may resolve to false, assign cache to variable
+        # and then use strict comparison operators
         if ( $cache_content = Cache::read($cache_key) )
         {
             $display = sprintf($display_t, 'hit', 'cache found', $cache_content);
