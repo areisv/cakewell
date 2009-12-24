@@ -3,7 +3,7 @@
 class DemoController extends AppController
 {
     var $name = 'Demo';
-    var $uses = array('SimpleLog', 'Mock', 'SimpleRecord');
+    var $uses = array('SimpleLog', 'Mock');
     var $components = array(
             'RequestHandler',
             'Twitter',
@@ -80,28 +80,6 @@ XHTML;
 
         $this->set('header', 'Welcome to the Cakewell CakePhp Demo');
         $this->set('content', $content);
-    }
-
-    function sandbox()
-    {
-        /*
-          This is an open action for quick-testing new stuff and things I'm
-          not sure about.
-        */
-        $this->SourceView->introspect();
-
-        $a = 'a';
-        $b = 'b';
-        $c = 'c';
-        $Arr = array( 'a' => 'not a', 'c' => 'not c' );
-        extract($Arr, EXTR_OVERWRITE);
-        $REPORT = array($a,$b,$c);
-
-        $this->set('header', 'Sandbox');
-        $this->set('data', $REPORT);
-
-        $this->set('menu', $this->Gatekeeper->get_controller_menu($this));
-        $this->render('report');
     }
 
     function dump($object='options')
@@ -290,6 +268,54 @@ EOMENU;
         return $Constants;
     }
 
+    function cache()
+    {
+        $display_t = '<span class="%s">%s</span>: %s';
+
+        # cache config settings
+        $CacheConfig = Configure::read('Cache');
+
+        # update settings to force cache
+        if ( $CacheConfig['disable'] || ! $CacheConfig['check'] ) {
+            Configure::write('Cache.disable', 0);
+            Configure::write('Cache.check', 1);
+            $CacheConfig = Configure::read('Cache');
+        }
+
+        # Check for cache: key = 'cache_demo'
+        $cache_key = 'cache_demo';
+        $cache_config = 'demo';
+        if ( $cache_content = Cache::read($cache_key) ) {
+            $display = sprintf($display_t, 'hit', 'cache found', $cache_content);
+        }
+        else {
+            $cache_content = sprintf('cache saved <b>%s</b>', date('H:i:s Y-m-d'));
+            $display = sprintf($display_t, 'miss', 'cache not found',
+                'saving new cache (reload page to see content)');
+            Cache::write($cache_key, $cache_content, $cache_config);
+        }
+
+        # restore cache settings
+        Configure::write('Cache', $CacheConfig);
+
+        # view settings
+        $content_t = <<<XHTML
+<div class="cache_demo">
+    <p>%s</p>
+    <small>current time: %s</small>
+    <h4>Configure::read('Cache')</h4>
+    <pre>%s</pre>
+</div>
+XHTML;
+
+        $this->set('header', 'Cakewell Cache Demo');
+        $this->set('content', sprintf($content_t,
+                                      $display,
+                                      date('H:i:s Y-m-d'),
+                                      print_r($CacheConfig,1)));
+        $this->render('index');
+    }
+
     function email()
     {
         App::import('Vendor', 'recaptcha/recaptchalib');
@@ -472,31 +498,33 @@ EOMENU;
         $this->render('index');
     }
 
-    function auth_demo()
+    function auth($option='default')
     {
-        $html = <<<XHTML
-<p>You have logged in as <strong>%s</strong></p>
-<a href="/authwell/logout/">logout</a>
-XHTML;
-        $this->Auth->flash_login('please login');
-        $this->Auth->require_privilege('demo.demo');
-        die('dead');
-        $this->set('header', 'Welcome to the Cakewell CakePhp Demo');
-        $this->set('content', sprintf($html, $this->Auth->get_user_name()));
-        $this->render('index');
-    }
+        $header = 'Welcome to the Cakewell CakePhp Demo';
 
-    function auth_forbidden()
-    {
-        $html = <<<XHTML
-<p>Oops.  You shouldn't see this.</p>
-<a href="/authwell/logout/">logout</a>
-XHTML;
+        if ( $option == 'forbidden' )
+        {
+            $this->Auth->flash_login('please login');
+            $this->Auth->require_privilege('forbidden.null');
+            $content = "<p>Oops.  You shouldn't see this.</p>";
+            $this->set('header', 'Welcome to the Cakewell CakePhp Demo');
+        }
+        else
+        {
+            $this->Auth->flash_login('please login');
+            $this->Auth->require_privilege('demo.demo');
+            $content = sprintf('<p>You have logged in as <strong>%s</strong></p>',
+                $this->Auth->get_user_name());
+        }
 
-        $this->Auth->flash_login('please login');
-        $this->Auth->require_privilege('forbidden.null');
-        $this->set('header', 'Welcome to the Cakewell CakePhp Demo');
-        $this->set('content', sprintf($html));
+        $content .= <<<EOMENU
+<h3>options</h3>
+<a href="/authwell/logout">logout</a><br />
+<a href="/demo/auth/">this page</a><br />
+<a href="/demo/auth/forbidden">blocked page</a><br />
+EOMENU;
+        $this->set('header', $header);
+        $this->set('content', $content);
         $this->render('index');
     }
 
@@ -664,6 +692,28 @@ EOMENU;
 
         $this->set('header', 'Set Examples');
         $this->set('data', $REPORT);
+        $this->render('report');
+    }
+
+    function sandbox()
+    {
+        /*
+          This is an open action for quick-testing new stuff and things I'm
+          not sure about.
+        */
+        $this->SourceView->introspect();
+
+        $a = 'a';
+        $b = 'b';
+        $c = 'c';
+        $Arr = array( 'a' => 'not a', 'c' => 'not c' );
+        extract($Arr, EXTR_OVERWRITE);
+        $REPORT = array($a,$b,$c);
+
+        $this->set('header', 'Sandbox');
+        $this->set('data', $REPORT);
+
+        $this->set('menu', $this->Gatekeeper->get_controller_menu($this));
         $this->render('report');
     }
 }

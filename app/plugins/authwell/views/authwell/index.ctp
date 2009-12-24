@@ -60,7 +60,7 @@ plugin.  But the ultimate goal is to create a fully functional, easy-to-use
 authentication plugin.</p>
 
 <p>For a demonstration, see the examples in the
-<a href="/demo/auth_demo/">demo controller</a> or the
+<a href="/demo/auth/">demo controller</a> or the
 <a href="/authwell/demo/">demo page</a> included in the authwell plugin
 controller.  The login for both examples is <strong>demo@klenwell.com</strong>
 / <strong>cakewell</strong>.</p>
