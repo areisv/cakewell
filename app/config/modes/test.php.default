@@ -10,6 +10,13 @@
 
     // Example
     Configure::write('App.domain_file', __FILE__);
-    Configure::write('App.motto', 'development mode'); 
+    Configure::write('App.motto', 'development mode');
+
+    Cache::config( 'demo', array(
+        'engine' => 'File',
+        'duration'=> '30 seconds',
+        'path' => CACHE . 'views',
+        'prefix' => 'demo_'
+    ));
 
 ?>

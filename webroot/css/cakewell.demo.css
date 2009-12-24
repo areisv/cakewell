@@ -54,12 +54,12 @@ form div { margin:0; padding:0; }
 .section h4 a { color:#4c003d; text-decoration:none; }
 .section h4 a:hover { color:#cc3333; }
 
+
 /* SimpleLog View */
 div#cakewell-demo-simplelog {
 }
 div#cakewell-demo-simplelog h2 { margin-bottom:0; }
 div#cakewell-demo-simplelog h3 { margin-top:1em; }
-
 
 div#cakewell-demo-simplelog table#log_results {
     font-family:arial,sans-serif;
@@ -74,4 +74,15 @@ table#log_results th {
 table#log_results td {
     padding:4px 8px;
     border:1px solid #eee;
+}
+
+
+/* Cache Demo */
+div.cache_demo {}
+div.cache_demo span.hit { color:green; font-weight:bold; }
+div.cache_demo span.miss { color:#660000; font-weight:bold; }
+div.cache_demo p {}
+div.cache_demo h4 {
+    margin:1em 0 0;
+    font-weight:bold;
 }
