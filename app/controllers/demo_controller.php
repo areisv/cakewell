@@ -273,22 +273,25 @@ EOMENU;
         $display_t = '<span class="%s">%s</span>: %s';
 
         # cache config settings
+        $cache_key = 'cache_demo';
+        $cache_config = 'demo';
         $CacheConfig = Configure::read('Cache');
 
         # update settings to force cache
-        if ( $CacheConfig['disable'] || ! $CacheConfig['check'] ) {
+        if ( $CacheConfig['disable'] || ! $CacheConfig['check'] )
+        {
             Configure::write('Cache.disable', 0);
             Configure::write('Cache.check', 1);
-            $CacheConfig = Configure::read('Cache');
         }
+        $CacheDump = Configure::read('Cache');
 
-        # Check for cache: key = 'cache_demo'
-        $cache_key = 'cache_demo';
-        $cache_config = 'demo';
-        if ( $cache_content = Cache::read($cache_key) ) {
+        # Check for cache
+        if ( $cache_content = Cache::read($cache_key) )
+        {
             $display = sprintf($display_t, 'hit', 'cache found', $cache_content);
         }
-        else {
+        else
+        {
             $cache_content = sprintf('cache saved <b>%s</b>', date('H:i:s Y-m-d'));
             $display = sprintf($display_t, 'miss', 'cache not found',
                 'saving new cache (reload page to see content)');
@@ -297,6 +300,7 @@ EOMENU;
 
         # restore cache settings
         Configure::write('Cache', $CacheConfig);
+        #debug(Configure::read('Cache'));
 
         # view settings
         $content_t = <<<XHTML
@@ -312,7 +316,7 @@ XHTML;
         $this->set('content', sprintf($content_t,
                                       $display,
                                       date('H:i:s Y-m-d'),
-                                      print_r($CacheConfig,1)));
+                                      print_r($CacheDump,1)));
         $this->render('index');
     }
 
