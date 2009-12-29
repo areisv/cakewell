@@ -19,25 +19,25 @@
 # $ sudo gedit /etc/hosts
 # add line: 127.0.0.1     cakewell
 
-<VirtualHost *:80>
+<VirtualHost *>
 
-  ServerName cakewell
-  #ServerAlias tba
-  ServerAdmin webmaster@localhost
-  DocumentRoot /absolute/path/to/cakewell/webroot
+    ServerName cakewell
+    #ServerAlias tba
+    ServerAdmin webmaster@localhost
+    DocumentRoot /absolute/path/to/cakewell/webroot
 
-  <Directory /absolute/path/to/cakewell/webroot/>
-    Options Indexes FollowSymLinks MultiViews
-    AllowOverride All
-    Order allow,deny
-    allow from all
-  </Directory>
+    <Directory /absolute/path/to/cakewell/webroot/>
+        Options -Indexes -MultiViews FollowSymLinks
+        AllowOverride All
+        Order allow,deny
+        allow from all
+    </Directory>
 
-  # Log level: debug, info, notice, warn, error, crit, alert, emerg
-  LogLevel warn
-  ErrorLog /var/log/apache2/error.log
-  CustomLog /var/log/apache2/access.log combined	
+    # Log level: debug, info, notice, warn, error, crit, alert, emerg
+    LogLevel warn
+    ErrorLog /var/log/apache2/error.log
+    CustomLog /var/log/apache2/access.log combined
 
-  ServerSignature On
+    ServerSignature Off
 
 </VirtualHost>
