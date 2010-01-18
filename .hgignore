@@ -17,3 +17,4 @@ dev/outreach
 webroot/index.php
 webroot/test.php
 apache/local.conf
+etc/cron/local.cron
