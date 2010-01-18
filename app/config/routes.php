@@ -11,6 +11,7 @@
  */
 
     Router::connect('/', array('controller' => 'pages', 'action' => 'home'));
+    #Router::connect('/journal/*', array('controller' => 'journal', 'action' => 'index'));
     Router::connect('/cake', array('controller' => 'pages', 'action' => 'display', 'cake'));
     Router::connect('/gatekeeper/block',
         array('controller' => 'demo', 'action' => 'test_gatekeeper_component',
