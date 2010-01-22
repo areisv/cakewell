@@ -11,14 +11,14 @@
  */
 
     Router::connect('/', array('controller' => 'pages', 'action' => 'home'));
-    #Router::connect('/journal/*', array('controller' => 'journal', 'action' => 'index'));
+    Router::connect('/journal/*', array('controller' => 'journal', 'action' => 'index'));
     Router::connect('/cake', array('controller' => 'pages', 'action' => 'display', 'cake'));
     Router::connect('/gatekeeper/block',
         array('controller' => 'demo', 'action' => 'test_gatekeeper_component',
               'restrict', 'redirect', 'message'));
 
     // Pages Controller (a default)
-    # Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
+    #Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 
     // Test Controller
     Router::connect('/test', array('controller' => 'tests', 'action' => 'index'));
