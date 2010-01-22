@@ -7,6 +7,7 @@ class DemoController extends AppController
     var $components = array(
             'RequestHandler',
             'Twitter',
+            'SimplePie',
             'Sample',
             'Gatekeeper',
             'SourceView',
@@ -540,6 +541,14 @@ EOMENU;
     function recaptcha()
     {
         return $this->redirect('/demo/model');
+    }
+
+    function atom_updates() {
+        $feed_url = 'http://code.google.com/feeds/p/cakewell/updates/basic';
+        $ItemList = $this->SimplePie->fetch_url($feed_url);
+        $this->set('header', 'Google Code Atom Update Feed');
+        $this->set('data', $ItemList);
+        $this->render('report');
     }
 
     function twitter_component()
