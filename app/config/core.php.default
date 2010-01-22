@@ -78,6 +78,11 @@
     define('TWITTER_USER', 'YOUR_TWITTER_USERNAME');
     define('TWITTER_PASS', 'YOUR_TWITTER_PASSWORD');
 
+    // SimplePie Defaults
+    // see http://simplepie.org/wiki/reference/start
+    define('SIMPLEPIE_CACHE_PATH', CACHE . 'views' . DS);
+    define('SIMPLEPIE_CACHE_TIME', 3600);
+
     /**
      * Default Config Settings
      * These are the basic CakePhp core settings (with comments scrubbed.)
