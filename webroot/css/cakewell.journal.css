@@ -1,0 +1,36 @@
+/* SVN FILE: $Id: cake.generic.css 6311 2008-01-02 06:33:52Z phpnut $ */
+
+* {
+margin:0;
+padding:0;
+}
+div.right { float: right; }
+div.left { float: left; }
+div.clear { clear: both; }
+
+/* Menu */
+div.index_menu {
+    float:right;
+    width:180px;
+    margin-right:2em;
+    padding:1em 3em;
+    border:1px solid #ccc;
+}
+div.index_menu h3 {
+    margin:0 0 0.2em;
+    padding:0;
+}
+div.index_menu ul li {
+    list-style-type:none;
+    margin-left:0;
+    line-height:1.8em;
+}
+
+/* Views */
+div.cakewell-journal {
+    margin-right:320px;
+}
+
+div.cakewell-journal div.log {
+    margin-top:1em;
+}
