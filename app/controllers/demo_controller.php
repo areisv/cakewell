@@ -546,8 +546,25 @@ EOMENU;
     function atom_updates() {
         $feed_url = 'http://code.google.com/feeds/p/cakewell/updates/basic';
         $ItemList = $this->SimplePie->fetch_url($feed_url);
+
+        # Tidy output
+        $maxlen = 80;
+        foreach ( $ItemList as $Item ) {
+            foreach ( $Item as $k => $v ) {
+                $v = preg_replace('%\s+%', ' ', $v);
+                $Item_[$k] = preg_replace('%\n+%', "\n", $v);
+                if ( strlen($v) > $maxlen+3 ) {
+                    $Item_[$k] = sprintf('%s... (strlen: %s)',
+                                         substr($v,0,$maxlen),
+                                         strlen($v) );
+                }
+            }
+            $ItemList_[] = $Item_;
+        }
+
+
         $this->set('header', 'Google Code Atom Update Feed');
-        $this->set('data', $ItemList);
+        $this->set('data', $ItemList_);
         $this->render('report');
     }
 
