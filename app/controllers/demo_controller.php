@@ -543,12 +543,33 @@ EOMENU;
         return $this->redirect('/demo/model');
     }
 
-    function atom_updates() {
+    function atom_builder() {
+        /*
+         This just repackages the Google updates feed as
+        */
         $feed_url = 'http://code.google.com/feeds/p/cakewell/updates/basic';
         $ItemList = $this->SimplePie->fetch_url($feed_url);
 
         # Tidy output
-        $maxlen = 80;
+        foreach ( $ItemList as $Item ) {
+            foreach ( $Item as $k => $v ) {
+                $v = preg_replace('%\s+%', ' ', $v);
+                $Item_[$k] = preg_replace('%\n+%', "\n", $v);
+            }
+            $ItemList_[] = $Item_;
+        }
+
+        $this->set('ItemList', $ItemList_);
+        $this->RequestHandler->respondAs('xml');
+        $this->render('atom_builder', 'blank');
+    }
+
+    function atom_consumer() {
+        $feed_url = 'http://code.google.com/feeds/p/cakewell/hgchanges/basic';
+        $ItemList = $this->SimplePie->fetch_url($feed_url);
+
+        # Tidy output
+        $maxlen = 90;
         foreach ( $ItemList as $Item ) {
             foreach ( $Item as $k => $v ) {
                 $v = preg_replace('%\s+%', ' ', $v);
@@ -563,7 +584,8 @@ EOMENU;
         }
 
 
-        $this->set('header', 'Google Code Atom Update Feed');
+        $this->set('header',
+                   'Google Code Atom Feed for Mercurial commits to Cakewell');
         $this->set('data', $ItemList_);
         $this->render('report');
     }
