@@ -1,2 +1,1 @@
-
-<?php echo $content_for_view; ?>
+<?php echo $content_for_view;

@@ -23,4 +23,6 @@
     // Test Controller
     Router::connect('/test', array('controller' => 'tests', 'action' => 'index'));
 
+    // Sitemap
+    Router::connect('/sitemap.txt', array('controller' => 'demo', 'action' => 'sitemap'));
 ?>

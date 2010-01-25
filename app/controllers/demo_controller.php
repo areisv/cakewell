@@ -543,6 +543,49 @@ EOMENU;
         return $this->redirect('/demo/model');
     }
 
+    function sitemap()
+    {
+        /*
+            Generate simple plaintext sitemap for this site.  In routes config,
+            add route from /sitemap.txt to action
+
+            NOTE: if querying a database table, too large a limit may raise
+            memory issues.  Either keep limit in check or raise memory limit.
+        */
+        $domain_url = sprintf('http://%s/', Configure::read('App.domain'));
+        $UrlList = array(
+            $domain_url,
+            $domain_url . 'demo/'
+        );
+        $ActionList = $this->Gatekeeper->get_controller_methods($this);
+        foreach ( $ActionList as $action ) {
+            $UrlList[] = sprintf('http://%s/%s/%s',
+                                 Configure::read('App.domain'),
+                                 low($this->name),
+                                 $action);
+        }
+
+        if ( $this->here == '/sitemap.txt' ) {
+            $this->RequestHandler->respondAs('text');
+            $this->set('content_for_view', trim(implode("\n", $UrlList)));
+            return $this->render('blank', 'blank');
+        }
+        else {
+            $content_t = <<<XHTML
+<h5>For spider view, try <a href="/sitemap.txt">sitemap.txt</a></h5>
+<h6>%s urls</h6>
+<pre>
+%s
+</pre>
+XHTML;
+            $this->set('content', sprintf( $content_t,
+                                           count($UrlList),
+                                           implode("\n", $UrlList)) );
+            $this->set('header', 'Sitemap Link List');
+            $this->render('index');
+        }
+    }
+
     function atom_builder() {
         /*
          This just repackages the Google updates feed as
