@@ -73,6 +73,6 @@ CREATE TABLE IF NOT EXISTS `comments` (
 -- SPRINT v1s7
 -- removing deprecated tables
 -- development: 2009.12.19
--- production: TBA
+-- production: 2010.01.24
 DROP TABLE IF EXISTS `simple_records`;
 DROP TABLE IF EXISTS `simple_users`;
