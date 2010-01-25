@@ -24,9 +24,15 @@ LWD=$LPD/tmp-install-$TODAY
 
 # Ignore these repository directories
 IGNORE_ZIP="\
-app/config
 app/tests
 app/tmp
+app/config/*.default
+app/config/phpmailer.php
+app/config/sql
+app/config/modes/test*
+app/config/domains/my-domain.com.php
+app/config/domains/cakewell.php
+app/config/domains/localhost.php
 "
 
 # Remote Server
@@ -131,7 +137,7 @@ function install_app() {
         echo "[$VPS_HOST] disconnecting from remote server"
         exit
 EOC
-
+    prompt_
 }
 
 function preamble() {
@@ -139,8 +145,12 @@ function preamble() {
 
 *** uploading cakewell to NFS hosted site ***
 *** http://code.google.com/p/cakewell/    ***
+remote host:        $VPS_HOST
+local working dir:  $LWD
+remote working dir: $RWD
 
 EOB
+    prompt_
 }
 
 function cleanup() {
@@ -166,6 +176,15 @@ USAGE:
     $SCRIPT <NFS_USER>
     e.g. $SCRIPT cakewell
 EOB
+}
+
+function prompt_() {
+    read -s -n1 -p "Hit [ENTER] or [SPACE] to continue, any other key to quit " INPUT_
+    if [ ! -e $INPUT_ ]; then
+        echo -e "\nquitting now...\n"
+        exit 1
+    fi
+    echo -e "\n"
 }
 
 function exit_() {
