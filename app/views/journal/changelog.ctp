@@ -26,6 +26,9 @@ $updated = ( is_null($updated) ) ? '' :
         <h5>released: TBA</h4>
         <ul>
             <li>Added journal controller with changelog</li>
+            <li>Added <a href="/demo/sitemap">sitemap example</a></li>
+            <li>Updated <a href="http://code.google.com/p/cakewell/source/browse/dev/bin/nfs_update.sh">
+                auto-update script</a></li>
         </ul>
     </div>
 </div>
