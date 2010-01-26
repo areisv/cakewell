@@ -65,6 +65,13 @@ class DemoController extends AppController
 </div>
 
 <div class="section">
+    <h4><a href="/journal">Journal Controller</a></h4>
+    <p>A very basic view-centric journal or weblog that does not involve a
+       database.  This is used for the <a href="/journal/changelog">Cakewell
+       changelog</a>.</p>
+</div>
+
+<div class="section">
     <h4><a href="/authwell">Authwell Plugin</a></h4>
     <p>The Authwell plugin is an authorization component.  At this point, it
     is intended mainly as a learning tool and illustration of a robust
@@ -90,6 +97,9 @@ XHTML;
             $this->render('view_dump');
         }
         elseif ( $object == 'controller' ) {
+            $this->Gatekeeper->restrict_from_app_modes( array('production'),
+                    '/demo/gatekeeper/blocked',
+                    'this option is blocked in production mode');
             $REPORT = array($this->name => $this);
             $this->set('header', 'Dumping the Controller Object');
             $this->set('data', $REPORT);
@@ -503,7 +513,7 @@ EMAILX;
 EOMENU;
 }
 
-        $this->set('header', 'Gatekeeper Test');
+        $this->set('header', 'Gatekeeper Demo');
         $this->set('content', $content);
         $this->render('index');
     }
