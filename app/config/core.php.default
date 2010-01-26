@@ -68,6 +68,7 @@
     define('GA_CODE', 'UA-CODE-HERE');
     define('GMAIL_USER', 'GMAIL_ADDRESS');
     define('GMAIL_PASS', 'GMAIL_PASSWORD');
+    define('GWT_META', 'SITE_VERIFICATION_TAG');
 
     // ReCaptcha Keys (http://recaptcha.net/)
     define('RECAPTCHA_DOMAIN', 'YOUR_KEY_DOMAIN');

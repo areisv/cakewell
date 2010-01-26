@@ -26,6 +26,12 @@ $version = Configure::version();
         echo $html->charset();
         echo $html->meta('icon');
 
+        if ( defined('GWT_META') ) {
+            printf('<meta name="google-site-verification" content="%s" />',
+                   GWT_META);
+        }
+
+        # stylesheet
         echo $html->css('cakewell.home');
 
         echo $scripts_for_layout;
