@@ -6,9 +6,12 @@
     For use with cakewell/webroot/cron.php.  Require php-cli.
 
     USAGE (from command line):
-        $ php cakewell/webroot/cron.php /cron/test
+        $ php cakewell/webroot/cron.php /cron/test <domain>
 
     NOTES
+        The final parameter sets the server context based on the
+        $ConfigDomainMap settings in the core.php config file.
+
         Bear in mind, the .htaccess file in webroot contains this line:
 
             RewriteCond %{REQUEST_FILENAME} !-f

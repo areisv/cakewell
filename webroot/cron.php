@@ -1,13 +1,15 @@
 <?php
-/* SVN FILE: $Id: index.php 7296 2008-06-27 09:09:03Z gwoo $ */
-
 /*
     A dispatch handler for cron jobs
     See http://bakery.cakephp.org/articles/view/calling-controller-actions-from-cron-and-the-command-line
 
-    USAGE:
-    php path/to/cron.php /controller/action mode
+    USAGE
+        php path/to/cron.php /controller/action domain
 
+    NOTES
+        The domain parameter maps the domain settings from the $ConfigDomainMap
+        settings to the $_SERVER['SERVER_NAME'] setting.  This allows the
+        database settings to be properly configured.
 */
 
 /**

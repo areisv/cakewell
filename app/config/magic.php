@@ -11,21 +11,19 @@
  */
 
     /*
-        $_SERVER['SERVER_NAME'] not set in some contexts (e.g. cron jobs)
-        In this case, we manually set server value.  This is inspired by:
+        Set $_SERVER['SERVER_NAME'] for command line
+
+        Since $_SERVER['SERVER_NAME'] is not set when php is run from the
+        command line, we give the command line call an opportunity to set
+        the server environment as the last parameter, following this example:
         http://bakery.cakephp.org/articles/view/one-core-one-app-multiple-domains
     */
     if ( empty($_SERVER['SERVER_NAME']) )
     {
-        // look at last cli value, set server name to value if in Domain Map config
-        if ( count($_SERVER['argv'])  ) {
-            $cli_arg = $_SERVER['argv'][count($_SERVER['argv'])-1];
-            if ( in_array($cli_arg, array_keys($ConfigDomainMap)) )
-                $_SERVER['SERVER_NAME'] = $cli_arg;
+        // look at last cli value
+        if ( count($_SERVER['argv']) ) {
+            $_SERVER['SERVER_NAME'] = $_SERVER['argv'][count($_SERVER['argv'])-1];
         }
-        // else set to cron, which can be added as key to $ConfigDomainMap
-        else
-            $_SERVER['SERVER_NAME'] = 'cron';
     }
 
     // Set App.Mode Value
