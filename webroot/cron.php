@@ -6,6 +6,9 @@
     USAGE
         php path/to/cron.php /controller/action domain
 
+        nfs server:
+        php cron.php /controller/action nfs
+
     NOTES
         The domain parameter maps the domain settings from the $ConfigDomainMap
         settings to the $_SERVER['SERVER_NAME'] setting.  This allows the
@@ -19,16 +22,38 @@
 		define('DS', DIRECTORY_SEPARATOR);
 	}
 
+/**
+ * Flag this as a cron request
+ */
+    define('CAKEWELL_CRON', TRUE);
+
 
 /* Essential Cake Paths
     I like to use a centralized core cake library for multiple projects on
     my development server and I find the names of the Cake path constants below
     ambiguous.  So I use var names here that I find more explicit that allow
     me to use a single core cake installation with multiple "apps" or projects.
+
+    cakewell.klenwell.com filetree:
+    /f5/cakewell/public/webroot/index.php
+    /f5/cakewell/protected/app
+    /f5/cakewell/protected/cake_core
 */
-$CakePhpAppDirParent = dirname(dirname(__FILE__));
-$CakePhpAppDirName = 'app';
-$CakePhpCoreDir = dirname($CakePhpAppDirParent) . '/cake_core';
+if ( isset($_SERVER['argv'])  && $_SERVER['argv'][2] == 'nfs' )
+{
+    $_SERVER['SERVER_NAME'] = 'cakewell.klenwell.com';
+    $nsfn_root = dirname(dirname(__FILE__));
+    if ( substr($nsfn_root, -1) == '/' ) $nsfn_root = substr($nsfn_root, 0, -1);
+    $CakePhpAppDirParent = sprintf('%s/protected', $nsfn_root);
+    $CakePhpAppDirName = 'app';
+    $CakePhpCoreDir = sprintf('%s/cake_core', $CakePhpAppDirParent);
+}
+else
+{
+    $CakePhpAppDirParent = dirname(dirname(__FILE__));
+    $CakePhpAppDirName = 'app';
+    $CakePhpCoreDir = sprintf('%s/cake_core', dirname($CakePhpAppDirParent));
+}
 
 
 /**
@@ -87,7 +112,6 @@ $CakePhpCoreDir = dirname($CakePhpAppDirParent) . '/cake_core';
 	}
 
         // Dispatch the controller action given to it
-        define('CRON_OK', true);
         if (isset($argc) && $argc > 1) {
             $Dispatcher= new Dispatcher();
             $Dispatcher->dispatch($argv[1]);
