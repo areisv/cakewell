@@ -28,15 +28,29 @@
 class CronController extends AppController
 {
     var $name = 'Cron';
-    var $uses = null; #array('ModelName');   // or: null;
+    var $uses = array('SimpleLog');
     var $components = array('RequestHandler');
     var $layout = 'blank';
 
     function beforeFilter()
     {
         // check CAKEWELL_CRON constant, set in webroot/cron.php
-        if ( !defined('CRON_OK') )
+        if ( !defined('CAKEWELL_CRON') )
             die('cron exception: cron flag not set by dispatcher');
+    }
+
+    function simple_log($message=NULL)
+    {
+        $type = 'system';
+        $keyword = 'cron';
+
+        if ( empty($message) ) {
+            $message = '/cron/simple_log task run';
+        }
+
+        $result = $this->SimpleLog->log($type, $keyword, $message);
+        $this->set('content_for_layout', sprintf("\n%s\n", print_r($result,1)));
+        $this->render('/layouts/blank');
     }
 
     function index()
@@ -51,7 +65,14 @@ class CronController extends AppController
 
     function test()
     {
-        $this->set('content_for_layout', "\ncakewell cron test successful\n\n");
+        $stdoutf = <<<XSTD
+cakewell cron test successful
+
+SERVER:
+%s
+
+XSTD;
+        $this->set('content_for_layout', sprintf($stdoutf, print_r($_SERVER,1)));
         $this->render('/layouts/blank');
     }
 }

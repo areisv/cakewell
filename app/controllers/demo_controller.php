@@ -336,6 +336,57 @@ XHTML;
         $this->render('index');
     }
 
+    function cron()
+    {
+        $summary = "A simple demonstration of CakePHP.";
+
+        $content = <<<XHTML
+<div class="intro">
+    <p>Cakewell introduces a couple adaptations the CakePhp framework in order to
+    handle requests from the command line and accommodate cron scheduling
+    a little more easily.  It does not use the native CakePhp
+    <a href="http://book.cakephp.org/view/108/The-CakePHP-Console">console</a>
+    feature because I found running cron jobs with it <a
+    href="http://book.cakephp.org/view/846/Running-Shells-as-cronjobs">too
+    complicated</a>.</p>
+
+    <p>Rather, the Cakewell handles cron job through a special <a
+    href="http://code.google.com/p/cakewell/source/browse/webroot/cron.php?r=v1s8-201001">
+    cron.php</a> file that mimics the <a
+    href="http://code.google.com/p/cakewell/source/browse/webroot/index.php.default?r=v1s8-201001">index.php</a>
+    file that drives all CakePhp requests.  Otherwise, requests use normal
+    controllers.</p>
+</div>
+
+<div class="section">
+    <h4>Usage</h4>
+    <p>As with the CakePhp console, php's command line interface (php-cli) must
+    beinstalled on your system to use this feature.  Once installed, a request
+    may be invoked like so:</p>
+    <pre>$ php cakewell/webroot/cron.php /cron/test <domain></pre>
+    <p>The final parameter sets the server context based on the \$ConfigDomainMap
+    settings in the core.php config file.</p>
+    <p>A cron job can be set like so:</p>
+    <pre>*/4 9-17 * * 1-5     php cakewell/webroot/cron.php /cron/test cakewell.klenwell.com</pre>
+</div>
+
+<div class="section">
+    <h4>Production Note</h4>
+    <p>Because nearlyfreespeech.net does not yet support cron jobs, there are
+    no cron jobs scheduled in production.  But requests can be called from
+    the command line:</p>
+    <pre>$ php cron.php /cron/simple_log cakewell.klenwell.com</pre>
+    <p>This command updates the simple log, which can be viewed
+    <a href="/demo/model">here</a>.</p>
+</div>
+
+XHTML;
+
+        $this->set('header', 'Cakewell Cron');
+        $this->set('content', $content);
+        $this->render('index');
+    }
+
     function email()
     {
         App::import('Vendor', 'recaptcha/recaptchalib');
@@ -455,18 +506,6 @@ EMAILX;
         $this->Email->send(sprintf($body, $to_address, $Response[1]));
 
         return $Response;
-    }
-
-    function custom_error()
-    {
-        $this->cakeError('cakewellTestError', array('message'=>'a test error'));
-        $REPORT = array(
-            'you should be redirected to the error page'
-        );
-
-        $this->set('header', 'Test Error');
-        $this->set('data', $REPORT);
-        $this->render('report');
     }
 
     function gatekeeper($subaction='explain', $object=null)
@@ -650,6 +689,18 @@ XHTML;
         // output
         $this->set('header', 'Twitter Component: $this->Twitter->get_tweets()');
         $this->set('data', $TweetData);
+        $this->render('report');
+    }
+
+    function custom_error()
+    {
+        $this->cakeError('cakewellTestError', array('message'=>'a test error'));
+        $REPORT = array(
+            'you should be redirected to the error page'
+        );
+
+        $this->set('header', 'Test Error');
+        $this->set('data', $REPORT);
         $this->render('report');
     }
 
