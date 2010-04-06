@@ -35,8 +35,9 @@ class CronController extends AppController
     function beforeFilter()
     {
         // check CAKEWELL_CRON constant, set in webroot/cron.php
-        if ( !defined('CAKEWELL_CRON') )
-            die('cron exception: cron flag not set by dispatcher');
+        if ( !defined('CAKEWELL_CRON') ) {
+            $this->kill('cron exception: cron flag not set by dispatcher');
+        }
     }
 
     function simple_log($message=NULL)
@@ -58,20 +59,29 @@ class CronController extends AppController
         $this->test();
     }
 
-    function exception()
+    function kill($message)
     {
-        die("\ncron error: cron must be called from the command line\n\n");
+        printf("\n%s\n", $message);
+        die("\n");
     }
 
     function test()
     {
+        $FilterKeys = array('argv', 'argc', 'SERVER_NAME');
         $stdoutf = <<<XSTD
 cakewell cron test successful
 
-SERVER:
+SERVER (partial):
 %s
 
 XSTD;
+
+        foreach ( $_SERVER as $key => $val ) {
+            if ( !in_array($key, $FilterKeys) ) {
+                unset($_SERVER[$key]);
+            }
+        }
+
         $this->set('content_for_layout', sprintf($stdoutf, print_r($_SERVER,1)));
         $this->render('/layouts/blank');
     }
