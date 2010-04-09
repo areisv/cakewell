@@ -635,6 +635,10 @@ XHTML;
         }
     }
 
+    function ajax() {
+        $this->render('ajax');
+    }
+
     function atom_builder() {
         /*
          This just repackages the Google updates feed as
