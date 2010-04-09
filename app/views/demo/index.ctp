@@ -14,15 +14,15 @@ $html->css('cakewell.demo', null, array(), false);
 ?>
 <div class="cakewell-demo" id="cakewell-demo-index">
 
-<div class="controller_menu">
-<h2>menu</h2>
-<ul>
-<?php echo $menu; ?>
-</ul>
-</div>
+    <div class="controller_menu">
+        <h2>menu</h2>
+        <ul>
+            <?php echo $menu; ?>
+        </ul>
+    </div>
 
-<h2><?php echo $header; ?></h2>
+    <h2><?php echo $header; ?></h2>
 
-<?php echo $content; ?>
+    <?php echo $content; ?>
 
 </div>
