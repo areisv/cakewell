@@ -90,8 +90,8 @@ class ServicesController extends AppController
         die();
     }
 
-    function _render_jsonp($JsonData, $wrapper=NULL) {
-        if ( ! $wrapper ) {
+    function _render_jsonp($JsonData, $wrapper='?') {
+        if ( $wrapper == '?' ) {
             $wrapper = substr(md5(microtime(1)), -9);
         }
 
