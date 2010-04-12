@@ -37,7 +37,7 @@ class ServicesController extends AppController
         die();
     }
 
-    function random($min=1, $max=6, $format='json') {
+    function random($min=1, $max=100, $format='json') {
         if ( $min < 0 ) {
             $min = 0;
         }
@@ -47,9 +47,25 @@ class ServicesController extends AppController
 
         $Data = array( 'number' => mt_rand($min, $max) );
 
-        $this->RequestHandler->respondAs('json');
-        $this->set('Data', $Data);
-        $this->render('json', 'ajax');
+        if ( $format == 'plain' ) {
+            $this->_render_plain($Data['number']);
+        }
+        else {
+            $this->_render_json($Data);
+        }
+    }
+
+    function dice($sides=6) {
+        $DiceChoice = array(4, 6, 10, 20);
+        if ( ! in_array($sides, $DiceChoice) ) {
+            $sides = 6;
+        }
+
+        $rolled = mt_rand(1, $sides);
+        $callback = ( isset($this->params['url']['callback']) )
+            ? $this->params['url']['callback'] : NULL;
+        $JsonData = array( 'rolled' => $rolled );
+        $this->_render_jsonp($JsonData, $callback);
     }
 
     function _bad_request($reason='no explanation')
@@ -60,13 +76,37 @@ class ServicesController extends AppController
         die();
     }
 
-    function _render_as_json($Data)
+    function _render_json($JsonData)
     {
+        App::import('Helper', 'Javascript');
+        $Javascript = new JavascriptHelper();
+        $content = $Javascript->object($JsonData);
+
         header("Pragma: no-cache");
         header("Cache-Control: no-store, no-cache, max-age=0, must-revalidate");
-        header('Content-Type: application/json');
-        header("X-JSON: ".$javascript->object($Data));
-        print $javascript->object($Data);
+        header('Content-Type: application/x-javascript; charset=utf-8');
+        header("X-JSON: ".$content);
+        print $content;
+        die();
+    }
+
+    function _render_jsonp($JsonData, $wrapper=NULL) {
+        if ( ! $wrapper ) {
+            $wrapper = substr(md5(microtime(1)), -9);
+        }
+
+        App::import('Helper', 'Javascript');
+        $Javascript = new JavascriptHelper();
+        $content = sprintf('%s(%s)', $wrapper, $Javascript->object($JsonData));
+
+        header('Content-Type: application/x-javascript; charset=utf-8');
+        print $content;
+        die();
+    }
+
+    function _render_plain($content) {
+        header('Content-type: text/plain; charset=UTF-8');
+        print $content;
         die();
     }
 }
