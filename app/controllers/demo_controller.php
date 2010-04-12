@@ -387,6 +387,10 @@ XHTML;
         $this->render('index');
     }
 
+    function ajax() {
+        $this->render('ajax');
+    }
+
     function email()
     {
         App::import('Vendor', 'recaptcha/recaptchalib');
@@ -633,10 +637,6 @@ XHTML;
             $this->set('header', 'Sitemap Link List');
             $this->render('index');
         }
-    }
-
-    function ajax() {
-        $this->render('ajax');
     }
 
     function atom_builder() {
