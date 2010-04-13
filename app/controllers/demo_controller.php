@@ -302,7 +302,8 @@ EOMENU;
         # check for cache
         # note: if the content may resolve to false, assign cache to variable
         # and then use strict comparison operators
-        if ( $cache_content = Cache::read($cache_key) )
+        $cache_content = Cache::read($cache_key, $cache_config);
+        if ( $cache_content !== FALSE )
         {
             $display = sprintf($display_t, 'hit', 'cache found', $cache_content);
         }
