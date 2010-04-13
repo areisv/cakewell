@@ -45,7 +45,11 @@ class ServicesController extends AppController
             $max = 1000000;
         }
 
-        $Data = array( 'number' => mt_rand($min, $max) );
+        $Data = array(
+            'min'    => $min,
+            'max'    => $max,
+            'number' => mt_rand($min, $max)
+        );
 
         if ( $format == 'plain' ) {
             $this->_render_plain($Data['number']);
@@ -57,6 +61,9 @@ class ServicesController extends AppController
 
     function dice($sides=6) {
         $DiceChoice = array(4, 6, 10, 20);
+        $base_die_code = 9855;
+        $die_html = '';
+
         if ( ! in_array($sides, $DiceChoice) ) {
             $sides = 6;
         }
@@ -64,7 +71,13 @@ class ServicesController extends AppController
         $rolled = mt_rand(1, $sides);
         $callback = ( isset($this->params['url']['callback']) )
             ? $this->params['url']['callback'] : NULL;
-        $JsonData = array( 'rolled' => $rolled );
+        if ( $sides == 6 ) {
+            $die_html = sprintf('&#%s;', $base_die_code + $rolled);
+        }
+
+        $JsonData = array( 'rolled' => $rolled,
+                           'die'    => $die_html );
+
         $this->_render_jsonp($JsonData, $callback);
     }
 
