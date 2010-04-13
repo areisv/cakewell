@@ -19,6 +19,7 @@
 # Local Server
 GID='cakewell'
 LPD=~/qed/cakewell
+HG_TAG='nfs-release'
 TODAY=`date +%Y%m%d`
 LWD=$LPD/tmp-install-$TODAY
 
@@ -140,6 +141,11 @@ EOC
     prompt_
 }
 
+function tag_code() {
+    cd $LPD
+    hg tag -f "$HG_TAG-"$(date +%Y%m%d)
+}
+
 function preamble() {
     cat <<EOB
 
@@ -204,5 +210,6 @@ create_lwd
 gzip_app
 upload_app
 install_app
+tag_code
 cleanup
 exit 0
