@@ -51,7 +51,8 @@ $html->css('cakewell.demo', null, array(), false);
                     {},
                     function (data) {
                         if ( data.number ) {
-                            $('#response').html('number: <strong>' +
+                            $('#response').html('number (between ' + data.min +
+                                                ' and ' + data.max + '): <strong>' +
                                                 data.number + '</strong>');
                         }
                         else {
@@ -65,19 +66,14 @@ $html->css('cakewell.demo', null, array(), false);
 
         function roll_die() {
             var ajax_url = '/services/dice/6?callback=?';
-            var base_die_code = 9855;
             $('#response').html('rolling a 6-sided dice...');
 
             setTimeout(function() {
                 $.getJSON( ajax_url, function (json) {
                     if ( json.rolled ) {
                         var die_html = '';
-                        var die_code = 0;
-                        if ( json.rolled >= 1 && json.rolled <= 6 ) {
-                            var die_code = base_die_code + json.rolled;
-                        }
-                        if ( die_code ) {
-                            die_html = ' ( &#' + parseInt(die_code) + '; )';
+                        if ( json.die != '' ) {
+                            die_html = ' ( ' + json.die + ' )';
                         }
 
                         $('#response').html('rolled a <strong>' +
